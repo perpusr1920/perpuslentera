@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PERPUSTAKAAN</title>
+    <title>Desain Web Perpustakaan</title>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap');
@@ -30,16 +30,18 @@
         }
 
         .logo {
-            font-size: 28px;
+            font-size: 24px; /* Ukuran sedikit disesuaikan agar pas */
             font-weight: 800;
-            letter-spacing: 10px; /* Jarak antar huruf untuk logo */
+            letter-spacing: 6px; /* Jarak disesuaikan untuk kata yang panjang */
             margin-bottom: 40px;
+            text-transform: uppercase;
         }
 
         nav {
             display: flex;
             justify-content: center;
-            gap: 40px; /* Jarak antar menu navigasi */
+            align-items: center;
+            gap: 40px; 
         }
 
         nav a {
@@ -49,10 +51,17 @@
             font-weight: 600;
             letter-spacing: 2px;
             text-transform: uppercase;
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
         }
 
-        nav a:hover {
+        /* Gaya khusus untuk menu yang sedang aktif (kotak pada HOME) */
+        nav a.active {
+            border: 2px solid #000000;
+            padding: 6px 14px;
+            border-radius: 6px;
+        }
+
+        nav a:hover:not(.active) {
             color: #888888;
         }
 
@@ -75,7 +84,7 @@
         .hero-text h1 {
             font-size: 52px;
             font-weight: 800;
-            letter-spacing: 15px; /* Spasi huruf ekstra lebar */
+            letter-spacing: 15px; 
             line-height: 1.5;
             margin-bottom: 20px;
         }
@@ -89,7 +98,7 @@
 
         /* Gambar sebelah kanan */
         .hero-image {
-            flex: 1.2; /* Mengambil ruang sedikit lebih besar dari teks */
+            flex: 1.2; 
             display: flex;
             justify-content: flex-end;
         }
@@ -100,7 +109,7 @@
             height: auto;
             
             /* Tampilan sementara jika gambar belum dimasukkan */
-            background-color: #f9f9f9;
+            background-color: #ffffff;
             border: 2px dashed #cccccc;
             min-height: 400px;
             display: flex;
@@ -138,9 +147,9 @@
 <body>
 
     <header>
-        <div class="logo">K A C C O</div>
+        <div class="logo">PERPUSTAKAAN</div>
         <nav>
-            <a href="#">HOME</a>
+            <a href="#" class="active">HOME</a>
             <a href="#">ABOUT</a>
             <a href="#">SERVICE</a>
             <a href="#">WORKS</a>
@@ -157,7 +166,7 @@
         </div>
         
         <div class="hero-image">
-            <img src="ilustrasi-anda.png" alt="Letakkan gambar ilustrasi puzzle di sini">
+            <img src="ilustrasi-perpustakaan.png" alt="Ilustrasi membaca buku">
         </div>
 
     </main>
