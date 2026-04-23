@@ -3,52 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PERPUSTAKAAN</title>
+    <title>Pelangi Pustaka - SD Kristen</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
-            --primary-blue: #2A5C99; /* Biru Overlay */
-            --accent-blue: #4A88E5; /* Biru Tombol */
+            --primary-blue: #2A5C99;
+            --accent-blue: #4A88E5;
             --text-dark: #2B3674;
             --text-gray: #707EAE;
             --bg-light: #F4F7FE;
             --white: #FFFFFF;
+            --danger: #FF4B4B;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background-color: var(--bg-light); color: var(--text-dark); }
+        body { background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; }
 
         /* --- NAVBAR --- */
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 50px;
+            padding: 15px 5%;
             background-color: var(--white);
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
         }
-        .nav-logo { display: flex; align-items: center; gap: 15px; font-weight: 700; font-size: 1.2rem; color: var(--primary-blue); cursor: pointer; }
-        .nav-logo img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-        .nav-links { display: flex; list-style: none; gap: 25px; align-items: center; }
-        .nav-links li { cursor: pointer; font-weight: 500; color: var(--text-dark); transition: color 0.3s; }
-        .nav-links li:hover { color: var(--accent-blue); }
-        .nav-links li.active { background-color: var(--accent-blue); color: var(--white); padding: 8px 16px; border-radius: 8px; }
+        .nav-logo { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.3rem; color: var(--primary-blue); cursor: pointer; }
+        
+        .nav-links { display: flex; list-style: none; gap: 20px; align-items: center; }
+        .nav-links li { 
+            cursor: pointer; 
+            font-weight: 500; 
+            color: var(--text-gray); 
+            transition: 0.3s;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+        .nav-links li:hover { color: var(--primary-blue); background: #f0f4ff; }
+        .nav-links li.active { background-color: var(--accent-blue); color: var(--white); }
+
         .btn-admin-nav { background-color: var(--text-dark); color: var(--white); border: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; }
-        .btn-admin-nav:hover { background-color: #1a224a; }
+        .btn-admin-nav:hover { background-color: #1a224a; transform: scale(1.05); }
 
         /* --- HERO SECTION --- */
         .hero {
             position: relative;
-            background-image: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-image: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
             background-position: center;
-            height: 350px;
+            height: 380px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -58,160 +67,194 @@
         }
         .hero::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(42, 92, 153, 0.85); /* Overlay Biru */
+            background: linear-gradient(135deg, rgba(42, 92, 153, 0.9) 0%, rgba(74, 136, 229, 0.7) 100%);
             z-index: 1;
         }
-        .hero-content { position: relative; z-index: 2; }
-        .hero h1 { font-size: 3rem; font-weight: 700; margin-bottom: 10px; }
-        .hero p { font-size: 1.2rem; font-weight: 400; opacity: 0.9; }
+        .hero-content { position: relative; z-index: 2; padding: 0 20px; }
+        .hero h1 { font-size: 3.5rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 5px; }
+        .hero p { font-size: 1.4rem; opacity: 0.9; font-weight: 300; }
 
-        /* --- GREETING CARD (EZO & HERA) --- */
-        .greeting-container { max-width: 900px; margin: -50px auto 30px auto; position: relative; z-index: 3; padding: 0 20px; }
-        .greeting-card {
-            background: var(--white); border-radius: 20px; padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            display: flex; justify-content: space-between; align-items: center; gap: 20px;
+        /* --- WELCOME CARD (REPLACEMENT) --- */
+        .welcome-container { max-width: 900px; margin: -50px auto 30px auto; position: relative; z-index: 3; padding: 0 20px; }
+        .welcome-card {
+            background: var(--white); border-radius: 20px; padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            text-align: center;
         }
-        .mascot-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-light); }
-        .greeting-text { text-align: center; flex: 1; }
-        .greeting-text h2 { color: var(--text-dark); font-size: 1.4rem; margin-bottom: 8px; }
-        .greeting-text p { color: var(--text-gray); font-size: 1rem; line-height: 1.6; }
+        .welcome-card h2 { color: var(--text-dark); font-size: 1.8rem; margin-bottom: 15px; }
+        .welcome-card p { color: var(--text-gray); font-size: 1.1rem; line-height: 1.6; max-width: 700px; margin: 0 auto; }
+        .welcome-card .divider { width: 60px; height: 4px; background: var(--accent-blue); margin: 20px auto; border-radius: 2px; }
 
         /* --- INFO BOARD --- */
         .info-board-container { max-width: 900px; margin: 0 auto 50px auto; padding: 0 20px; }
         .info-board {
             background: var(--white); border-radius: 15px; padding: 25px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05); border-top: 4px solid #F5A623;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05); border-left: 6px solid #F5A623;
         }
-        .info-board h3 { display: flex; align-items: center; gap: 10px; color: var(--text-dark); margin-bottom: 15px; }
+        .info-board h3 { display: flex; align-items: center; gap: 10px; color: var(--text-dark); margin-bottom: 10px; }
 
         /* --- LOGIN SECTION --- */
-        #loginSection { display: none; min-height: 70vh; justify-content: center; align-items: center; }
-        .login-card { background: var(--white); padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 400px; }
-        .login-card i { font-size: 3rem; color: var(--accent-blue); margin-bottom: 15px; }
-        .login-card h2 { margin-bottom: 25px; }
-        .login-card input { width: 100%; padding: 12px 15px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; outline: none; font-size: 1rem; }
-        .login-card button { width: 100%; padding: 12px; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.3s; }
-        .login-card button:hover { background: var(--primary-blue); }
-        #loginError { color: red; font-size: 0.9rem; margin-top: -10px; margin-bottom: 15px; display: none; }
+        #loginSection { display: none; min-height: 70vh; justify-content: center; align-items: center; padding: 20px; }
+        .login-card { background: var(--white); padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 400px; }
+        .login-card i { font-size: 3.5rem; color: var(--primary-blue); margin-bottom: 20px; }
+        .login-card input { width: 100%; padding: 14px 20px; margin-bottom: 15px; border: 2px solid #eee; border-radius: 12px; outline: none; font-size: 1rem; }
+        .login-card button { width: 100%; padding: 14px; background: var(--accent-blue); color: white; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        #loginError { color: var(--danger); font-size: 0.85rem; margin-bottom: 15px; display: none; font-weight: 500; }
 
-        /* --- ADMIN DASHBOARD SECTION (Dari kode sebelumnya) --- */
-        #adminSection { display: none; max-width: 1100px; margin: 50px auto; padding: 0 20px; }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #ddd; padding-bottom: 15px; }
-        .btn-logout { background: #FF4B4B; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        /* --- ADMIN DASHBOARD --- */
+        #adminSection { display: none; max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: var(--white); padding: 20px 30px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        .btn-logout { background: var(--danger); color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; }
         
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
-        .card { background: var(--white); border-radius: 20px; padding: 35px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.3s ease; box-shadow: 0px 10px 20px rgba(112, 144, 176, 0.08); cursor: pointer; border: 1px solid #eee; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0px 15px 30px rgba(112, 144, 176, 0.15); }
-        .icon-wrapper { width: 60px; height: 60px; border-radius: 50%; background-color: var(--bg-light); display: flex; align-items: center; justify-content: center; margin-bottom: 15px; color: var(--accent-blue); font-size: 1.5rem; transition: all 0.3s ease; }
-        .card:hover .icon-wrapper { background-color: var(--accent-blue); color: var(--white); }
-        .card h3 { font-size: 1rem; font-weight: 600; color: var(--text-dark); text-align: center; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; }
+        .card { background: var(--white); border-radius: 20px; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; transition: 0.3s; box-shadow: 0px 10px 20px rgba(112, 144, 176, 0.08); cursor: pointer; border: 1px solid transparent; }
+        .card:hover { transform: translateY(-10px); border-color: var(--accent-blue); }
+        .icon-wrapper { width: 70px; height: 70px; border-radius: 20px; background-color: #F4F7FE; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; color: var(--accent-blue); font-size: 1.8rem; }
+        .card h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); margin-bottom: 5px; }
+        .card p { font-size: 0.85rem; color: var(--text-gray); }
 
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero h1 { font-size: 2.2rem; }
+        }
     </style>
 </head>
 <body>
 
     <nav class="navbar">
         <div class="nav-logo" onclick="showHome()">
-            <img src="https://via.placeholder.com/40x40/2A5C99/FFFFFF?text=Logo" alt="Logo">
-            Pelangi Pustaka
+            <i class="fa-solid fa-book-bookmark" style="margin-right: 10px;"></i>
+            <span>Pelangi Pustaka</span>
         </div>
-        <ul class="nav-links" id="navLinks">
-            <li class="active" onclick="showHome()">Home</li>
-            <li>Tata Tertib</li>
-            <li>Keanggotaan</li>
-            <li>Filosofi Logo</li>
-            <li>Koleksi E-Book</li>
+        <ul class="nav-links">
+            <li class="active" onclick="handleNavClick(this, 'home')">Home</li>
+            <li onclick="handleNavClick(this)">Tata Tertib</li>
+            <li onclick="handleNavClick(this)">Keanggotaan</li>
+            <li onclick="handleNavClick(this)">Koleksi E-Book</li>
         </ul>
-        <button class="btn-admin-nav" onclick="showLogin()">Admin</button>
+        <button class="btn-admin-nav" onclick="showLogin()">Admin Portal</button>
     </nav>
 
     <div id="homeSection">
         <div class="hero">
             <div class="hero-content">
+                <p>Selamat Datang di</p>
                 <h1>Perpustakaan</h1>
-                <p>SD Kristen</p>
+                <p>SD Kristen Pelangi Bangsa</p>
             </div>
         </div>
 
-        <div class="greeting-container">
-            <div class="greeting-card">
-                <img src="https://via.placeholder.com/100/A3AED0/FFFFFF?text=Ezo" alt="Ezo" class="mascot-img">
-                
-                <div class="greeting-text">
-                    <h2>"Halo, Sobat Literasi!</h2>
-                    <p>Mau cari referensi tugas atau sekadar bacaan santai? Semua ada di sini. Yuk, mulai petualangan membaca kamu hari ini!</p>
-                </div>
-                
-                <img src="https://via.placeholder.com/100/FFB400/FFFFFF?text=Hera" alt="Hera" class="mascot-img">
+        <div class="welcome-container">
+            <div class="welcome-card">
+                <h2>Halo, Sobat Literasi!</h2>
+                <div class="divider"></div>
+                <p>Mau cari referensi tugas atau sekadar bacaan santai? Semua ada di sini. Mari perluas cakrawala dunia melalui jendela ilmu pengetahuan.</p>
             </div>
         </div>
 
         <div class="info-board-container">
             <div class="info-board">
-                <h3><i class="fa-solid fa-bullhorn" style="color: #F5A623;"></i> Papan Informasi Peminjaman</h3>
-                <p style="color: var(--text-gray); font-size: 0.9rem;">Belum ada informasi peminjaman terbaru hari ini.</p>
+                <h3><i class="fa-solid fa-bullhorn" style="color: #F5A623;"></i> Papan Pengumuman</h3>
+                <p>Belum ada informasi peminjaman terbaru hari ini. Silahkan hubungi petugas jika ada pertanyaan.</p>
             </div>
         </div>
     </div>
 
-    <div id="loginSection" style="display: flex;">
+    <div id="loginSection">
         <div class="login-card">
-            <i class="fa-solid fa-user-shield"></i>
-            <h2>Akses Admin</h2>
-            <input type="password" id="passwordInput" placeholder="Masukkan Password (ketik: admin)">
+            <i class="fa-solid fa-user-gear"></i>
+            <h2 style="margin-bottom: 10px;">Akses Admin</h2>
+            <p style="color: var(--text-gray); margin-bottom: 25px;">Masukkan kode petugas untuk masuk</p>
+            <input type="password" id="passwordInput" placeholder="Password (admin)" onkeypress="handleKeyPress(event)">
             <p id="loginError">Password salah!</p>
-            <button onclick="checkPassword()">Login</button>
+            <button onclick="checkPassword()">Masuk</button>
         </div>
     </div>
 
     <div id="adminSection">
         <div class="admin-header">
-            <h2>Panel Kelola Perpustakaan</h2>
-            <button class="btn-logout" onclick="showHome()">Logout</button>
+            <div>
+                <h2 style="color: var(--primary-blue)">Panel Petugas</h2>
+                <p style="color: var(--text-gray); font-size: 0.9rem;">Kelola sirkulasi buku dan data siswa</p>
+            </div>
+            <button class="btn-logout" onclick="showHome()">Keluar</button>
         </div>
         
         <div class="grid-container">
-            <div class="card"><div class="icon-wrapper"><i class="fa-solid fa-book"></i></div><h3>Daftar Buku</h3></div>
-            <div class="card"><div class="icon-wrapper"><i class="fa-solid fa-hand-holding-hand"></i></div><h3>Peminjaman</h3></div>
-            <div class="card"><div class="icon-wrapper"><i class="fa-solid fa-right-left"></i></div><h3>Pengembalian</h3></div>
-            <div class="card"><div class="icon-wrapper"><i class="fa-solid fa-id-card-clip"></i></div><h3>Absen Anggota</h3></div>
-            <div class="card"><div class="icon-wrapper"><i class="fa-solid fa-users"></i></div><h3>Data Anggota</h3></div>
+            <div class="card">
+                <div class="icon-wrapper"><i class="fa-solid fa-book"></i></div>
+                <h3>Daftar Buku</h3>
+                <p>Katalog lengkap buku</p>
+            </div>
+            <div class="card">
+                <div class="icon-wrapper"><i class="fa-solid fa-hand-holding-hand"></i></div>
+                <h3>Peminjaman</h3>
+                <p>Proses pinjam buku</p>
+            </div>
+            <div class="card">
+                <div class="icon-wrapper"><i class="fa-solid fa-right-left"></i></div>
+                <h3>Pengembalian</h3>
+                <p>Proses kembali buku</p>
+            </div>
+            <div class="card">
+                <div class="icon-wrapper"><i class="fa-solid fa-id-card-clip"></i></div>
+                <h3>Presensi</h3>
+                <p>Kunjungan harian</p>
+            </div>
+            <div class="card">
+                <div class="icon-wrapper"><i class="fa-solid fa-users"></i></div>
+                <h3>Data Anggota</h3>
+                <p>Profil siswa & guru</p>
+            </div>
+            <div class="card">
+                <div class="icon-wrapper"><i class="fa-solid fa-chart-line"></i></div>
+                <h3>Statistik</h3>
+                <p>Laporan perpustakaan</p>
+            </div>
         </div>
     </div>
 
     <script>
-        const homeSection = document.getElementById('homeSection');
-        const loginSection = document.getElementById('loginSection');
-        const adminSection = document.getElementById('adminSection');
-        const loginError = document.getElementById('loginError');
+        const sections = {
+            home: document.getElementById('homeSection'),
+            login: document.getElementById('loginSection'),
+            admin: document.getElementById('adminSection')
+        };
         const passwordInput = document.getElementById('passwordInput');
+        const loginError = document.getElementById('loginError');
 
-        // Sembunyikan login di awal
-        loginSection.style.display = 'none';
+        function handleNavClick(element, section = 'home') {
+            document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
+            element.classList.add('active');
+            if(section === 'home') showHome();
+        }
 
         function showHome() {
-            homeSection.style.display = 'block';
-            loginSection.style.display = 'none';
-            adminSection.style.display = 'none';
+            sections.home.style.display = 'block';
+            sections.login.style.display = 'none';
+            sections.admin.style.display = 'none';
             passwordInput.value = '';
             loginError.style.display = 'none';
         }
 
         function showLogin() {
-            homeSection.style.display = 'none';
-            adminSection.style.display = 'none';
-            loginSection.style.display = 'flex';
+            sections.home.style.display = 'none';
+            sections.admin.style.display = 'none';
+            sections.login.style.display = 'flex';
+            passwordInput.focus();
         }
 
         function checkPassword() {
-            // Password simulasi adalah "admin"
             if(passwordInput.value === "admin") {
-                loginSection.style.display = 'none';
-                adminSection.style.display = 'block';
+                sections.login.style.display = 'none';
+                sections.admin.style.display = 'block';
             } else {
                 loginError.style.display = 'block';
             }
+        }
+
+        function handleKeyPress(e) {
+            if(e.key === 'Enter') checkPassword();
         }
     </script>
 </body>
