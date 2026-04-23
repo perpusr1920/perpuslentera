@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pelangi Pustaka - SD Kristen 04 Eben Haezer</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-blue: #2A5C99; /* Biru Overlay */
+            --accent-blue: #4A88E5; /* Biru Tombol */
+            --text-dark: #2B3674;
+            --text-gray: #707EAE;
+            --bg-light: #F4F7FE;
+            --white: #FFFFFF;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-dark); }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: var(--white);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-logo { display: flex; align-items: center; gap: 15px; font-weight: 700; font-size: 1.2rem; color: var(--primary-blue); cursor: pointer; }
+        .nav-logo img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .nav-links { display: flex; list-style: none; gap: 25px; align-items: center; }
+        .nav-links li { cursor: pointer; font-weight: 500; color: var(--text-dark); transition: color 0.3s; }
+        .nav-links li:hover { color: var(--accent-blue); }
+        .nav-links li.active { background-color: var(--accent-blue); color: var(--white); padding: 8px 16px; border-radius: 8px; }
+        .btn-admin-nav { background-color: var(--text-dark); color: var(--white); border: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-admin-nav:hover { background-color: #1a224a; }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            position: relative;
+            background-image: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--white);
+        }
+        .hero::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(42, 92, 153, 0.85); /* Overlay Biru */
+            z-index: 1;
+        }
+        .hero-content { position: relative; z-index: 2; }
+        .hero h1 { font-size: 3rem; font-weight: 700; margin-bottom: 10px; }
+        .hero p { font-size: 1.2rem; font-weight: 400; opacity: 0.9; }
+
+        /* --- GREETING CARD (EZO & HERA) --- */
+        .greeting-container { max-width: 900px; margin: -50px auto 30px auto; position: relative; z-index: 3; padding: 0 20px; }
+        .greeting-card {
+            background: var(--white); border-radius: 20px; padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex; justify-content: space-between; align-items: center; gap: 20px;
+        }
+        .mascot-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-light); }
+        .greeting-text { text-align: center; flex: 1; }
+        .greeting-text h2 { color: var(--text-dark); font-size: 1.4rem; margin-bottom: 8px; }
+        .greeting-text p { color: var(--text-gray); font-size: 1rem; line-height: 1.6; }
+
+        /* --- INFO BOARD --- */
+        .info-board-container { max-width: 900px; margin: 0 auto 50px auto; padding: 0 20px; }
+        .info-board {
+            background: var(--white); border-radius: 15px; padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05); border-top: 4px solid #F5A623;
+        }
+        .info-board h3 { display: flex; align-items: center; gap: 10px; color: var(--text-dark); margin-bottom: 15px; }
+
+        /* --- LOGIN SECTION --- */
+        #loginSection { display: none; min-height: 70vh; justify-content: center; align-items: center; }
+        .login-card { background: var(--white); padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 400px; }
+        .login-card i { font-size: 3rem; color: var(--accent-blue); margin-bottom: 15px; }
+        .login-card h2 { margin-bottom: 25px; }
+        .login-card input { width: 100%; padding: 12px 15px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; outline: none; font-size: 1rem; }
+        .login-card button { width: 100%; padding: 12px; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .login-card button:hover { background: var(--primary-blue); }
+        #loginError { color: red; font-size: 0.9rem; margin-top: -10px; margin-bottom: 15px; display: none; }
+
+        /* --- ADMIN DASHBOARD SECTION (Dari kode sebelumnya) --- */
+        #adminSection { display: none; max-width: 1100px; margin: 50px auto; padding: 0 20px; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #ddd; padding-bottom: 15px; }
+        .btn-logout { background: #FF4B4B; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
+        .card { background: var(--white); border-radius: 20px; padding: 35px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.3s ease; box-shadow: 0px 10px 20px rgba(112, 144, 176, 0.08); cursor: pointer; border: 1px solid #eee; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0px 15px 30px rgba(112, 144, 176, 0.15); }
+        .icon-wrapper { width: 60px; height: 60px; border-radius: 50%; background-color: var(--bg-light); display: flex; align-items: center; justify-content: center; margin-bottom: 15px; color: var(--accent-blue); font-size: 1.5rem; transition: all 0.3s ease; }
+        .card:hover .icon-wrapper { background-color: var(--accent-blue); color: var(--white); }
+        .card h3 { font-size: 1rem; font-weight: 600; color: var(--text-dark); text-align: center; }
+
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-logo" onclick="showHome()">
+            <img src="https://via.placeholder.com/40x40/2A5C99/FFFFFF?text=Logo" alt="Logo">
+            Pelangi Pustaka
+        </div>
+        <ul class="nav-links" id="navLinks">
+            <li class="active" onclick="showHome()">Home</li>
+            <li>Tata Tertib</li>
+            <li>Keanggotaan</li>
+            <li>Filosofi Logo</li>
+            <li>Koleksi E-Book</li>
+        </ul>
+        <button class="btn-admin-nav" onclick="showLogin()">Admin</button>
+    </nav>
+
+    <div id="homeSection">
+        <div class="hero">
+            <div class="hero-content">
+                <h1>Perpustakaan</h1>
+                <p>SD Kristen 04 Eben Haezer Salatiga</p>
+            </div>
+        </div>
+
+        <div class="greeting-container">
+            <div class="greeting-card">
+                <img src="https://via.placeholder.com/100/A3AED0/FFFFFF?text=Ezo" alt="Ezo" class="mascot-img">
+                
+                <div class="greeting-text">
+                    <h2>Shalom! Kami Ezo & Hera</h2>
+                    <p>Selamat datang di rumah buku kami yang ceria! Kami siap menemani teman-teman menjelajahi dunia lewat membaca.</p>
+                </div>
+                
+                <img src="https://via.placeholder.com/100/FFB400/FFFFFF?text=Hera" alt="Hera" class="mascot-img">
+            </div>
+        </div>
+
+        <div class="info-board-container">
+            <div class="info-board">
+                <h3><i class="fa-solid fa-bullhorn" style="color: #F5A623;"></i> Papan Informasi Peminjaman</h3>
+                <p style="color: var(--text-gray); font-size: 0.9rem;">Belum ada informasi peminjaman terbaru hari ini.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="loginSection" style="display: flex;">
+        <div class="login-card">
+            <i class="fa-solid fa-user-shield"></i>
+            <h2>Akses Admin</h2>
+            <input type="password" id="passwordInput" placeholder="Masukkan Password (ketik: admin)">
+            <p id="loginError">Password salah!</p>
+            <button onclick="checkPassword()">Login</button>
+        </div>
+    </div>
+
+    <div id="adminSection">
+        <div class="admin-header">
+            <h2>Panel Kelola Perpustakaan</h2>
+            <button class="btn-logout" onclick="showHome()">Logout</button>
+        </div>
+        
+        <div class="grid-container">
+            <div class="card"><div class="icon-wrapper"><i class="fa-solid fa-book"></i></div><h3>Daftar Buku</h3></div>
+            <div class="card"><div class="icon-wrapper"><i class="fa-solid fa-hand-holding-hand"></i></div><h3>Peminjaman</h3></div>
+            <div class="card"><div class="icon-wrapper"><i class="fa-solid fa-right-left"></i></div><h3>Pengembalian</h3></div>
+            <div class="card"><div class="icon-wrapper"><i class="fa-solid fa-id-card-clip"></i></div><h3>Absen Anggota</h3></div>
+            <div class="card"><div class="icon-wrapper"><i class="fa-solid fa-users"></i></div><h3>Data Anggota</h3></div>
+        </div>
+    </div>
+
+    <script>
+        const homeSection = document.getElementById('homeSection');
+        const loginSection = document.getElementById('loginSection');
+        const adminSection = document.getElementById('adminSection');
+        const loginError = document.getElementById('loginError');
+        const passwordInput = document.getElementById('passwordInput');
+
+        // Sembunyikan login di awal
+        loginSection.style.display = 'none';
+
+        function showHome() {
+            homeSection.style.display = 'block';
+            loginSection.style.display = 'none';
+            adminSection.style.display = 'none';
+            passwordInput.value = '';
+            loginError.style.display = 'none';
+        }
+
+        function showLogin() {
+            homeSection.style.display = 'none';
+            adminSection.style.display = 'none';
+            loginSection.style.display = 'flex';
+        }
+
+        function checkPassword() {
+            // Password simulasi adalah "admin"
+            if(passwordInput.value === "admin") {
+                loginSection.style.display = 'none';
+                adminSection.style.display = 'block';
+            } else {
+                loginError.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
