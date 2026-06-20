@@ -68,15 +68,14 @@
         .hero h1 { font-size: 4rem; font-weight: 800; text-shadow: 0 4px 10px rgba(0,0,0,0.1); line-height: 1.1; }
         .hero p { font-size: 1.5rem; opacity: 0.9; font-weight: 400; margin-top: 10px; }
         
-        /* Gelombang Bawah Hero */
         .wave-container { position: absolute; bottom: 0; width: 100%; line-height: 0; }
         .wave-container svg { position: relative; display: block; width: calc(100% + 1.3px); height: 120px; }
         .wave-container .shape-fill { fill: var(--bg-body); }
 
-        /* --- CONTAINER UTAMA --- */
+        /* --- MAIN LAYOUT --- */
         .main-container { max-width: 1000px; margin: -120px auto 50px auto; position: relative; z-index: 5; padding: 0 20px; }
         
-        /* --- CARD STYLE (Dinamis untuk Navigasi) --- */
+        /* --- CARDS --- */
         .welcome-card {
             background: var(--white);
             border-radius: 40px;
@@ -108,6 +107,10 @@
         }
         .info-bar i { font-size: 1.5rem; color: var(--accent-orange); }
 
+        /* List Styling untuk Tata Tertib */
+        .rules-list { text-align: left; max-width: 600px; margin: 20px auto 0 auto; line-height: 2; font-size: 1.1rem; color: var(--text-dark); }
+        .rules-list li { margin-bottom: 10px; list-style-position: inside; }
+
         /* --- LOGIN SECTION --- */
         #loginSection { display: none; min-height: 100vh; justify-content: center; align-items: center; background: var(--bg-body); }
         .login-card { background: var(--white); padding: 50px; border-radius: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 450px; }
@@ -125,6 +128,11 @@
         .icon-wrapper { width: 70px; height: 70px; border-radius: 20px; background-color: var(--light-blue); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; color: var(--primary-blue); font-size: 1.8rem; }
         .card:hover .icon-wrapper { background: rgba(255,255,255,0.2); color: white; }
 
+        /* Detail Halaman Admin */
+        .admin-detail-box { display: none; background: var(--white); border-radius: 30px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
+        .btn-back-admin { background: var(--text-gray); color: white; border: none; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; margin-bottom: 20px; transition: 0.3s; }
+        .btn-back-admin:hover { background: var(--text-dark); }
+
         @media (max-width: 768px) {
             .navbar { padding: 20px; }
             .nav-links { display: none; }
@@ -136,20 +144,20 @@
 <body>
 
     <nav class="navbar">
-        <div class="nav-logo" onclick="navigateTo('home')">
+        <div class="nav-logo" onclick="showUserSection('home')">
             <i class="fa-solid fa-book-open"></i>
             <span>Pelangi Pustaka</span>
         </div>
         <ul class="nav-links">
-            <li id="nav-home" class="active" onclick="navigateTo('home')">Home</li>
-            <li id="nav-tata-tertib" onclick="navigateTo('tata-tertib')">Tata Tertib</li>
-            <li id="nav-keanggotaan" onclick="navigateTo('keanggotaan')">Keanggotaan</li>
-            <li id="nav-ebook" onclick="navigateTo('ebook')">E-Book</li>
+            <li id="li-home" class="active" onclick="showUserSection('home')">Home</li>
+            <li id="li-tata-tertib" onclick="showUserSection('tata-tertib')">Tata Tertib</li>
+            <li id="li-keanggotaan" onclick="showUserSection('keanggotaan')">Keanggotaan</li>
+            <li id="li-ebook" onclick="showUserSection('ebook')">E-Book</li>
         </ul>
         <button class="btn-admin-nav" onclick="showLogin()">Admin Portal</button>
     </nav>
 
-    <div id="homeSection">
+    <div id="userSection">
         <div class="hero">
             <div class="hero-content">
                 <p>Halo, Selamat Datang!</p>
@@ -164,17 +172,38 @@
         </div>
 
         <div class="main-container">
-            <div id="dynamicContent" class="welcome-card">
-                <div class="icon-circle">
-                    <i class="fa-solid fa-face-smile"></i>
-                </div>
+            <div id="sub-home" class="welcome-card user-sub-page">
+                <div class="icon-circle"><i class="fa-solid fa-face-smile"></i></div>
                 <h2>Ayo Membaca Hari Ini!</h2>
                 <p>Buku adalah jendela dunia. Di sini kamu bisa menemukan banyak petualangan seru melalui cerita dan ilmu pengetahuan yang luar biasa. Sudah siap menjelajah?</p>
-                
                 <div class="info-bar">
                     <i class="fa-solid fa-star"></i>
                     <span><strong>Info Hari Ini:</strong> Belum ada pengumuman terbaru. Selamat membaca, Sobat Pustaka!</span>
                 </div>
+            </div>
+
+            <div id="sub-tata-tertib" class="welcome-card user-sub-page" style="display: none;">
+                <div class="icon-circle"><i class="fa-solid fa-scale-balanced"></i></div>
+                <h2>Tata Tertib Perpustakaan</h2>
+                <p>Mohon dipatuhi peraturan di dalam ruang Pelangi Pustaka demi kenyamanan bersama:</p>
+                <ul class="rules-list">
+                    <li>1. Harap tenang dan tidak membuat kegaduhan di area membaca.</li>
+                    <li>2. Menjaga kebersihan dan tidak membawa makanan/minuman ke dalam ruangan.</li>
+                    <li>3. Batas waktu peminjaman buku maksimal adalah 7 hari kerja.</li>
+                    <li>4. Wajib mengembalikan buku dalam kondisi utuh dan tidak rusak.</li>
+                </ul>
+            </div>
+
+            <div id="sub-keanggotaan" class="welcome-card user-sub-page" style="display: none;">
+                <div class="icon-circle"><i class="fa-solid fa-id-card"></i></div>
+                <h2>Keanggotaan Pustaka</h2>
+                <p>Seluruh siswa-siswi dan guru SD Kristen Pelangi Bangsa otomatis terdaftar sebagai anggota resmi perpustakaan. Untuk mengaktifkan Nomor Induk Anggota atau mencetak kartu fisik barcode, silakan kunjungi meja petugas perpustakaan pada jam istirahat sekolah.</p>
+            </div>
+
+            <div id="sub-ebook" class="welcome-card user-sub-page" style="display: none;">
+                <div class="icon-circle"><i class="fa-solid fa-tablet-screen-button"></i></div>
+                <h2>Koleksi E-Book Digital</h2>
+                <p>Kabar gembira! Layanan Buku Digital (E-Book) saat ini sedang dalam proses integrasi sistem. Segera hadir ribuan koleksi buku cerita anak bergambar, komik pengetahuan, serta buku pelajaran interaktif yang dapat kamu akses langsung via gawai atau komputer sekolah.</p>
             </div>
         </div>
     </div>
@@ -186,109 +215,111 @@
             <input type="password" id="passwordInput" placeholder="Masukkan Password" onkeypress="handleKeyPress(event)">
             <p id="loginError" style="color: red; display: none; margin-bottom: 15px;">Akses ditolak!</p>
             <button onclick="checkPassword()">Masuk ke Panel</button>
-            <p onclick="showHome()" style="margin-top: 20px; color: var(--text-gray); cursor: pointer; font-size: 0.9rem;">Kembali ke Beranda</p>
+            <p onclick="showUserSection('home')" style="margin-top: 20px; color: var(--text-gray); cursor: pointer; font-size: 0.9rem;">Kembali ke Beranda</p>
         </div>
     </div>
 
     <div id="adminSection">
         <div class="admin-header">
             <div>
-                <h2 style="color: var(--primary-blue)">Dashboard Admin</h2>
+                <h2 id="adminTitle">Dashboard Admin</h2>
                 <p style="color: var(--text-gray); font-size: 0.9rem;">Manajemen Perpustakaan Pelangi</p>
             </div>
-            <button class="btn-logout" onclick="showHome()">Keluar</button>
+            <button class="btn-logout" onclick="showUserSection('home')">Keluar</button>
         </div>
         
-        <div class="grid-container">
-            <div class="card"><div class="icon-wrapper"><i class="fa-solid fa-book"></i></div><h3>Buku</h3><p>Kelola Katalog</p></div>
-            <div class="card"><div class="icon-wrapper"><i class="fa-solid fa-hand-holding-heart"></i></div><h3>Pinjam</h3><p>Transaksi Baru</p></div>
-            <div class="card"><div class="icon-wrapper"><i class="fa-solid fa-rotate-left"></i></div><h3>Kembali</h3><p>Pengembalian</p></div>
-            <div class="card"><div class="icon-wrapper"><i class="fa-solid fa-user-check"></i></div><h3>Absensi</h3><p>Daftar Hadir</p></div>
-            <div class="card"><div class="icon-wrapper"><i class="fa-solid fa-graduation-cap"></i></div><h3>Siswa</h3><p>Data Anggota</p></div>
-            <div class="card"><div class="icon-wrapper"><i class="fa-solid fa-file-invoice"></i></div><h3>Laporan</h3><p>Rekapitulasi</p></div>
+        <div id="adminGrid" class="grid-container">
+            <div class="card" onclick="showAdminDetail('Buku', 'Katalog Buku', 'Di sini tempat mengelola daftar judul buku, input buku baru, serta edit status ketersediaan buku.')">
+                <div class="icon-wrapper"><i class="fa-solid fa-book"></i></div>
+                <h3>Buku</h3>
+                <p>Kelola Katalog</p>
+            </div>
+            <div class="card" onclick="showAdminDetail('Pinjam', 'Transaksi Peminjaman', 'Menu untuk mencatat siswa yang sedang meminjam buku dan batas tanggal pengembaliannya.')">
+                <div class="icon-wrapper"><i class="fa-solid fa-hand-holding-heart"></i></div>
+                <h3>Pinjam</h3>
+                <p>Transaksi Baru</p>
+            </div>
+            <div class="card" onclick="showAdminDetail('Kembali', 'Pengembalian Buku', 'Menu untuk memproses buku yang dikembalikan oleh siswa serta kalkulasi denda keterlambatan jika ada.')">
+                <div class="icon-wrapper"><i class="fa-solid fa-rotate-left"></i></div>
+                <h3>Kembali</h3>
+                <p>Pengembalian</p>
+            </div>
+            <div class="card" onclick="showAdminDetail('Absensi', 'Daftar Hadir Pengunjung', 'Melihat dan mengunduh statistik absensi kunjungan harian siswa ke ruang perpustakaan.')">
+                <div class="icon-wrapper"><i class="fa-solid fa-user-check"></i></div>
+                <h3>Absensi</h3>
+                <p>Daftar Hadir</p>
+            </div>
+            <div class="card" onclick="showAdminDetail('Siswa', 'Data Anggota Siswa', 'Manajemen basis data siswa, registrasi anggota baru, dan pemblokiran kartu yang hilang.')">
+                <div class="icon-wrapper"><i class="fa-solid fa-graduation-cap"></i></div>
+                <h3>Siswa</h3>
+                <p>Data Anggota</p>
+            </div>
+            <div class="card" onclick="showAdminDetail('Laporan', 'Rekapitulasi Laporan bulanan', 'Generate otomatis data rekap grafik sirkulasi buku mingguan, bulanan, dan tahunan.')">
+                <div class="icon-wrapper"><i class="fa-solid fa-file-invoice"></i></div>
+                <h3>Laporan</h3>
+                <p>Rekapitulasi</p>
+            </div>
+        </div>
+
+        <div id="adminDetail" class="admin-detail-box">
+            <button class="btn-back-admin" onclick="hideAdminDetail()"><i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard</button>
+            <h2 id="detailSubTitle" style="margin-bottom: 10px; color: var(--primary-blue);">Judul Halaman</h2>
+            <p id="detailDesc" style="color: var(--text-gray); font-size: 1.1rem; line-height: 1.6;">Deskripsi konten statis dashboard perpustakaan digital.</p>
         </div>
     </div>
 
     <script>
-        // Data Konten untuk Halaman Depan
-        const pageContents = {
-            'home': `
-                <div class="icon-circle"><i class="fa-solid fa-face-smile"></i></div>
-                <h2>Ayo Membaca Hari Ini!</h2>
-                <p>Buku adalah jendela dunia. Di sini kamu bisa menemukan banyak petualangan seru melalui cerita dan ilmu pengetahuan yang luar biasa. Sudah siap menjelajah?</p>
-                <div class="info-bar">
-                    <i class="fa-solid fa-star"></i>
-                    <span><strong>Info Hari Ini:</strong> Belum ada pengumuman terbaru. Selamat membaca, Sobat Pustaka!</span>
-                </div>
-            `,
-            'tata-tertib': `
-                <div class="icon-circle"><i class="fa-solid fa-scale-balanced"></i></div>
-                <h2>Tata Tertib Perpustakaan</h2>
-                <p style="text-align: left; max-width: 600px; margin: 0 auto;">
-                    1. Harap tenang dan menjaga ketertiban di dalam ruang pustaka.<br>
-                    2. Maksimal peminjaman buku adalah 2 buku selama 1 minggu.<br>
-                    3. Kembalikan buku tepat waktu untuk menghindari sanksi.<br>
-                    4. Dilarang membawa makanan dan minuman ke area membaca.
-                </p>
-            `,
-            'keanggotaan': `
-                <div class="icon-circle"><i class="fa-solid fa-id-card"></i></div>
-                <h2>Keanggotaan Pustaka</h2>
-                <p>Seluruh siswa dan guru SD Kristen Pelangi Bangsa otomatis terdaftar sebagai anggota. Untuk mencetak kartu fisik atau aktivasi akun digital, silakan hubungi petugas perpustakaan di jam kerja.</p>
-            `,
-            'ebook': `
-                <div class="icon-circle"><i class="fa-solid fa-tablet-screen-button"></i></div>
-                <h2>Koleksi E-Book</h2>
-                <p>Fitur membaca buku digital (E-Book) saat ini sedang dalam pengembangan. Nantikan katalog buku cerita dan pelajaran interaktif yang bisa diakses langsung dari tablet atau gawaimu!</p>
-            `
-        };
-
-        const sections = {
-            home: document.getElementById('homeSection'),
+        // DOM Elments
+        const mainSections = {
+            user: document.getElementById('userSection'),
             login: document.getElementById('loginSection'),
             admin: document.getElementById('adminSection')
         };
 
-        // Fungsi Navigasi Utama Halaman User
-        function navigateTo(pageKey) {
-            showHome();
-            
-            // Ubah class active di Navbar
-            document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
-            const activeLi = document.getElementById(`nav-${pageKey}`);
-            if (activeLi) activeLi.classList.add('active');
-
-            // Ganti konten secara dinamis
-            const contentContainer = document.getElementById('dynamicContent');
-            if (pageContents[pageKey]) {
-                contentContainer.innerHTML = pageContents[pageKey];
-            }
-        }
-
-        function showHome() {
-            sections.home.style.display = 'block';
-            sections.login.style.display = 'none';
-            sections.admin.style.display = 'none';
+        /* ============================
+           LOGIKA NAVIGASI HALAMAN DEPAN USER
+           ============================ */
+        function showUserSection(subPageKey) {
+            // Tampilkan Section User Utama, sembunyikan sisanya
+            mainSections.user.style.display = 'block';
+            mainSections.login.style.display = 'none';
+            mainSections.admin.style.display = 'none';
             document.querySelector('.navbar').style.display = 'flex';
-            
-            // Bersihkan form login saat keluar halaman login
+
+            // Reset form input login saat berpindah
             document.getElementById('passwordInput').value = "";
             document.getElementById('loginError').style.display = 'none';
+
+            // Sembunyikan semua sub-page user terdahulu
+            document.querySelectorAll('.user-sub-page').forEach(div => div.style.display = 'none');
+            
+            // Hilangkan semua kelas active di li navbar
+            document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
+
+            // Aktifkan sub-page dan navbar item yang dipilih pengguna
+            const targetSubPage = document.getElementById(`sub-${subPageKey}`);
+            const targetLi = document.getElementById(`li-${subPageKey}`);
+            
+            if (targetSubPage) targetSubPage.style.display = 'flex';
+            if (targetLi) targetLi.classList.add('active');
         }
 
+        /* ============================
+           LOGIKA LOGIN PETUGAS
+           ============================ */
         function showLogin() {
-            sections.home.style.display = 'none';
-            sections.admin.style.display = 'none';
-            sections.login.style.display = 'flex';
+            mainSections.user.style.display = 'none';
+            mainSections.admin.style.display = 'none';
+            mainSections.login.style.display = 'flex';
             document.querySelector('.navbar').style.display = 'none';
         }
 
         function checkPassword() {
             const pass = document.getElementById('passwordInput').value;
             if(pass === "admin") {
-                sections.login.style.display = 'none';
-                sections.admin.style.display = 'block';
-                document.querySelector('.navbar').style.display = 'none'; // Sembunyikan navbar utama di admin panel
+                mainSections.login.style.display = 'none';
+                mainSections.admin.style.display = 'block';
+                hideAdminDetail(); // Pastikan grid menu utama yang tampil duluan
             } else {
                 document.getElementById('loginError').style.display = 'block';
             }
@@ -296,6 +327,26 @@
 
         function handleKeyPress(e) {
             if(e.key === 'Enter') checkPassword();
+        }
+
+        /* ============================
+           LOGIKA SUB-MENU DASHBOARD ADMIN
+           ============================ */
+        function showAdminDetail(title, subtitle, description) {
+            document.getElementById('adminTitle').innerText = `Dashboard Admin > ${title}`;
+            document.getElementById('adminGrid').style.display = 'none';
+            
+            const detailBox = document.getElementById('adminDetail');
+            document.getElementById('detailSubTitle').innerText = subtitle;
+            document.getElementById('detailDesc').innerText = description;
+            
+            detailBox.style.display = 'block';
+        }
+
+        function hideAdminDetail() {
+            document.getElementById('adminTitle').innerText = "Dashboard Admin";
+            document.getElementById('adminDetail').style.display = 'none';
+            document.getElementById('adminGrid').style.display = 'grid';
         }
     </script>
 </body>
