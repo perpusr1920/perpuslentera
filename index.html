@@ -500,137 +500,136 @@
         }
     </script>
 
-    <script>
-        const mainSections = {
-            user: document.getElementById('userSection'),
-            login: document.getElementById('loginSection'),
-            admin: document.getElementById('adminSection')
-        };
-        const navContainer = document.getElementById('navContainer');
-        const menuIcon = document.getElementById('menuIcon');
+<script>
+    const mainSections = {
+        user: document.getElementById('userSection'),
+        login: document.getElementById('loginSection'),
+        admin: document.getElementById('adminSection')
+    };
+    const navContainer = document.getElementById('navContainer');
+    const menuIcon = document.getElementById('menuIcon');
 
-        function toggleMobileMenu() {
-            navContainer.classList.toggle('active');
-            menuIcon.className = navContainer.classList.contains('active') ? "fa-solid fa-xmark" : "fa-solid fa-bars";
-        }
-
-        function closeMobileMenu() {
-            navContainer.classList.remove('active');
-            menuIcon.className = "fa-solid fa-bars";
-        }
-
-        function showUserSection(subPageKey) {
-    mainSections.user.style.display = 'block';
-    mainSections.login.style.display = 'none';
-    mainSections.admin.style.display = 'none';
-    
-    // PERBAIKAN: Set navbar tetap aman tanpa mengganggu layout di bawahnya
-    const navbar = document.querySelector('.navbar');
-    if (window.innerWidth > 768) {
-        navbar.style.display = 'flex';
-        navbar.style.backgroundColor = 'transparent';
-        navbar.style.position = 'absolute';
-    } else {
-        navbar.style.display = 'flex';
-        navbar.style.backgroundColor = 'var(--primary-blue)';
-        navbar.style.position = 'fixed';
+    function toggleMobileMenu() {
+        navContainer.classList.toggle('active');
+        menuIcon.className = navContainer.classList.contains('active') ? "fa-solid fa-xmark" : "fa-solid fa-bars";
     }
 
-    document.getElementById('passwordInput').value = "";
-    document.getElementById('loginError').style.display = 'none';
-
-    // Sembunyikan semua sub-halaman terlebih dahulu
-    document.querySelectorAll('.user-sub-page').forEach(div => {
-        div.style.display = 'none';
-    });
-    
-    document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
-
-    // Tampilkan sub-halaman target dengan style aslinya (Flexbox tetap terjaga)
-    const targetSubPage = document.getElementById(`sub-${subPageKey}`);
-    const targetLi = document.getElementById(`li-${subPageKey}`);
-    
-    if (targetSubPage) {
-        targetSubPage.style.display = 'flex'; // Kembalikan ke flex agar semua konten terkunci di tengah
+    function closeMobileMenu() {
+        navContainer.classList.remove('active');
+        menuIcon.className = "fa-solid fa-bars";
     }
-    if (targetLi) {
-        targetLi.classList.add('active');
-    }
-}
 
-        function navigateUser(subPageKey) {
-            showUserSection(subPageKey);
-            closeMobileMenu();
+    function showUserSection(subPageKey) {
+        // Standarisasi key id agar jika diklik dari logo 'home' diubah ke format ID yang benar
+        if (subPageKey === 'home') subPageKey = 'home';
+        if (subPageKey === 'tata-tertib') subPageKey = 'tata-tertib';
+        if (subPageKey === 'keanggotaan') subPageKey = 'keanggotaan';
+        if (subPageKey === 'ebook') subPageKey = 'ebook';
+
+        mainSections.user.style.display = 'block';
+        mainSections.login.style.display = 'none';
+        mainSections.admin.style.display = 'none';
+        
+        const navbar = document.querySelector('.navbar');
+        if (window.innerWidth > 768) {
+            navbar.style.display = 'flex';
+            navbar.style.backgroundColor = 'transparent';
+            navbar.style.position = 'absolute';
+        } else {
+            navbar.style.display = 'flex';
+            navbar.style.backgroundColor = 'var(--primary-blue)';
+            navbar.style.position = 'fixed';
         }
 
-        function showLogin() {
-            closeMobileMenu();
-            mainSections.user.style.display = 'none';
-            mainSections.admin.style.display = 'none';
-            mainSections.login.style.display = 'flex';
-            document.querySelector('.navbar').style.display = 'none';
-        }
+        document.getElementById('passwordInput').value = "";
+        document.getElementById('loginError').style.display = 'none';
 
-        function checkPassword() {
-            if(document.getElementById('passwordInput').value === "admin") {
-                mainSections.login.style.display = 'none';
-                mainSections.admin.style.display = 'block';
-                hideAdminDetail();
-            } else {
-                document.getElementById('loginError').style.display = 'block';
-            }
-        }
-
-        function handleKeyPress(e) { if(e.key === 'Enter') checkPassword(); }
-
-        function showAdminDetail(title, subtitle, description) {
-            document.getElementById('adminTitle').innerText = `Dashboard Admin > ${title}`;
-            document.getElementById('adminGrid').style.display = 'none';
-            document.getElementById('crudBookContainer').style.display = 'none';
-            
-            const detailBox = document.getElementById('adminDetail');
-            document.getElementById('detailDesc').style.display = 'block';
-            document.getElementById('detailSubTitle').innerText = subtitle;
-            document.getElementById('detailDesc').innerText = description;
-            detailBox.style.display = 'block';
-        }
-
-        function hideAdminDetail() {
-            document.getElementById('adminTitle').innerText = "Dashboard Admin";
-            document.getElementById('adminDetail').style.display = 'none';
-            document.getElementById('adminGrid').style.display = 'grid';
-            resetBookForm();
-        }
-
-        function openBookManager() {
-            document.getElementById('adminTitle').innerText = `Dashboard Admin > Buku`;
-            document.getElementById('adminGrid').style.display = 'none';
-            document.getElementById('detailDesc').style.display = 'none';
-            document.getElementById('detailSubTitle').innerText = "Katalog Manajemen Buku Cloud";
-            document.getElementById('crudBookContainer').style.display = 'block';
-            document.getElementById('adminDetail').style.display = 'block';
-            if (window.renderBooksTable) window.renderBooksTable();
-        }
-
-        function resetBookForm() {
-            document.getElementById('editBookId').value = "";
-            document.getElementById('bookTitleInput').value = "";
-            document.getElementById('bookAuthorInput').value = "";
-            document.getElementById('bookBarcodeInput').value = "";
-            document.getElementById('formFormTitle').innerText = "Tambah Buku Baru";
-            document.getElementById('btnSaveBookAction').innerText = "Simpan Buku";
-            document.getElementById('btnCancelEditAction').style.display = "none";
-        }
-
-        window.addEventListener('resize', () => {
-            const isDesktop = window.innerWidth > 768;
-            if (isDesktop) closeMobileMenu();
-            if (mainSections.user.style.display !== 'none') {
-                const navbar = document.querySelector('.navbar');
-                navbar.style.backgroundColor = isDesktop ? 'transparent' : 'var(--primary-blue)';
-                navbar.style.position = isDesktop ? 'absolute' : 'fixed';
-            }
+        // Sembunyikan semua sub halaman user
+        document.querySelectorAll('.user-sub-page').forEach(div => {
+            div.style.display = 'none';
         });
-    </script>
+        
+        // Reset status aktif menu link
+        document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
+
+        // Tampilkan halaman tujuan menggunakan FLEX agar konten tetap berada di tengah
+        const targetSubPage = document.getElementById(`sub-${subPageKey}`);
+        const targetLi = document.getElementById(`li-${subPageKey}`);
+        
+        if (targetSubPage) {
+            targetSubPage.style.setProperty('display', 'flex', 'important');
+        }
+        if (targetLi) {
+            targetLi.classList.add('active');
+        }
+    }
+
+    function navigateUser(subPageKey) {
+        showUserSection(subPageKey);
+        closeMobileMenu();
+    }
+
+    function showLogin() {
+        closeMobileMenu();
+        mainSections.user.style.display = 'none';
+        mainSections.admin.style.display = 'none';
+        mainSections.login.style.display = 'flex';
+        document.querySelector('.navbar').style.display = 'none';
+    }
+
+    function checkPassword() {
+        if(document.getElementById('passwordInput').value === "admin") {
+            mainSections.login.style.display = 'none';
+            mainSections.admin.style.display = 'block';
+            hideAdminDetail();
+        } else {
+            document.getElementById('loginError').style.display = 'block';
+        }
+    }
+
+    function handleKeyPress(e) { if(e.key === 'Enter') checkPassword(); }
+
+    function showAdminDetail(title, subtitle, description) {
+        document.getElementById('adminTitle').innerText = `Dashboard Admin > ${title}`;
+        document.getElementById('adminGrid').style.display = 'none';
+        document.getElementById('crudBookContainer').style.display = 'none';
+        
+        const detailBox = document.getElementById('adminDetail');
+        document.getElementById('detailDesc').style.display = 'block';
+        document.getElementById('detailSubTitle').innerText = subtitle;
+        document.getElementById('detailDesc').innerText = description;
+        detailBox.style.display = 'block';
+    }
+
+    function hideAdminDetail() {
+        document.getElementById('adminTitle').innerText = "Dashboard Admin";
+        document.getElementById('adminDetail').style.display = 'none';
+        document.getElementById('adminGrid').style.display = 'grid';
+        resetBookForm();
+    }
+
+    function openBookManager() {
+        document.getElementById('adminTitle').innerText = `Dashboard Admin > Buku`;
+        document.getElementById('adminGrid').style.display = 'none';
+        document.getElementById('detailDesc').style.display = 'none';
+        document.getElementById('detailSubTitle').innerText = "Katalog Manajemen Buku Cloud";
+        document.getElementById('crudBookContainer').style.display = 'block';
+        document.getElementById('adminDetail').style.display = 'block';
+    }
+
+    function resetBookForm() {
+        document.getElementById('editBookId').value = "";
+        document.getElementById('bookTitleInput').value = "";
+        document.getElementById('bookAuthorInput').value = "";
+        document.getElementById('bookBarcodeInput').value = "";
+        document.getElementById('formFormTitle').innerText = "Tambah Buku Baru";
+        document.getElementById('btnSaveBookAction').innerText = "Simpan Buku";
+        document.getElementById('btnCancelEditAction').style.display = "none";
+    }
+</script>
+</body>
+</html>
+</body>
+</html>
 </body>
 </html>
