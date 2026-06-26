@@ -37,6 +37,7 @@
         .nav-logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.4rem; color: var(--white); cursor: pointer; }
         .nav-logo i { background: var(--white); color: var(--primary-blue); padding: 8px; border-radius: 12px; }
         
+        .nav-container { display: flex; align-items: center; gap: 20px; }
         .nav-links { display: flex; list-style: none; gap: 15px; }
         .nav-links li { 
             cursor: pointer; 
@@ -53,6 +54,9 @@
         .btn-admin-nav { background: var(--accent-orange); color: white; border: none; padding: 10px 25px; border-radius: 25px; font-weight: 700; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3); }
         .btn-admin-nav:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4); }
 
+        /* Hamburger Menu (Khusus HP) */
+        .menu-toggle { display: none; font-size: 1.8rem; color: var(--white); cursor: pointer; }
+
         /* --- HERO SECTION --- */
         .hero {
             position: relative;
@@ -63,9 +67,11 @@
             align-items: center;
             text-align: center;
             padding-bottom: 100px;
+            padding-left: 20px;
+            padding-right: 20px;
         }
         .hero-content { position: relative; z-index: 2; color: var(--white); }
-        .hero h1 { font-size: 4rem; font-weight: 800; text-shadow: 0 4px 10px rgba(0,0,0,0.1); line-height: 1.1; }
+        .hero h1 { font-size: 4rem; font-weight: 800; text-shadow: 0 4px 10px rgba(0,0,0,0.1); line-height: 1.2; }
         .hero p { font-size: 1.5rem; opacity: 0.9; font-weight: 400; margin-top: 10px; }
         
         .wave-container { position: absolute; bottom: 0; width: 100%; line-height: 0; }
@@ -79,7 +85,7 @@
         .welcome-card {
             background: var(--white);
             border-radius: 40px;
-            padding: 50px 30px;
+            padding: 50px 40px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.05);
             text-align: center;
             display: flex;
@@ -89,7 +95,7 @@
         .welcome-card .icon-circle {
             width: 80px; height: 80px; background: var(--light-blue); color: var(--primary-blue);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; margin-bottom: 25px;
+            font-size: 2rem; margin-bottom: 25px; flex-shrink: 0;
         }
         .welcome-card h2 { font-size: 2.2rem; color: var(--text-dark); margin-bottom: 15px; }
         .welcome-card p { font-size: 1.1rem; color: var(--text-gray); max-width: 700px; line-height: 1.8; }
@@ -102,28 +108,31 @@
             border-radius: 30px;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 20px;
             box-shadow: 0 10px 30px rgba(42, 92, 153, 0.2);
+            width: 100%;
         }
-        .info-bar i { font-size: 1.5rem; color: var(--accent-orange); }
+        .info-bar i { font-size: 1.5rem; color: var(--accent-orange); flex-shrink: 0; }
 
         /* List Styling untuk Tata Tertib */
-        .rules-list { text-align: left; max-width: 600px; margin: 20px auto 0 auto; line-height: 2; font-size: 1.1rem; color: var(--text-dark); }
-        .rules-list li { margin-bottom: 10px; list-style-position: inside; }
+        .rules-list { text-align: left; max-width: 600px; margin: 20px auto 0 auto; line-height: 1.8; font-size: 1.1rem; color: var(--text-dark); list-style: none; }
+        .rules-list li { margin-bottom: 12px; display: flex; gap: 10px; align-items: flex-start; }
+        .rules-list li::before { content: "\f00c"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--accent-orange); }
 
         /* --- LOGIN SECTION --- */
-        #loginSection { display: none; min-height: 100vh; justify-content: center; align-items: center; background: var(--bg-body); }
-        .login-card { background: var(--white); padding: 50px; border-radius: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 450px; }
+        #loginSection { display: none; min-height: 100vh; justify-content: center; align-items: center; background: var(--bg-body); padding: 20px; }
+        .login-card { background: var(--white); padding: 40px 30px; border-radius: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 450px; }
         .login-card input { width: 100%; padding: 16px 25px; margin-bottom: 20px; border: 2px solid var(--light-blue); border-radius: 20px; outline: none; font-size: 1rem; transition: 0.3s; }
         .login-card input:focus { border-color: var(--primary-blue); }
         .login-card button { width: 100%; padding: 16px; background: var(--primary-blue); color: white; border: none; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 1rem; }
 
         /* --- ADMIN SECTION --- */
         #adminSection { display: none; max-width: 1100px; margin: 40px auto; padding: 0 20px; }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: var(--white); padding: 25px 40px; border-radius: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-        .btn-logout { background: #FF4B4B; color: white; border: none; padding: 12px 25px; border-radius: 15px; cursor: pointer; font-weight: 600; }
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; }
-        .card { background: var(--white); border-radius: 30px; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; transition: 0.3s; box-shadow: 0px 10px 20px rgba(112, 144, 176, 0.08); cursor: pointer; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: var(--white); padding: 25px 40px; border-radius: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); gap: 15px; }
+        .btn-logout { background: #FF4B4B; color: white; border: none; padding: 12px 25px; border-radius: 15px; cursor: pointer; font-weight: 600; flex-shrink: 0; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; }
+        .card { background: var(--white); border-radius: 30px; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; transition: 0.3s; box-shadow: 0px 10px 20px rgba(112, 144, 176, 0.08); cursor: pointer; text-align: center; }
         .card:hover { transform: translateY(-10px); background: var(--primary-blue); color: white; }
         .icon-wrapper { width: 70px; height: 70px; border-radius: 20px; background-color: var(--light-blue); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; color: var(--primary-blue); font-size: 1.8rem; }
         .card:hover .icon-wrapper { background: rgba(255,255,255,0.2); color: white; }
@@ -133,11 +142,53 @@
         .btn-back-admin { background: var(--text-gray); color: white; border: none; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; margin-bottom: 20px; transition: 0.3s; }
         .btn-back-admin:hover { background: var(--text-dark); }
 
+
+        /* ==========================================
+           RESPONSIVE DESIGN (MEDIA QUERIES)
+           ========================================== */
+        
+        /* TAMPILAN HP / TABLET KECIL (Lebar Layar di bawah 768px) */
         @media (max-width: 768px) {
-            .navbar { padding: 20px; }
-            .nav-links { display: none; }
-            .hero h1 { font-size: 2.5rem; }
-            .welcome-card { padding: 30px 20px; }
+            .navbar { padding: 15px 5%; background-color: var(--primary-blue); position: fixed; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+            .nav-logo color { color: var(--white); }
+            
+            /* Sembunyikan Menu bawaan, ubah jadi Dropdown */
+            .nav-container {
+                display: none; /* Dikontrol via JavaScript class 'active' */
+                flex-direction: column;
+                position: absolute;
+                top: 100%; left: 0; width: 100%;
+                background-color: var(--primary-blue);
+                padding: 20px;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+                gap: 20px;
+            }
+            .nav-container.active { display: flex; }
+            .nav-links { flex-direction: column; width: 100%; text-align: center; gap: 5px; }
+            .nav-links li { width: 100%; padding: 12px; }
+            .nav-links li.active { background: rgba(255,255,255,0.2); color: var(--white); font-weight: 700; }
+            .btn-admin-nav { width: 100%; text-align: center; }
+            
+            /* Tampilkan Tombol Hamburger */
+            .menu-toggle { display: block; }
+
+            /* Penyesuaian Hero Section */
+            .hero { height: 450px; padding-top: 100px; padding-bottom: 60px; }
+            .hero h1 { font-size: 2.2rem; }
+            .hero p { font-size: 1.1rem; }
+            .wave-container svg { height: 60px; }
+
+            /* Penyesuaian Konten Utama */
+            .main-container { margin: -50px auto 30px auto; }
+            .welcome-card { padding: 35px 20px; border-radius: 25px; }
+            .welcome-card h2 { font-size: 1.6rem; }
+            .welcome-card p { font-size: 0.95rem; line-height: 1.6; }
+            .info-bar { padding: 15px 20px; border-radius: 20px; flex-direction: column; text-align: center; gap: 10px; }
+
+            /* Penyesuaian Admin */
+            .admin-header { flex-direction: column; text-align: center; padding: 20px; border-radius: 20px; }
+            .btn-logout { width: 100%; }
+            .admin-detail-box { padding: 25px 20px; border-radius: 20px; }
         }
     </style>
 </head>
@@ -148,13 +199,20 @@
             <i class="fa-solid fa-book-open"></i>
             <span>Pelangi Pustaka</span>
         </div>
-        <ul class="nav-links">
-            <li id="li-home" class="active" onclick="showUserSection('home')">Home</li>
-            <li id="li-tata-tertib" onclick="showUserSection('tata-tertib')">Tata Tertib</li>
-            <li id="li-keanggotaan" onclick="showUserSection('keanggotaan')">Keanggotaan</li>
-            <li id="li-ebook" onclick="showUserSection('ebook')">E-Book</li>
-        </ul>
-        <button class="btn-admin-nav" onclick="showLogin()">Admin Portal</button>
+        
+        <div class="menu-toggle" onclick="toggleMobileMenu()">
+            <i class="fa-solid fa-bars" id="menuIcon"></i>
+        </div>
+
+        <div class="nav-container" id="navContainer">
+            <ul class="nav-links">
+                <li id="li-home" class="active" onclick="navigateUser('home')">Home</li>
+                <li id="li-tata-tertib" onclick="navigateUser('tata-tertib')">Tata Tertib</li>
+                <li id="li-keanggotaan" onclick="navigateUser('keanggotaan')">Keanggotaan</li>
+                <li id="li-ebook" onclick="navigateUser('ebook')">E-Book</li>
+            </ul>
+            <button class="btn-admin-nav" onclick="showLogin()">Admin Portal</button>
+        </div>
     </nav>
 
     <div id="userSection">
@@ -187,10 +245,10 @@
                 <h2>Tata Tertib Perpustakaan</h2>
                 <p>Mohon dipatuhi peraturan di dalam ruang Pelangi Pustaka demi kenyamanan bersama:</p>
                 <ul class="rules-list">
-                    <li>1. Harap tenang dan tidak membuat kegaduhan di area membaca.</li>
-                    <li>2. Menjaga kebersihan dan tidak membawa makanan/minuman ke dalam ruangan.</li>
-                    <li>3. Batas waktu peminjaman buku maksimal adalah 7 hari kerja.</li>
-                    <li>4. Wajib mengembalikan buku dalam kondisi utuh dan tidak rusak.</li>
+                    <li>Harap tenang dan tidak membuat kegaduhan di area membaca.</li>
+                    <li>Menjaga kebersihan dan tidak membawa makanan/minuman ke dalam ruangan.</li>
+                    <li>Batas waktu peminjaman buku maksimal adalah 7 hari kerja.</li>
+                    <li>Wajib mengembalikan buku dalam kondisi utuh dan tidak rusak.</li>
                 </ul>
             </div>
 
@@ -269,45 +327,80 @@
     </div>
 
     <script>
-        // DOM Elments
+        // DOM Elements
         const mainSections = {
             user: document.getElementById('userSection'),
             login: document.getElementById('loginSection'),
             admin: document.getElementById('adminSection')
         };
+        const navContainer = document.getElementById('navContainer');
+        const menuIcon = document.getElementById('menuIcon');
 
         /* ============================
-           LOGIKA NAVIGASI HALAMAN DEPAN USER
+           LOGIKA TOGGLE MENU DI HP
+           ============================ */
+        function toggleMobileMenu() {
+            navContainer.classList.toggle('active');
+            // Ganti ikon hamburger ke ikon silang 'X' saat terbuka
+            if(navContainer.classList.contains('active')) {
+                menuIcon.className = "fa-solid fa-xmark";
+            } else {
+                menuIcon.className = "fa-solid fa-bars";
+            }
+        }
+
+        function closeMobileMenu() {
+            navContainer.classList.remove('active');
+            menuIcon.className = "fa-solid fa-bars";
+        }
+
+        /* ============================
+           LOGIKA NAVIGASI USER
            ============================ */
         function showUserSection(subPageKey) {
-            // Tampilkan Section User Utama, sembunyikan sisanya
             mainSections.user.style.display = 'block';
             mainSections.login.style.display = 'none';
             mainSections.admin.style.display = 'none';
-            document.querySelector('.navbar').style.display = 'flex';
+            
+            // Di desktop navbar transparan mengikuti hero, di HP navbar tetap fixed biru
+            if (window.innerWidth > 768) {
+                document.querySelector('.navbar').style.display = 'flex';
+                document.querySelector('.navbar').style.backgroundColor = 'transparent';
+                document.querySelector('.navbar').style.position = 'absolute';
+            } else {
+                document.querySelector('.navbar').style.display = 'flex';
+                document.querySelector('.navbar').style.backgroundColor = 'var(--primary-blue)';
+                document.querySelector('.navbar').style.position = 'fixed';
+            }
 
-            // Reset form input login saat berpindah
             document.getElementById('passwordInput').value = "";
             document.getElementById('loginError').style.display = 'none';
 
-            // Sembunyikan semua sub-page user terdahulu
+            // Ganti sub-page menggunakan flex/block yang aman
             document.querySelectorAll('.user-sub-page').forEach(div => div.style.display = 'none');
-            
-            // Hilangkan semua kelas active di li navbar
             document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
 
-            // Aktifkan sub-page dan navbar item yang dipilih pengguna
             const targetSubPage = document.getElementById(`sub-${subPageKey}`);
             const targetLi = document.getElementById(`li-${subPageKey}`);
             
-            if (targetSubPage) targetSubPage.style.display = 'flex';
+            if (targetSubPage) {
+                // Menggunakan block untuk menghindari bug flex pergeseran list tata tertib
+                targetSubPage.style.display = 'block'; 
+            }
             if (targetLi) targetLi.classList.add('active');
+        }
+
+        // Fungsi pembungkus saat user klik menu agar dropdown HP langsung menutup
+        function navigateUser(subPageKey) {
+            showUserSection(subPageKey);
+            closeMobileMenu();
         }
 
         /* ============================
            LOGIKA LOGIN PETUGAS
            ============================ */
         function showLogin() {
+            closeMobileMenu();
             mainSections.user.style.display = 'none';
             mainSections.admin.style.display = 'none';
             mainSections.login.style.display = 'flex';
@@ -319,7 +412,7 @@
             if(pass === "admin") {
                 mainSections.login.style.display = 'none';
                 mainSections.admin.style.display = 'block';
-                hideAdminDetail(); // Pastikan grid menu utama yang tampil duluan
+                hideAdminDetail();
             } else {
                 document.getElementById('loginError').style.display = 'block';
             }
@@ -348,6 +441,22 @@
             document.getElementById('adminDetail').style.display = 'none';
             document.getElementById('adminGrid').style.display = 'grid';
         }
+
+        // Menjaga kestabilan navbar saat resize layar PC <-> HP browser
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                closeMobileMenu();
+                if (mainSections.user.style.display !== 'none') {
+                    document.querySelector('.navbar').style.backgroundColor = 'transparent';
+                    document.querySelector('.navbar').style.position = 'absolute';
+                }
+            } else {
+                if (mainSections.user.style.display !== 'none') {
+                    document.querySelector('.navbar').style.backgroundColor = 'var(--primary-blue)';
+                    document.querySelector('.navbar').style.position = 'fixed';
+                }
+            }
+        });
     </script>
 </body>
 </html>
