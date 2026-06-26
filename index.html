@@ -520,27 +520,43 @@
         }
 
         function showUserSection(subPageKey) {
-            mainSections.user.style.display = 'block';
-            mainSections.login.style.display = 'none';
-            mainSections.admin.style.display = 'none';
-            
-            const isDesktop = window.innerWidth > 768;
-            const navbar = document.querySelector('.navbar');
-            navbar.style.display = 'flex';
-            navbar.style.backgroundColor = isDesktop ? 'transparent' : 'var(--primary-blue)';
-            navbar.style.position = isDesktop ? 'absolute' : 'fixed';
+    mainSections.user.style.display = 'block';
+    mainSections.login.style.display = 'none';
+    mainSections.admin.style.display = 'none';
+    
+    // PERBAIKAN: Set navbar tetap aman tanpa mengganggu layout di bawahnya
+    const navbar = document.querySelector('.navbar');
+    if (window.innerWidth > 768) {
+        navbar.style.display = 'flex';
+        navbar.style.backgroundColor = 'transparent';
+        navbar.style.position = 'absolute';
+    } else {
+        navbar.style.display = 'flex';
+        navbar.style.backgroundColor = 'var(--primary-blue)';
+        navbar.style.position = 'fixed';
+    }
 
-            document.getElementById('passwordInput').value = "";
-            document.getElementById('loginError').style.display = 'none';
+    document.getElementById('passwordInput').value = "";
+    document.getElementById('loginError').style.display = 'none';
 
-            document.querySelectorAll('.user-sub-page').forEach(div => div.style.display = 'none');
-            document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
+    // Sembunyikan semua sub-halaman terlebih dahulu
+    document.querySelectorAll('.user-sub-page').forEach(div => {
+        div.style.display = 'none';
+    });
+    
+    document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
 
-            const targetSubPage = document.getElementById(`sub-${subPageKey}`);
-            const targetLi = document.getElementById(`li-${subPageKey}`);
-            if (targetSubPage) targetSubPage.style.display = 'block'; 
-            if (targetLi) targetLi.classList.add('active');
-        }
+    // Tampilkan sub-halaman target dengan style aslinya (Flexbox tetap terjaga)
+    const targetSubPage = document.getElementById(`sub-${subPageKey}`);
+    const targetLi = document.getElementById(`li-${subPageKey}`);
+    
+    if (targetSubPage) {
+        targetSubPage.style.display = 'flex'; // Kembalikan ke flex agar semua konten terkunci di tengah
+    }
+    if (targetLi) {
+        targetLi.classList.add('active');
+    }
+}
 
         function navigateUser(subPageKey) {
             showUserSection(subPageKey);
