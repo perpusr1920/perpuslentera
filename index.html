@@ -526,7 +526,6 @@
     }
 
     function showUserSection(subPageKey) {
-        // Standarisasi key id agar jika diklik dari logo 'home' diubah ke format ID yang benar
         if (subPageKey === 'home') subPageKey = 'home';
         if (subPageKey === 'tata-tertib') subPageKey = 'tata-tertib';
         if (subPageKey === 'keanggotaan') subPageKey = 'keanggotaan';
@@ -558,7 +557,7 @@
         // Reset status aktif menu link
         document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
 
-        // Tampilkan halaman tujuan menggunakan FLEX agar konten tetap berada di tengah
+        // Tampilkan halaman tujuan
         const targetSubPage = document.getElementById(`sub-${subPageKey}`);
         const targetLi = document.getElementById(`li-${subPageKey}`);
         
@@ -607,20 +606,21 @@
         detailBox.style.display = 'block';
     }
 
+    // --- BAGIAN YANG TADI TERPOTONG SEKARANG SUDAH LENGKAP ---
     function hideAdminDetail() {
         document.getElementById('adminTitle').innerText = "Dashboard Admin";
-        document.getElementById('adminDetail').style.display = 'none';
         document.getElementById('adminGrid').style.display = 'grid';
-        resetBookForm();
+        document.getElementById('adminDetail').style.display = 'none';
+        document.getElementById('crudBookContainer').style.display = 'none';
     }
 
     function openBookManager() {
-        document.getElementById('adminTitle').innerText = `Dashboard Admin > Buku`;
+        document.getElementById('adminTitle').innerText = "Dashboard Admin > Buku";
         document.getElementById('adminGrid').style.display = 'none';
-        document.getElementById('detailDesc').style.display = 'none';
         document.getElementById('detailSubTitle').innerText = "Katalog Manajemen Buku Cloud";
-        document.getElementById('crudBookContainer').style.display = 'block';
+        document.getElementById('detailDesc').style.display = 'none'; // Sembunyikan deskripsi teks biasa
         document.getElementById('adminDetail').style.display = 'block';
+        document.getElementById('crudBookContainer').style.display = 'block'; // Tampilkan form & tabel CRUD
     }
 
     function resetBookForm() {
@@ -628,53 +628,11 @@
         document.getElementById('bookTitleInput').value = "";
         document.getElementById('bookAuthorInput').value = "";
         document.getElementById('bookBarcodeInput').value = "";
+
         document.getElementById('formFormTitle').innerText = "Tambah Buku Baru";
         document.getElementById('btnSaveBookAction').innerText = "Simpan Buku";
         document.getElementById('btnCancelEditAction').style.display = "none";
     }
-    function downloadBackupCSV() {
-    // 1. Ambil referensi ke koleksi buku di Firebase
-    db.collection("books").get().then((querySnapshot) => {
-        if (querySnapshot.empty) {
-            alert("Tidak ada data buku yang bisa di-backup!");
-            return;
-        }
-
-        // 2. Buat struktur kolom untuk Excel/CSV
-        let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "No,Nomor Barcode,Judul Buku,Pengarang\n"; // Header Kolom
-
-        let nomor = 1;
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            
-            // Bersihkan teks dari tanda koma agar tidak merusak format Excel
-            const barcode = data.barcode ? data.barcode.replace(/,/g, '') : '';
-            const title = data.title ? data.title.replace(/,/g, '') : '';
-            const author = data.author ? data.author.replace(/,/g, '') : '';
-
-            // Masukkan data per baris
-            csvContent += `${nomor},"${barcode}","${title}","${author}"\n`;
-            nomor++;
-        });
-
-        // 3. Proses download file secara otomatis di browser
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        
-        // Beri nama file backup sesuai tanggal hari ini
-        const tanggal HariIni = new Date().toISOString().slice(0, 10);
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `Backup_Buku_Perpus_${tanggalHariIni}.csv`);
-        
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }).catch((error) => {
-        console.error("Gagal mengambil data untuk backup: ", error);
-        alert("Terjadi kesalahan saat memproses backup data.");
-    });
-}
 </script>
 </body>
 </html>
