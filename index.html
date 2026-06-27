@@ -350,12 +350,18 @@
                     </div>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; margin-bottom: 15px;">
-                    <h3 style="margin: 0;">Daftar Koleksi Buku (Cloud Firebase)</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
+                    <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-dark);">Daftar Koleksi Buku (Cloud Firebase)</h3>
                     <button onclick="downloadBackupCSV()" style="background-color: #2ecc71; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px;">
                         <i class="fa-solid fa-file-excel"></i> Backup Data Buku
                     </button>
                 </div>
+
+                <div style="position: relative; margin-bottom: 20px;">
+                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-gray);"></i>
+                    <input type="text" id="bookSearchInput" oninput="searchBook()" placeholder="Cari berdasarkan Judul, Pengarang, atau Barcode Buku..." style="width: 100%; padding: 12px 20px 12px 45px; border: 2px solid var(--light-blue); border-radius: 25px; outline: none; font-size: 0.95rem; box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: 0.3s;">
+                </div>
+
                 <div class="table-responsive">
                     <table class="book-table">
                         <thead>
@@ -513,24 +519,30 @@
             snapshot.forEach((doc) => {
                 localBooksArray.push({ id: doc.id, ...doc.data() });
             });
-            renderBooksTable();
+            // Reset input pencarian buku saat data cloud sinkron ulang
+            const searchInput = document.getElementById('bookSearchInput');
+            if (searchInput && searchInput.value) {
+                searchBook();
+            } else {
+                renderBooksTable(localBooksArray);
+            }
         });
 
-        window.renderBooksTable = function() {
+        window.renderBooksTable = function(dataArray) {
             const tbody = document.getElementById('bookTableBody');
             if (!tbody) return;
             tbody.innerHTML = "";
-            if(localBooksArray.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-gray);">Katalog Cloud Kosong. Silakan tambah buku!</td></tr>`;
+            if(dataArray.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-gray);">Data tidak ditemukan / Katalog kosong.</td></tr>`;
                 return;
             }
-            localBooksArray.forEach((book, index) => {
+            dataArray.forEach((book, index) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${index + 1}</td>
-                    <td><strong style="color:var(--primary-blue); font-family:monospace;">${book.barcode}</strong></td>
-                    <td>${book.title}</td>
-                    <td>${book.author}</td>
+                    <td><strong style="color:var(--primary-blue); font-family:monospace;">${book.barcode || ''}</strong></td>
+                    <td>${book.title || ''}</td>
+                    <td>${book.author || ''}</td>
                     <td style="text-align: center; white-space: nowrap;">
                         <button class="btn-action btn-edit" onclick="editBookTrigger('${book.id}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
                         <button class="btn-action btn-delete" onclick="deleteBook('${book.id}')"><i class="fa-solid fa-trash"></i> Hapus</button>
@@ -540,13 +552,100 @@
             });
         }
 
+        window.saveBook = async function() {
+            const idHidden = document.getElementById('editBookId').value;
+            const titleInput = document.getElementById('bookTitleInput').value.trim();
+            const authorInput = document.getElementById('bookAuthorInput').value.trim();
+            const barcodeInput = document.getElementById('bookBarcodeInput').value.trim();
+
+            if(!titleInput || !authorInput || !barcodeInput) {
+                alert("Mohon isi seluruh data buku sebelum menyimpan!");
+                return;
+            }
+
+            try {
+                const bookData = {
+                    title: titleInput,
+                    author: authorInput,
+                    barcode: barcodeInput
+                };
+
+                if(idHidden) {
+                    await updateDoc(doc(db, "books", idHidden), bookData);
+                    alert("Data buku berhasil diperbarui!");
+                } else {
+                    await addDoc(booksCollection, bookData);
+                    alert("Buku baru berhasil disimpan ke Katalog!");
+                }
+                resetBookForm();
+            } catch(e) {
+                console.error("Gagal menyimpan data buku:", e);
+            }
+        }
+
+        window.editBookTrigger = function(id) {
+            const book = localBooksArray.find(b => b.id === id);
+            if(!book) return;
+
+            document.getElementById('editBookId').value = book.id;
+            document.getElementById('bookTitleInput').value = book.title || '';
+            document.getElementById('bookAuthorInput').value = book.author || '';
+            document.getElementById('bookBarcodeInput').value = book.barcode || '';
+
+            document.getElementById('formFormTitle').innerText = "Edit Data Buku";
+            document.getElementById('btnSaveBookAction').innerText = "Simpan Perubahan";
+            document.getElementById('btnCancelEditAction').style.display = "inline-block";
+        }
+
+        window.deleteBook = async function(id) {
+            if(!confirm("Apakah Anda yakin ingin menghapus buku ini dari katalog?")) return;
+            try {
+                await deleteDoc(doc(db, "books", id));
+                alert("Buku berhasil dihapus.");
+            } catch(e) { console.error(e); }
+        }
+
+        window.resetBookForm = function() {
+            document.getElementById('editBookId').value = "";
+            document.getElementById('bookTitleInput').value = "";
+            document.getElementById('bookAuthorInput').value = "";
+            document.getElementById('bookBarcodeInput').value = "";
+            document.getElementById('formFormTitle').innerText = "Tambah Buku Baru";
+            document.getElementById('btnSaveBookAction').innerText = "Simpan Buku";
+            document.getElementById('btnCancelEditAction').style.display = "none";
+        }
+
+        /* --- FUNGSI PENCARIAN BUKU BARU (LIVE SEARCH) --- */
+        window.searchBook = function() {
+            const keyword = document.getElementById('bookSearchInput').value.toLowerCase().trim();
+            if(!keyword) {
+                renderBooksTable(localBooksArray);
+                return;
+            }
+
+            const filteredBooks = localBooksArray.filter(book => {
+                const title = (book.title || "").toLowerCase();
+                const author = (book.author || "").toLowerCase();
+                const barcode = (book.barcode || "").toLowerCase();
+                return title.includes(keyword) || author.includes(keyword) || barcode.includes(keyword);
+            });
+
+            renderBooksTable(filteredBooks);
+        }
+
+
         /* --- MANAJEMEN LIVE DATA SISWA --- */
         onSnapshot(studentsCollection, (snapshot) => {
             localStudentsArray = [];
             snapshot.forEach((doc) => {
                 localStudentsArray.push({ id: doc.id, ...doc.data() });
             });
-            renderStudentsTable(localStudentsArray);
+            const searchInput = document.getElementById('studentSearchInput');
+            if (searchInput && searchInput.value) {
+                searchStudent();
+            } else {
+                renderStudentsTable(localStudentsArray);
+            }
         });
 
         window.renderStudentsTable = function(dataArray) {
@@ -555,7 +654,7 @@
             tbody.innerHTML = "";
             
             if(dataArray.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-gray);">Data siswa kosong. Silakan registrasikan siswa baru!</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-gray);">Data tidak ditemukan / Anggota kosong.</td></tr>`;
                 return;
             }
             
@@ -666,16 +765,12 @@
                 return;
             }
             
-            // Header kolom untuk CSV
             let csvContent = "data:text/csv;charset=utf-8,No,Barcode,Judul Buku,Pengarang\n";
-            
-            // Isi data buku ke baris CSV
             localBooksArray.forEach((book, index) => {
                 let row = `${index + 1},"${book.barcode || ''}","${book.title || ''}","${book.author || ''}"`;
                 csvContent += row + "\n";
             });
             
-            // Generate link download otomatis
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
@@ -692,10 +787,7 @@
                 return;
             }
             
-            // Header kolom untuk CSV
             let csvContent = "data:text/csv;charset=utf-8,No,Barcode Siswa,Nama Siswa,Kelas\n";
-            
-            // Isi data siswa ke baris CSV
             localStudentsArray.forEach((student, index) => {
                 const barcode = student.barcode || student.barcodeSiswa || '';
                 const nama = student.name || student.namaSiswa || student.nama || '';
@@ -705,7 +797,6 @@
                 csvContent += row + "\n";
             });
             
-            // Generate link download otomatis
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
