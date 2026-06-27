@@ -18,6 +18,7 @@
             --white: #FFFFFF;
             --bg-body: #F0F5FA;
             --danger-red: #FF4B4B;
+            --success-green: #2ecc71;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
@@ -151,6 +152,9 @@
         .btn-save-book { background: var(--primary-blue); color: white; border: none; padding: 12px 25px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.3s; }
         .btn-save-book:hover { background: #1a4577; }
         .btn-cancel-edit { background: var(--text-gray); color: white; border: none; padding: 12px 25px; border-radius: 12px; font-weight: 600; cursor: pointer; display: none; }
+
+        /* Styling Info Box Hasil scan */
+        .scanned-info-box { background: var(--light-blue); border-left: 5px solid var(--primary-blue); padding: 15px 20px; border-radius: 0 15px 15px 0; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
 
         /* Styling Tabel */
         .table-responsive { width: 100%; overflow-x: auto; margin-top: 20px; }
@@ -294,7 +298,7 @@
                 <h3>Buku</h3>
                 <p>Kelola Katalog</p>
             </div>
-            <div class="card" onclick="showAdminDetail('Pinjam', 'Transaksi Peminjaman', 'Menu untuk mencatat siswa yang sedang meminjam buku.')">
+            <div class="card" onclick="openLoanManager()">
                 <div class="icon-wrapper"><i class="fa-solid fa-hand-holding-heart"></i></div>
                 <h3>Pinjam</h3>
                 <p>Transaksi Baru</p>
@@ -324,7 +328,7 @@
         <div id="adminDetail" class="admin-detail-box">
             <button class="btn-back-admin" onclick="hideAdminDetail()"><i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard</button>
             <h2 id="detailSubTitle" style="margin-bottom: 15px; color: var(--primary-blue);">Judul Halaman</h2>
-            <p id="detailDesc" style="color: var(--text-gray); font-size: 1.1rem; line-height: 1.6; display: block;">Deskripsi konten.</p>
+            <p id="detailDesc" style="color: var(--text-gray); font-size: 1.1rem; line-height: 1.6; margin-bottom: 20px; display: block;">Deskripsi konten.</p>
 
             <div id="crudBookContainer" style="display: none;">
                 <div class="book-form-container">
@@ -377,6 +381,54 @@
                             <tr><td colspan="5" style="text-align:center;">Memuat data dari cloud...</td></tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <div id="loanTransactionContainer" style="display: none;">
+                <div class="book-form-container">
+                    <h3 style="margin-bottom: 15px; font-size: 1.1rem; color: var(--primary-blue);"><i class="fa-solid fa-id-card"></i> Langkah 1: Scan Barcode Anggota Siswa</h3>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <input type="text" id="loanStudentBarcodeInput" placeholder="Masukkan / Scan Barcode Siswa..." onkeypress="handleStudentScan(event)" style="flex: 1; padding: 14px 20px; border: 2px solid var(--light-blue); border-radius: 15px; outline: none; font-size: 1rem;">
+                        <button onclick="checkStudentLoanBarcode()" style="background: var(--primary-blue); color: white; border: none; padding: 0 25px; border-radius: 15px; font-weight: 600; cursor: pointer;">Cari Siswa</button>
+                    </div>
+
+                    <div id="loanStudentInfoBox" class="scanned-info-box" style="display: none;">
+                        <div>
+                            <p style="font-size: 0.85rem; color: var(--text-gray); font-weight: 600;">Siswa Terverifikasi:</p>
+                            <h4 id="txtLoanStudentName" style="font-size: 1.2rem; color: var(--primary-blue);">Nama Siswa</h4>
+                            <p id="txtLoanStudentClass" style="font-size: 0.95rem;">Kelas: -</p>
+                        </div>
+                        <button onclick="resetLoanSession()" style="background: var(--danger-red); color: white; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-size: 0.85rem;"><i class="fa-solid fa-rotate"></i> Ganti Siswa</button>
+                    </div>
+                </div>
+
+                <div id="loanBookSection" class="book-form-container" style="display: none; border-top: 4px solid var(--success-green);">
+                    <h3 style="margin-bottom: 15px; font-size: 1.1rem; color: var(--success-green);"><i class="fa-solid fa-book"></i> Langkah 2: Masukkan Barcode Buku</h3>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <input type="text" id="loanBookBarcodeInput" placeholder="Masukkan / Scan Barcode Buku..." onkeypress="handleBookScan(event)" style="flex: 1; padding: 14px 20px; border: 2px solid var(--light-blue); border-radius: 15px; outline: none; font-size: 1rem;">
+                        <button onclick="addBookToLoanList()" style="background: var(--success-green); color: white; border: none; padding: 0 25px; border-radius: 15px; font-weight: 600; cursor: pointer;">Tambah Peminjaman</button>
+                    </div>
+
+                    <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 1rem;">Buku yang akan Dipinjam Saat Ini:</h4>
+                    <div class="table-responsive">
+                        <table class="book-table" style="background: white; border-radius: 15px;">
+                            <thead>
+                                <tr>
+                                    <th>Barcode</th>
+                                    <th>Judul Buku</th>
+                                    <th>Pengarang</th>
+                                    <th style="text-align: center;">Batal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="loanCartTableBody">
+                                <tr><td colspan="4" style="text-align: center; color: var(--text-gray);">Belum ada buku dimasukkan.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="margin-top: 25px; display: flex; justify-content: flex-end;">
+                        <button onclick="submitLoanTransaction()" style="background: var(--primary-blue); color: white; border: none; padding: 15px 40px; border-radius: 15px; font-weight: bold; font-size: 1.05rem; cursor: pointer; box-shadow: 0 5px 15px rgba(42, 92, 153, 0.3);"><i class="fa-solid fa-floppy-disk"></i> Proses Selesai & Simpan Transaksi</button>
+                    </div>
                 </div>
             </div>
 
@@ -478,6 +530,7 @@
             document.getElementById('detailDesc').innerText = desc;
             
             document.getElementById('crudBookContainer').style.display = (type === 'Buku') ? 'block' : 'none';
+            document.getElementById('loanTransactionContainer').style.display = (type === 'Pinjam') ? 'block' : 'none';
             document.getElementById('crudStudentContainer').style.display = (type === 'Siswa') ? 'block' : 'none';
         }
         function hideAdminDetail() {
@@ -486,6 +539,10 @@
         }
         function openBookManager() { showAdminDetail('Buku', 'Katalog Buku Perpustakaan', 'Kelola data buku yang tersedia.'); }
         function openStudentManager() { showAdminDetail('Siswa', 'Data Anggota Siswa', 'Manajemen basis data siswa.'); }
+        function openLoanManager() { 
+            showAdminDetail('Pinjam', 'Transaksi Peminjaman Buku', 'Masukkan Barcode Siswa terlebih dahulu untuk mulai meminjam buku.'); 
+            if (typeof window.resetLoanSession === 'function') { window.resetLoanSession(); }
+        }
     </script>
 
     <script type="module">
@@ -509,9 +566,14 @@
         
         const booksCollection = collection(db, "books");
         const studentsCollection = collection(db, "students");
+        const loansCollection = collection(db, "loans"); // Koleksi log peminjaman baru
 
         let localBooksArray = [];
         let localStudentsArray = [];
+        
+        // State Penampung Sementara Transaksi Pinjam
+        let currentActiveStudent = null;
+        let loanCartBooks = [];
 
         /* --- MANAJEMEN LIVE DATA BUKU --- */
         onSnapshot(booksCollection, (snapshot) => {
@@ -519,7 +581,6 @@
             snapshot.forEach((doc) => {
                 localBooksArray.push({ id: doc.id, ...doc.data() });
             });
-            // Reset input pencarian buku saat data cloud sinkron ulang
             const searchInput = document.getElementById('bookSearchInput');
             if (searchInput && searchInput.value) {
                 searchBook();
@@ -615,7 +676,6 @@
             document.getElementById('btnCancelEditAction').style.display = "none";
         }
 
-        /* --- FUNGSI PENCARIAN BUKU BARU (LIVE SEARCH) --- */
         window.searchBook = function() {
             const keyword = document.getElementById('bookSearchInput').value.toLowerCase().trim();
             if(!keyword) {
@@ -631,6 +691,151 @@
             });
 
             renderBooksTable(filteredBooks);
+        }
+
+        /* --- FUNGSI UTAMA SISTEM PEMINJAMAN (BARU) --- */
+        window.handleStudentScan = function(e) {
+            if(e.key === 'Enter') checkStudentLoanBarcode();
+        }
+
+        window.checkStudentLoanBarcode = function() {
+            const inputVal = document.getElementById('loanStudentBarcodeInput').value.trim();
+            if(!inputVal) return;
+
+            // Cari di database lokal siswa berdasarkan barcode
+            const studentFound = localStudentsArray.find(s => {
+                const bc = s.barcode || s.barcodeSiswa || '';
+                return bc.toLowerCase() === inputVal.toLowerCase();
+            });
+
+            if(studentFound) {
+                currentActiveStudent = studentFound;
+                
+                // Tampilkan info siswa
+                document.getElementById('txtLoanStudentName').innerText = studentFound.name || studentFound.namaSiswa || studentFound.nama || '-';
+                document.getElementById('txtLoanStudentClass').innerText = "Kelas: " + (studentFound.class || studentFound.kelas || '-');
+                document.getElementById('loanStudentInfoBox').style.display = "flex";
+                
+                // Buka Kunci Langkah 2 (Scan Buku)
+                document.getElementById('loanBookSection').style.display = "block";
+                document.getElementById('loanStudentBarcodeInput').disabled = true;
+                document.getElementById('loanBookBarcodeInput').focus();
+            } else {
+                alert("Barcode siswa tidak terdaftar! Silakan registrasikan siswa terlebih dahulu di menu 'Siswa'.");
+                document.getElementById('loanStudentBarcodeInput').value = "";
+                document.getElementById('loanStudentBarcodeInput').focus();
+            }
+        }
+
+        window.handleBookScan = function(e) {
+            if(e.key === 'Enter') addBookToLoanList();
+        }
+
+        window.addBookToLoanList = function() {
+            const inputVal = document.getElementById('loanBookBarcodeInput').value.trim();
+            if(!inputVal) return;
+
+            // Cari buku di database lokal berdasarkan barcode
+            const bookFound = localBooksArray.find(b => (b.barcode || '').toLowerCase() === inputVal.toLowerCase());
+
+            if(!bookFound) {
+                alert("Barcode buku tidak ditemukan di dalam katalog! Silakan cek kembali atau input buku baru.");
+                document.getElementById('loanBookBarcodeInput').value = "";
+                document.getElementById('loanBookBarcodeInput').focus();
+                return;
+            }
+
+            // Validasi agar buku yang sama tidak dimasukkan dua kali dalam satu sesi transaksi
+            const isAlreadyAdded = loanCartBooks.some(b => b.id === bookFound.id);
+            if(isAlreadyAdded) {
+                alert("Buku ini sudah dimasukkan ke dalam daftar peminjaman!");
+                document.getElementById('loanBookBarcodeInput').value = "";
+                document.getElementById('loanBookBarcodeInput').focus();
+                return;
+            }
+
+            // Masukkan ke keranjang pinjam sementara
+            loanCartBooks.push(bookFound);
+            document.getElementById('loanBookBarcodeInput').value = "";
+            renderLoanCartTable();
+            document.getElementById('loanBookBarcodeInput').focus();
+        }
+
+        function renderLoanCartTable() {
+            const tbody = document.getElementById('loanCartTableBody');
+            tbody.innerHTML = "";
+
+            if(loanCartBooks.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-gray);">Belum ada buku dimasukkan.</td></tr>`;
+                return;
+            }
+
+            loanCartBooks.forEach((book, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong style="color:var(--primary-blue); font-family:monospace;">${book.barcode || ''}</strong></td>
+                    <td>${book.title || ''}</td>
+                    <td>${book.author || ''}</td>
+                    <td style="text-align: center;">
+                        <button onclick="removeBookFromLoanCart(${index})" style="background: none; border: none; color: var(--danger-red); cursor: pointer; font-size: 1.1rem;"><i class="fa-solid fa-circle-xmark"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.removeBookFromLoanCart = function(index) {
+            loanCartBooks.splice(index, 1);
+            renderLoanCartTable();
+        }
+
+        window.resetLoanSession = function() {
+            currentActiveStudent = null;
+            loanCartBooks = [];
+            
+            document.getElementById('loanStudentBarcodeInput').disabled = false;
+            document.getElementById('loanStudentBarcodeInput').value = "";
+            document.getElementById('loanBookBarcodeInput').value = "";
+            document.getElementById('loanStudentInfoBox').style.display = "none";
+            document.getElementById('loanBookSection').style.display = "none";
+            
+            renderLoanCartTable();
+            setTimeout(() => {
+                const el = document.getElementById('loanStudentBarcodeInput');
+                if(el) el.focus();
+            }, 100);
+        }
+
+        window.submitLoanTransaction = async function() {
+            if(!currentActiveStudent) return;
+            if(loanCartBooks.length === 0) {
+                alert("Gagal memproses! Minimal masukkan 1 buku untuk dipinjam.");
+                return;
+            }
+
+            const todayStr = new Date().toISOString().split('T')[0]; // Format tanggal YYYY-MM-DD
+
+            try {
+                // Simpan setiap buku yang dipinjam sebagai satu record log transaksi ke cloud Firebase
+                for(let book of loanCartBooks) {
+                    await addDoc(loansCollection, {
+                        studentBarcode: currentActiveStudent.barcode || currentActiveStudent.barcodeSiswa || '',
+                        studentName: currentActiveStudent.name || currentActiveStudent.namaSiswa || currentActiveStudent.nama || '',
+                        studentClass: currentActiveStudent.class || currentActiveStudent.kelas || '',
+                        bookBarcode: book.barcode || '',
+                        bookTitle: book.title || '',
+                        loanDate: todayStr,
+                        status: "Dipinjam" // Untuk validasi menu pengembalian nanti
+                    });
+                }
+
+                alert("Sore! Transaksi peminjaman sukses disimpan ke Cloud.");
+                resetLoanSession();
+                hideAdminDetail(); // Kembali ke panel utama dashboard
+            } catch(e) {
+                console.error("Gagal menyimpan transaksi pinjam:", e);
+                alert("Terjadi kesalahan sistem saat menyimpan data.");
+            }
         }
 
 
