@@ -476,7 +476,25 @@
                     </table>
                 </div>
             </div>
-
+            <div id="returnTransactionContainer" style="display: none;">
+                <div class="book-form-container" style="border-top: 4px solid var(--accent-orange);">
+                    <h3 style="margin-bottom: 15px; font-size: 1.1rem; color: var(--text-dark);">
+                        <i class="fa-solid fa-barcode"></i> Scan Barcode Buku untuk Pengembalian
+                    </h3>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <input type="text" id="returnBookBarcodeInput" placeholder="Scan Barcode Buku di Sini..." onkeypress="handleReturnScan(event)" style="flex: 1; padding: 14px 20px; border: 2px solid var(--light-blue); border-radius: 15px; outline: none; font-size: 1rem;">
+                        <button onclick="processBookReturn()" style="background: var(--accent-orange); color: white; border: none; padding: 0 25px; border-radius: 15px; font-weight: 600; cursor: pointer;">Proses Kembali</button>
+                    </div>
+                </div>
+            
+                <div id="returnSuccessBox" class="scanned-info-box" style="display: none; background: #e8f8f5; border-left: 5px solid var(--success-green);">
+                    <div>
+                        <p style="font-size: 0.85rem; color: var(--success-green); font-weight: 600;"><i class="fa-solid fa-circle-check"></i> PENGEMBALIAN BERHASIL!</p>
+                        <h4 id="txtReturnBookTitle" style="font-size: 1.2rem; color: var(--text-dark);">Judul Buku</h4>
+                        <p id="txtReturnStudentName" style="font-size: 0.95rem; color: var(--text-gray);">Dikembalikan oleh: -</p>
+                    </div>
+                </div>
+            </div>
             <div id="crudStudentContainer" style="display: none; margin-top: 20px;">
                 <div class="book-form-container">
                     <h3 id="studentFormTitle" style="margin-bottom: 15px; font-size: 1.1rem;">Registrasi Anggota Siswa Baru</h3>
@@ -569,29 +587,24 @@
         function handleKeyPress(e) { if(e.key === 'Enter') checkPassword(); }
         
         function showAdminDetail(type, title, desc) {
-            document.getElementById('adminGrid').style.display = 'none';
-            document.getElementById('adminDetail').style.display = 'block';
-            document.getElementById('detailSubTitle').innerText = title;
-            document.getElementById('detailDesc').innerText = desc;
-            
-            document.getElementById('crudBookContainer').style.display = (type === 'Buku') ? 'block' : 'none';
-            document.getElementById('loanTransactionContainer').style.display = (type === 'Pinjam') ? 'block' : 'none';
-            document.getElementById('crudStudentContainer').style.display = (type === 'Siswa') ? 'block' : 'none';
-            document.getElementById('reportTransactionContainer').style.display = (type === 'Laporan') ? 'block' : 'none';
-        }
-        function hideAdminDetail() {
-            document.getElementById('adminGrid').style.display = 'grid';
-            document.getElementById('adminDetail').style.display = 'none';
-        }
-        function openBookManager() { showAdminDetail('Buku', 'Katalog Buku Perpustakaan', 'Kelola data buku yang tersedia.'); }
-        function openStudentManager() { showAdminDetail('Siswa', 'Data Anggota Siswa', 'Manajemen basis data siswa.'); }
-        function openLoanManager() { 
-            showAdminDetail('Pinjam', 'Transaksi Peminjaman Buku', 'Masukkan Barcode Siswa terlebih dahulu untuk mulai meminjam buku.'); 
-            if (typeof window.resetLoanSession === 'function') { window.resetLoanSession(); }
-        }
-        function openReportManager() {
-            showAdminDetail('Laporan', 'Laporan Riwayat Transaksi', 'Memantau data riwayat sirkulasi keluar masuknya buku secara real-time.');
-        }
+    document.getElementById('adminGrid').style.display = 'none';
+    document.getElementById('adminDetail').style.display = 'block';
+    document.getElementById('detailSubTitle').innerText = title;
+    document.getElementById('detailDesc').innerText = desc;
+    
+    // Atur visibilitas masing-masing container
+    document.getElementById('crudBookContainer').style.display = (type === 'Buku') ? 'block' : 'none';
+    document.getElementById('loanTransactionContainer').style.display = (type === 'Pinjam') ? 'block' : 'none';
+    document.getElementById('returnTransactionContainer').style.display = (type === 'Kembali') ? 'block' : 'none'; // Tambahkan ini
+    document.getElementById('crudStudentContainer').style.display = (type === 'Siswa') ? 'block' : 'none';
+    document.getElementById('reportTransactionContainer').style.display = (type === 'Laporan') ? 'block' : 'none';
+}
+
+// Dan pastikan fungsi pemicu kartu "Kembali" disesuaikan menjadi:
+function openReturnManager() {
+    showAdminDetail('Kembali', 'Pengembalian Buku', 'Silakan scan langsung barcode fisik buku untuk memproses pengembalian.');
+    setTimeout(() => { document.getElementById('returnBookBarcodeInput').focus(); }, 200);
+}
     </script>
 
     <script type="module">
@@ -1025,6 +1038,62 @@ window.deleteSelectedLoans = async function() {
             renderStudentsTable(filtered);
         }
         window.downloadStudentBackupCSV = function() { /* backup logic */ }
+        import { 
+    getDocs, query, where 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Pastikan query dan where sudah di-import di bagian atas script module
+
+// Fungsi mendeteksi tombol Enter dari Alat Scan Barcode
+window.handleReturnScan = function(e) {
+    if(e.key === 'Enter') {
+        processBookReturn();
+    }
+}
+
+// Fungsi utama memproses pengembalian buku
+window.processBookReturn = async function() {
+    const barcodeInput = document.getElementById('returnBookBarcodeInput').value.trim();
+    const successBox = document.getElementById('returnSuccessBox');
+    
+    if(!barcodeInput) return;
+
+    try {
+        // 1. Cari data di koleksi "loans" yang barcode bukunya cocok DAN statusnya masih "Dipinjam"
+        const q = query(loansCollection, where("bookBarcode", "==", barcodeInput), where("status", "==", "Dipinjam"));
+        const querySnapshot = await getDocs(q);
+
+        if(querySnapshot.empty) {
+            alert("Gagal: Buku dengan barcode tersebut tidak ditemukan dalam daftar aktif peminjaman!");
+            document.getElementById('returnBookBarcodeInput').value = "";
+            document.getElementById('returnBookBarcodeInput').focus();
+            successBox.style.display = "none";
+            return;
+        }
+
+        // 2. Jika transaksi ditemukan, ambil data pertama (paling relevan)
+        querySnapshot.forEach(async (docSnap) => {
+            const loanId = docSnap.id;
+            const loanData = docSnap.data();
+
+            // 3. Update status dokumen di Firebase menjadi "Kembali"
+            await updateDoc(doc(db, "loans", loanId), {
+                status: "Kembali"
+            });
+
+            // 4. Tampilkan Notifikasi Berhasil di Layar
+            document.getElementById('txtReturnBookTitle').innerText = loanData.bookTitle || "Buku Tanpa Judul";
+            document.getElementById('txtReturnStudentName').innerText = `Dikembalikan oleh: ${loanData.studentName || '-'} (Kelas ${loanData.studentClass || '-'})`;
+            successBox.style.display = "flex";
+            
+            // Bersihkan input agar siap menerima scan buku selanjutnya
+            document.getElementById('returnBookBarcodeInput').value = "";
+            document.getElementById('returnBookBarcodeInput').focus();
+        });
+
+    } catch (error) {
+        console.error("Terjadi kesalahan saat memproses pengembalian: ", error);
+        alert("Sistem error saat mencoba mengembalikan buku.");
+    }
+}
     </script>
 </body>
 </html>
