@@ -141,7 +141,7 @@
         .btn-back-admin { background: var(--text-gray); color: white; border: none; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; margin-bottom: 20px; transition: 0.3s; }
         .btn-back-admin:hover { background: var(--text-dark); }
 
-        /* Styling Form Buku */
+        /* Styling Form Buku & Siswa */
         .book-form-container { background: var(--bg-body); padding: 25px; border-radius: 20px; margin-bottom: 30px; }
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
         .form-grid .form-group { display: flex; flex-direction: column; gap: 5px; }
@@ -152,7 +152,7 @@
         .btn-save-book:hover { background: #1a4577; }
         .btn-cancel-edit { background: var(--text-gray); color: white; border: none; padding: 12px 25px; border-radius: 12px; font-weight: 600; cursor: pointer; display: none; }
 
-        /* Styling Tabel Buku */
+        /* Styling Tabel */
         .table-responsive { width: 100%; overflow-x: auto; margin-top: 20px; }
         .book-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem; }
         .book-table th, .book-table td { padding: 15px; border-bottom: 1px solid var(--light-blue); }
@@ -350,7 +350,6 @@
                     </div>
                 </div>
 
-                <h3 style="margin-bottom: 10px; font-size: 1.2rem; color: var(--text-dark);">Daftar Koleksi Buku (Cloud Firebase)</h3>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; margin-bottom: 15px;">
                     <h3 style="margin: 0;">Daftar Koleksi Buku (Cloud Firebase)</h3>
                     <button onclick="downloadBackupCSV()" style="background-color: #2ecc71; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px;">
@@ -374,6 +373,7 @@
                     </table>
                 </div>
             </div>
+
             <div id="crudStudentContainer" style="display: none; margin-top: 20px;">
                 <div class="book-form-container">
                     <h3 style="margin-bottom: 15px; font-size: 1.1rem;">Registrasi Anggota Siswa Baru</h3>
@@ -425,6 +425,7 @@
                     </table>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -434,32 +435,28 @@
             getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // 1. Konfigurasi Firebase Proyekmu
         const firebaseConfig = {
-  apiKey: "AIzaSyC-DIolrfqSIxhZVGE5JjFaeGOCtsMRz3c",
-  authDomain: "perpus-lentera.firebaseapp.com",
-  projectId: "perpus-lentera",
-  storageBucket: "perpus-lentera.firebasestorage.app",
-  messagingSenderId: "767330778517",
-  appId: "1:767330778517:web:bf8d3058be09cee206ca9c",
-  measurementId: "G-7MXKTJV66C"
-};
+            apiKey: "AIzaSyC-DIolrfqSIxhZVGE5JjFaeGOCtsMRz3c",
+            authDomain: "perpus-lentera.firebaseapp.com",
+            projectId: "perpus-lentera",
+            storageBucket: "perpus-lentera.firebasestorage.app",
+            messagingSenderId: "767330778517",
+            appId: "1:767330778517:web:bf8d3058be09cee206ca9c",
+            measurementId: "G-7MXKTJV66C"
+        };
 
-        // 2. Inisialisasi Firebase & Firestore Database
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const studentsCollection = collection(db, "students");
-let localStudentsArray = [];
+        
+        // Referensi Koleksi Cloud
         const booksCollection = collection(db, "books");
+        const studentsCollection = collection(db, "students");
 
-        // Simpan referensi data lokal untuk keperluan pencarian / edit cepat
+        // Array Sinkronisasi Data Lokal
         let localBooksArray = [];
+        let localStudentsArray = [];
 
-        /* ============================
-           FUNGSI CRUD UTAMA (FIREBASE)
-           ============================ */
-
-        // Ambil Data Buku Secara Real-time (Otomatis Sync PC <-> HP)
+        /* --- MANAJEMEN LIVE DATA BUKU --- */
         onSnapshot(booksCollection, (snapshot) => {
             localBooksArray = [];
             snapshot.forEach((doc) => {
@@ -468,16 +465,13 @@ let localStudentsArray = [];
             renderBooksTable();
         });
 
-        // Menampilkan data array ke baris tabel HTML
         window.renderBooksTable = function() {
             const tbody = document.getElementById('bookTableBody');
             tbody.innerHTML = "";
-
             if(localBooksArray.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-gray);">Katalog Cloud Kosong. Silakan tambah buku!</td></tr>`;
                 return;
             }
-
             localBooksArray.forEach((book, index) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -494,7 +488,6 @@ let localStudentsArray = [];
             });
         }
 
-        // Aksi Simpan (Tambah Baru ke Firebase / Perbarui Data Lama)
         window.saveBook = async function() {
             const idHidden = document.getElementById('editBookId').value;
             const titleInput = document.getElementById('bookTitleInput').value.trim();
@@ -505,385 +498,303 @@ let localStudentsArray = [];
                 alert("Mohon isi seluruh data buku sebelum menyimpan!");
                 return;
             }
-
             try {
                 if(idHidden) {
-                    // MODE UPDATE DATA KE FIREBASE
-                    const docRef = doc(db, "books", idHidden);
-                    await updateDoc(docRef, {
-                        title: titleInput,
-                        author: authorInput,
-                        barcode: barcodeInput
-                    });
+                    await updateDoc(doc(db, "books", idHidden), { title: titleInput, author: authorInput, barcode: barcodeInput });
                 } else {
-                    // MODE TAMBAH BARU KE FIREBASE
-                    await addDoc(booksCollection, {
-                        title: titleInput,
-                        author: authorInput,
-                        barcode: barcodeInput
-                    });
+                    await addDoc(booksCollection, { title: titleInput, author: authorInput, barcode: barcodeInput });
                 }
                 resetBookForm();
             } catch (error) {
-                console.error("Gagal memproses data Firebase: ", error);
                 alert("Terjadi kesalahan koneksi database cloud.");
             }
         }
 
-        // Trigger saat tombol edit di baris tabel diklik
         window.editBookTrigger = function(id) {
             const target = localBooksArray.find(b => b.id === id);
             if(!target) return;
-
             document.getElementById('editBookId').value = target.id;
             document.getElementById('bookTitleInput').value = target.title;
             document.getElementById('bookAuthorInput').value = target.author;
             document.getElementById('bookBarcodeInput').value = target.barcode;
-
             document.getElementById('formFormTitle').innerText = "Edit Informasi Buku Cloud";
             document.getElementById('btnSaveBookAction').innerText = "Perbarui di Cloud";
             document.getElementById('btnCancelEditAction').style.display = "inline-block";
         }
 
-        // Hapus Buku dari Firebase Cloud
         window.deleteBook = async function(id) {
             if(confirm("Hapus permanen buku ini dari cloud database?")) {
                 try {
                     await deleteDoc(doc(db, "books", id));
-                    const idHidden = document.getElementById('editBookId').value;
-                    if(idHidden === id) resetBookForm();
                 } catch(err) {
                     alert("Gagal menghapus data.");
                 }
             }
         }
-       
 
-// Ambil data langsung dari Firestore dan buat file CSV
-window.downloadBackupCSV = function() {
-    if (localBooksArray.length === 0) {
-        alert("Tidak ada data buku di cloud yang bisa di-backup!");
-        return;
-    }
-
-    try {
-        // 1. Buat struktur kolom untuk Excel/CSV (Gunakan pemisah titik koma ';' agar rapi di Excel Indonesia)
-        let csvContent = "\uFEFF"; // BOM untuk mendeteksi karakter UTF-8 di Excel
-        csvContent += "No;Nomor Barcode;Judul Buku;Pengarang\n"; 
-
-        // 2. Masukkan data dari database ke baris CSV
-        localBooksArray.forEach((book, index) => {
-            // Bersihkan teks dari tanda kutip atau titik koma agar format tidak rusak
-            const barcode = book.barcode ? book.barcode.toString().replace(/;/g, ' ') : '';
-            const title = book.title ? book.title.replace(/;/g, ' ') : '';
-            const author = book.author ? book.author.replace(/;/g, ' ') : '';
-
-            csvContent += `${index + 1};"${barcode}";"${title}";"${author}"\n`;
-        });
-
-        // 3. Proses unduh otomatis di browser
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        
-        // Penamaan file menggunakan tanggal otomatis hari ini
-        const tanggalHariIni = new Date().toISOString().slice(0, 10);
-        link.setAttribute("href", url);
-        link.setAttribute("download", `Backup_Buku_PelangiPustaka_${tanggalHariIni}.csv`);
-        
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-    } catch (error) {
-        console.error("Gagal melakukan backup: ", error);
-        alert("Terjadi kesalahan saat memproses backup data.");
-    }
-}
-// Ambil Data Siswa Secara Real-time dari Firebase
-onSnapshot(studentsCollection, (snapshot) => {
-    localStudentsArray = [];
-    snapshot.forEach((doc) => {
-        localStudentsArray.push({ id: doc.id, ...doc.data() });
-    });
-    renderStudentsTable();
-});
-
-// Menampilkan data siswa ke tabel HTML
-window.renderStudentsTable = function() {
-    const tbody = document.getElementById('studentTableBody');
-    tbody.innerHTML = "";
-
-    if(localStudentsArray.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-gray);">Belum ada anggota siswa yang terdaftar.</td></tr>`;
-        return;
-    }
-
-    localStudentsArray.forEach((student, index) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${index + 1}</td>
-            <td><strong style="color:var(--accent-orange); font-family:monospace;">${student.barcode}</strong></td>
-            <td>${student.name}</td>
-            <td>Kelas ${student.class}</td>
-            <td style="text-align: center;">
-                <button class="btn-action btn-delete" onclick="deleteStudent('${student.id}')"><i class="fa-solid fa-trash"></i> Hapus</button>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
-
-// Fungsi Menyimpan Data Registrasi Siswa ke Firebase
-window.saveStudent = async function() {
-    const nameInput = document.getElementById('studentNameInput').value.trim();
-    const classInput = document.getElementById('studentClassInput').value.trim();
-    const barcodeInput = document.getElementById('studentBarcodeInput').value.trim();
-
-    if(!nameInput || !classInput || !barcodeInput) {
-        alert("Mohon lengkapi Nama, Kelas, dan Barcode siswa!");
-        return;
-    }
-
-    try {
-        await addDoc(studentsCollection, {
-            name: nameInput,
-            class: classInput,
-            barcode: barcodeInput
-        });
-        
-        // Kosongkan form setelah berhasil input
-        document.getElementById('studentNameInput').value = "";
-        document.getElementById('studentClassInput').value = "";
-        document.getElementById('studentBarcodeInput').value = "";
-        alert("Siswa berhasil didaftarkan sebagai anggota!");
-    } catch (error) {
-        console.error("Gagal mendaftarkan siswa: ", error);
-        alert("Terjadi kesalahan koneksi database saat mendaftarkan siswa.");
-    }
-}
-
-// Fungsi Menghapus Anggota Siswa dari Firebase
-window.deleteStudent = async function(id) {
-    if(confirm("Hapus keanggotaan siswa ini secara permanen dari cloud?")) {
-        try {
-            await deleteDoc(doc(db, "students", id));
-        } catch(err) {
-            alert("Gagal menghapus data siswa.");
+        window.downloadBackupCSV = function() {
+            if (localBooksArray.length === 0) {
+                alert("Tidak ada data buku di cloud yang bisa di-backup!");
+                return;
+            }
+            try {
+                let csvContent = "\uFEFF"; 
+                csvContent += "No;Nomor Barcode;Judul Buku;Pengarang\n"; 
+                localBooksArray.forEach((book, index) => {
+                    const barcode = book.barcode ? book.barcode.toString().replace(/;/g, ' ') : '';
+                    const title = book.title ? book.title.replace(/;/g, ' ') : '';
+                    const author = book.author ? book.author.replace(/;/g, ' ') : '';
+                    csvContent += `${index + 1};"${barcode}";"${title}";"${author}"\n`;
+                });
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.setAttribute("href", url);
+                link.setAttribute("download", `Backup_Buku_PelangiPustaka_${new Date().toISOString().slice(0, 10)}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (error) {
+                alert("Gagal melakukan backup data buku.");
+            }
         }
-    }
-}
-// 1. FUNGSI PENCARIAN LIVE SISWA (SEPERTI GOOGLE)
-window.searchStudent = function() {
-    const keyword = document.getElementById('studentSearchInput').value.toLowerCase().trim();
-    const tbody = document.getElementById('studentTableBody');
-    tbody.innerHTML = "";
 
-    // Saring array siswa lokal berdasarkan kata kunci
-    const filteredStudents = localStudentsArray.filter(student => {
-        const name = student.name ? student.name.toLowerCase() : "";
-        const sClass = student.class ? student.class.toLowerCase() : "";
-        const barcode = student.barcode ? student.barcode.toLowerCase() : "";
-        
-        return name.includes(keyword) || sClass.includes(keyword) || barcode.includes(keyword);
-    });
 
-    if(filteredStudents.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-gray);">Data siswa yang kamu cari tidak ditemukan.</td></tr>`;
-        return;
-    }
-
-    // Tampilkan hasil pencarian ke tabel
-    filteredStudents.forEach((student, index) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${index + 1}</td>
-            <td><strong style="color:var(--accent-orange); font-family:monospace;">${student.barcode}</strong></td>
-            <td>${student.name}</td>
-            <td>Kelas ${student.class}</td>
-            <td style="text-align: center;">
-                <button class="btn-action btn-delete" onclick="deleteStudent('${student.id}')"><i class="fa-solid fa-trash"></i> Hapus</button>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
-
-// 2. FUNGSI BACKUP DATA SISWA KE EXCEL/CSV
-window.downloadStudentBackupCSV = function() {
-    if (localStudentsArray.length === 0) {
-        alert("Tidak ada data siswa di cloud yang bisa di-backup!");
-        return;
-    }
-
-    try {
-        let csvContent = "\uFEFF"; // BOM UTF-8 agar nama terbaca rapi di Excel Indonesia
-        csvContent += "No;Nomor Barcode Siswa;Nama Siswa;Kelas\n"; 
-
-        localStudentsArray.forEach((student, index) => {
-            const barcode = student.barcode ? student.barcode.toString().replace(/;/g, ' ') : '';
-            const name = student.name ? student.name.replace(/;/g, ' ') : '';
-            const sClass = student.class ? student.class.replace(/;/g, ' ') : '';
-
-            csvContent += `${index + 1};"${barcode}";"${name}";"Kelas ${sClass}"\n`;
+        /* --- MANAJEMEN LIVE DATA SISWA --- */
+        onSnapshot(studentsCollection, (snapshot) => {
+            localStudentsArray = [];
+            snapshot.forEach((doc) => {
+                localStudentsArray.push({ id: doc.id, ...doc.data() });
+            });
+            renderStudentsTable();
         });
 
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        
-        const tanggalHariIni = new Date().toISOString().slice(0, 10);
-        link.setAttribute("href", url);
-        link.setAttribute("download", `Backup_Siswa_PelangiPustaka_${tanggalHariIni}.csv`);
-        
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-    } catch (error) {
-        console.error("Gagal melakukan backup siswa: ", error);
-        alert("Terjadi kesalahan saat memproses backup data siswa.");
-    }
-}
+        window.renderStudentsTable = function() {
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = "";
+            if(localStudentsArray.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-gray);">Belum ada anggota siswa yang terdaftar.</td></tr>`;
+                return;
+            }
+            localStudentsArray.forEach((student, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><strong style="color:var(--accent-orange); font-family:monospace;">${student.barcode}</strong></td>
+                    <td>${student.name}</td>
+                    <td>Kelas ${student.class}</td>
+                    <td style="text-align: center;">
+                        <button class="btn-action btn-delete" onclick="deleteStudent('${student.id}')"><i class="fa-solid fa-trash"></i> Hapus</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.saveStudent = async function() {
+            const nameInput = document.getElementById('studentNameInput').value.trim();
+            const classInput = document.getElementById('studentClassInput').value.trim();
+            const barcodeInput = document.getElementById('studentBarcodeInput').value.trim();
+
+            if(!nameInput || !classInput || !barcodeInput) {
+                alert("Mohon lengkapi Nama, Kelas, dan Barcode siswa!");
+                return;
+            }
+            try {
+                await addDoc(studentsCollection, { name: nameInput, class: classInput, barcode: barcodeInput });
+                document.getElementById('studentNameInput').value = "";
+                document.getElementById('studentClassInput').value = "";
+                document.getElementById('studentBarcodeInput').value = "";
+                alert("Siswa berhasil didaftarkan sebagai anggota!");
+            } catch (error) {
+                alert("Terjadi kesalahan saat mendaftarkan siswa.");
+            }
+        }
+
+        window.deleteStudent = async function(id) {
+            if(confirm("Hapus keanggotaan siswa ini secara permanen dari cloud?")) {
+                try { await deleteDoc(doc(db, "students", id)); } catch(err) { alert("Gagal menghapus data siswa."); }
+            }
+        }
+
+        window.searchStudent = function() {
+            const keyword = document.getElementById('studentSearchInput').value.toLowerCase().trim();
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = "";
+
+            const filtered = localStudentsArray.filter(student => {
+                const name = student.name ? student.name.toLowerCase() : "";
+                const sClass = student.class ? student.class.toLowerCase() : "";
+                const barcode = student.barcode ? student.barcode.toLowerCase() : "";
+                return name.includes(keyword) || sClass.includes(keyword) || barcode.includes(keyword);
+            });
+
+            if(filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-gray);">Data siswa tidak ditemukan.</td></tr>`;
+                return;
+            }
+            filtered.forEach((student, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><strong style="color:var(--accent-orange); font-family:monospace;">${student.barcode}</strong></td>
+                    <td>${student.name}</td>
+                    <td>Kelas ${student.class}</td>
+                    <td style="text-align: center;">
+                        <button class="btn-action btn-delete" onclick="deleteStudent('${student.id}')"><i class="fa-solid fa-trash"></i> Hapus</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.downloadStudentBackupCSV = function() {
+            if (localStudentsArray.length === 0) {
+                alert("Tidak ada data siswa di cloud yang bisa di-backup!");
+                return;
+            }
+            try {
+                let csvContent = "\uFEFF"; 
+                csvContent += "No;Nomor Barcode Siswa;Nama Siswa;Kelas\n"; 
+                localStudentsArray.forEach((student, index) => {
+                    const barcode = student.barcode ? student.barcode.toString().replace(/;/g, ' ') : '';
+                    const name = student.name ? student.name.replace(/;/g, ' ') : '';
+                    const sClass = student.class ? student.class.replace(/;/g, ' ') : '';
+                    csvContent += `${index + 1};"${barcode}";"${name}";"Kelas ${sClass}"\n`;
+                });
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.setAttribute("href", url);
+                link.setAttribute("download", `Backup_Siswa_PelangiPustaka_${new Date().toISOString().slice(0, 10)}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (error) {
+                alert("Terjadi kesalahan saat memproses backup data siswa.");
+            }
+        }
     </script>
 
-<script>
-    const mainSections = {
-        user: document.getElementById('userSection'),
-        login: document.getElementById('loginSection'),
-        admin: document.getElementById('adminSection')
-    };
-    const navContainer = document.getElementById('navContainer');
-    const menuIcon = document.getElementById('menuIcon');
+    <script>
+        const mainSections = {
+            user: document.getElementById('userSection'),
+            login: document.getElementById('loginSection'),
+            admin: document.getElementById('adminSection')
+        };
+        const navContainer = document.getElementById('navContainer');
+        const menuIcon = document.getElementById('menuIcon');
 
-    function toggleMobileMenu() {
-        navContainer.classList.toggle('active');
-        menuIcon.className = navContainer.classList.contains('active') ? "fa-solid fa-xmark" : "fa-solid fa-bars";
-    }
-
-    function closeMobileMenu() {
-        navContainer.classList.remove('active');
-        menuIcon.className = "fa-solid fa-bars";
-    }
-
-    function showUserSection(subPageKey) {
-        if (subPageKey === 'home') subPageKey = 'home';
-        if (subPageKey === 'tata-tertib') subPageKey = 'tata-tertib';
-        if (subPageKey === 'keanggotaan') subPageKey = 'keanggotaan';
-        if (subPageKey === 'ebook') subPageKey = 'ebook';
-
-        mainSections.user.style.display = 'block';
-        mainSections.login.style.display = 'none';
-        mainSections.admin.style.display = 'none';
-        
-        const navbar = document.querySelector('.navbar');
-        if (window.innerWidth > 768) {
-            navbar.style.display = 'flex';
-            navbar.style.backgroundColor = 'transparent';
-            navbar.style.position = 'absolute';
-        } else {
-            navbar.style.display = 'flex';
-            navbar.style.backgroundColor = 'var(--primary-blue)';
-            navbar.style.position = 'fixed';
+        function toggleMobileMenu() {
+            navContainer.classList.toggle('active');
+            menuIcon.className = navContainer.classList.contains('active') ? "fa-solid fa-xmark" : "fa-solid fa-bars";
         }
 
-        document.getElementById('passwordInput').value = "";
-        document.getElementById('loginError').style.display = 'none';
-
-        // Sembunyikan semua sub halaman user
-        document.querySelectorAll('.user-sub-page').forEach(div => {
-            div.style.display = 'none';
-        });
-        
-        // Reset status aktif menu link
-        document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
-
-        // Tampilkan halaman tujuan
-        const targetSubPage = document.getElementById(`sub-${subPageKey}`);
-        const targetLi = document.getElementById(`li-${subPageKey}`);
-        
-        if (targetSubPage) {
-            targetSubPage.style.setProperty('display', 'flex', 'important');
+        function closeMobileMenu() {
+            navContainer.classList.remove('active');
+            menuIcon.className = "fa-solid fa-bars";
         }
-        if (targetLi) {
-            targetLi.classList.add('active');
-        }
-    }
 
-    function navigateUser(subPageKey) {
-        showUserSection(subPageKey);
-        closeMobileMenu();
-    }
-
-    function showLogin() {
-        closeMobileMenu();
-        mainSections.user.style.display = 'none';
-        mainSections.admin.style.display = 'none';
-        mainSections.login.style.display = 'flex';
-        document.querySelector('.navbar').style.display = 'none';
-    }
-
-    function checkPassword() {
-        if(document.getElementById('passwordInput').value === "admin") {
+        function showUserSection(subPageKey) {
+            mainSections.user.style.display = 'block';
             mainSections.login.style.display = 'none';
-            mainSections.admin.style.display = 'block';
-            hideAdminDetail();
-        } else {
-            document.getElementById('loginError').style.display = 'block';
+            mainSections.admin.style.display = 'none';
+            
+            const navbar = document.querySelector('.navbar');
+            if (window.innerWidth > 768) {
+                navbar.style.display = 'flex';
+                navbar.style.backgroundColor = 'transparent';
+                navbar.style.position = 'absolute';
+            } else {
+                navbar.style.display = 'flex';
+                navbar.style.backgroundColor = 'var(--primary-blue)';
+                navbar.style.position = 'fixed';
+            }
+
+            document.getElementById('passwordInput').value = "";
+            document.getElementById('loginError').style.display = 'none';
+
+            document.querySelectorAll('.user-sub-page').forEach(div => div.style.display = 'none');
+            document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
+
+            const targetSubPage = document.getElementById(`sub-${subPageKey}`);
+            const targetLi = document.getElementById(`li-${subPageKey}`);
+            if (targetSubPage) targetSubPage.style.setProperty('display', 'flex', 'important');
+            if (targetLi) targetLi.classList.add('active');
         }
-    }
 
-    function handleKeyPress(e) { if(e.key === 'Enter') checkPassword(); }
-
-    function showAdminDetail(title, subtitle, description) {
-        document.getElementById('adminTitle').innerText = `Dashboard Admin > ${title}`;
-        document.getElementById('adminGrid').style.display = 'none';
-        document.getElementById('crudBookContainer').style.display = 'none';
-        document.getElementById('crudStudentContainer').style.display = 'none'; // Sembunyikan form siswa dulu
-        
-        const detailBox = document.getElementById('adminDetail');
-        document.getElementById('detailDesc').style.display = 'block';
-        document.getElementById('detailSubTitle').innerText = subtitle;
-        document.getElementById('detailDesc').innerText = description;
-        detailBox.style.display = 'block';
-
-        // KHUSUS: Jika yang diklik adalah menu "Siswa"
-        if (title === 'Siswa') {
-            document.getElementById('detailDesc').style.display = 'none'; // Sembunyikan teks deskripsi bawaan
-            document.getElementById('crudStudentContainer').style.display = 'block'; // Tampilkan form registrasi siswa
+        function navigateUser(subPageKey) {
+            showUserSection(subPageKey);
+            closeMobileMenu();
         }
-    }
 
-    function hideAdminDetail() {
-        document.getElementById('adminTitle').innerText = "Dashboard Admin";
-        document.getElementById('adminGrid').style.display = 'grid';
-        document.getElementById('adminDetail').style.display = 'none';
-        document.getElementById('crudBookContainer').style.display = 'none';
-        document.getElementById('crudStudentContainer').style.display = 'none'; // Ikut disembunyikan saat kembali ke dashboard
-    }
-    function openBookManager() {
-        document.getElementById('adminTitle').innerText = "Dashboard Admin > Buku";
-        document.getElementById('adminGrid').style.display = 'none';
-        document.getElementById('detailSubTitle').innerText = "Katalog Manajemen Buku Cloud";
-        document.getElementById('detailDesc').style.display = 'none'; // Sembunyikan deskripsi teks biasa
-        document.getElementById('adminDetail').style.display = 'block';
-        document.getElementById('crudBookContainer').style.display = 'block'; // Tampilkan form & tabel CRUD
-    }
+        function showLogin() {
+            closeMobileMenu();
+            mainSections.user.style.display = 'none';
+            mainSections.admin.style.display = 'none';
+            mainSections.login.style.display = 'flex';
+            document.querySelector('.navbar').style.display = 'none';
+        }
 
-    function resetBookForm() {
-        document.getElementById('editBookId').value = "";
-        document.getElementById('bookTitleInput').value = "";
-        document.getElementById('bookAuthorInput').value = "";
-        document.getElementById('bookBarcodeInput').value = "";
+        function checkPassword() {
+            if(document.getElementById('passwordInput').value === "admin") {
+                mainSections.login.style.display = 'none';
+                mainSections.admin.style.display = 'block';
+                hideAdminDetail();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
 
-        document.getElementById('formFormTitle').innerText = "Tambah Buku Baru";
-        document.getElementById('btnSaveBookAction').innerText = "Simpan Buku";
-        document.getElementById('btnCancelEditAction').style.display = "none";
-    }
-</script>
-</body>
-</html>
-</body>
-</html>
+        function handleKeyPress(e) { if(e.key === 'Enter') checkPassword(); }
+
+        function showAdminDetail(title, subtitle, description) {
+            document.getElementById('adminTitle').innerText = `Dashboard Admin > ${title}`;
+            document.getElementById('adminGrid').style.display = 'none';
+            document.getElementById('crudBookContainer').style.display = 'none';
+            document.getElementById('crudStudentContainer').style.display = 'none';
+            
+            const detailBox = document.getElementById('adminDetail');
+            document.getElementById('detailDesc').style.display = 'block';
+            document.getElementById('detailSubTitle').innerText = subtitle;
+            document.getElementById('detailDesc').innerText = description;
+            detailBox.style.display = 'block';
+
+            if (title === 'Siswa') {
+                document.getElementById('detailDesc').style.display = 'none';
+                document.getElementById('crudStudentContainer').style.display = 'block';
+                if(window.renderStudentsTable) window.renderStudentsTable();
+            }
+        }
+
+        function hideAdminDetail() {
+            document.getElementById('adminTitle').innerText = "Dashboard Admin";
+            document.getElementById('adminGrid').style.display = 'grid';
+            document.getElementById('adminDetail').style.display = 'none';
+            document.getElementById('crudBookContainer').style.display = 'none';
+            document.getElementById('crudStudentContainer').style.display = 'none';
+            resetBookForm();
+        }
+
+        function openBookManager() {
+            document.getElementById('adminTitle').innerText = "Dashboard Admin > Buku";
+            document.getElementById('adminGrid').style.display = 'none';
+            document.getElementById('detailSubTitle').innerText = "Katalog Manajemen Buku Cloud";
+            document.getElementById('detailDesc').style.display = 'none';
+            document.getElementById('adminDetail').style.display = 'block';
+            document.getElementById('crudBookContainer').style.display = 'block';
+            if(window.renderBooksTable) window.renderBooksTable();
+        }
+
+        function resetBookForm() {
+            document.getElementById('editBookId').value = "";
+            document.getElementById('bookTitleInput').value = "";
+            document.getElementById('bookAuthorInput').value = "";
+            document.getElementById('bookBarcodeInput').value = "";
+            document.getElementById('formFormTitle').innerText = "Tambah Buku Baru";
+            document.getElementById('btnSaveBookAction').innerText = "Simpan Buku";
+            document.getElementById('btnCancelEditAction').style.display = "none";
+        }
+    </script>
 </body>
 </html>
