@@ -374,6 +374,46 @@
                     </table>
                 </div>
             </div>
+            <div id="crudStudentContainer" style="display: none; margin-top: 20px;">
+                <div class="book-form-container">
+                    <h3 style="margin-bottom: 15px; font-size: 1.1rem;">Registrasi Anggota Siswa Baru</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nama Siswa</label>
+                            <input type="text" id="studentNameInput" placeholder="Contoh: Budi Santoso">
+                        </div>
+                        <div class="form-group">
+                            <label>Kelas</label>
+                            <input type="text" id="studentClassInput" placeholder="Contoh: 4A atau 5">
+                        </div>
+                        <div class="form-group">
+                            <label>Nomor Barcode Siswa</label>
+                            <input type="text" id="studentBarcodeInput" placeholder="Contoh: SISWA12345">
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-save-book" onclick="saveStudent()">Registrasikan Siswa</button>
+                    </div>
+                </div>
+            
+                <h3 style="margin-bottom: 15px; font-size: 1.2rem; color: var(--text-dark); margin-top: 30px;">Daftar Anggota Siswa Resmi (Cloud)</h3>
+                <div class="table-responsive">
+                    <table class="book-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Barcode Siswa</th>
+                                <th>Nama Siswa</th>
+                                <th>Kelas</th>
+                                <th style="text-align: center;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody">
+                            <tr><td colspan="5" style="text-align:center;">Memuat data siswa...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -397,6 +437,8 @@
         // 2. Inisialisasi Firebase & Firestore Database
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const studentsCollection = collection(db, "students");
+let localStudentsArray = [];
         const booksCollection = collection(db, "books");
 
         // Simpan referensi data lokal untuk keperluan pencarian / edit cepat
@@ -547,6 +589,79 @@ window.downloadBackupCSV = function() {
         alert("Terjadi kesalahan saat memproses backup data.");
     }
 }
+// Ambil Data Siswa Secara Real-time dari Firebase
+onSnapshot(studentsCollection, (snapshot) => {
+    localStudentsArray = [];
+    snapshot.forEach((doc) => {
+        localStudentsArray.push({ id: doc.id, ...doc.data() });
+    });
+    renderStudentsTable();
+});
+
+// Menampilkan data siswa ke tabel HTML
+window.renderStudentsTable = function() {
+    const tbody = document.getElementById('studentTableBody');
+    tbody.innerHTML = "";
+
+    if(localStudentsArray.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-gray);">Belum ada anggota siswa yang terdaftar.</td></tr>`;
+        return;
+    }
+
+    localStudentsArray.forEach((student, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td><strong style="color:var(--accent-orange); font-family:monospace;">${student.barcode}</strong></td>
+            <td>${student.name}</td>
+            <td>Kelas ${student.class}</td>
+            <td style="text-align: center;">
+                <button class="btn-action btn-delete" onclick="deleteStudent('${student.id}')"><i class="fa-solid fa-trash"></i> Hapus</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Fungsi Menyimpan Data Registrasi Siswa ke Firebase
+window.saveStudent = async function() {
+    const nameInput = document.getElementById('studentNameInput').value.trim();
+    const classInput = document.getElementById('studentClassInput').value.trim();
+    const barcodeInput = document.getElementById('studentBarcodeInput').value.trim();
+
+    if(!nameInput || !classInput || !barcodeInput) {
+        alert("Mohon lengkapi Nama, Kelas, dan Barcode siswa!");
+        return;
+    }
+
+    try {
+        await addDoc(studentsCollection, {
+            name: nameInput,
+            class: classInput,
+            barcode: barcodeInput
+        });
+        
+        // Kosongkan form setelah berhasil input
+        document.getElementById('studentNameInput').value = "";
+        document.getElementById('studentClassInput').value = "";
+        document.getElementById('studentBarcodeInput').value = "";
+        alert("Siswa berhasil didaftarkan sebagai anggota!");
+    } catch (error) {
+        console.error("Gagal mendaftarkan siswa: ", error);
+        alert("Terjadi kesalahan koneksi database saat mendaftarkan siswa.");
+    }
+}
+
+// Fungsi Menghapus Anggota Siswa dari Firebase
+window.deleteStudent = async function(id) {
+    if(confirm("Hapus keanggotaan siswa ini secara permanen dari cloud?")) {
+        try {
+            await deleteDoc(doc(db, "students", id));
+        } catch(err) {
+            alert("Gagal menghapus data siswa.");
+        }
+    }
+}
     </script>
 
 <script>
@@ -641,22 +756,28 @@ window.downloadBackupCSV = function() {
         document.getElementById('adminTitle').innerText = `Dashboard Admin > ${title}`;
         document.getElementById('adminGrid').style.display = 'none';
         document.getElementById('crudBookContainer').style.display = 'none';
+        document.getElementById('crudStudentContainer').style.display = 'none'; // Sembunyikan form siswa dulu
         
         const detailBox = document.getElementById('adminDetail');
         document.getElementById('detailDesc').style.display = 'block';
         document.getElementById('detailSubTitle').innerText = subtitle;
         document.getElementById('detailDesc').innerText = description;
         detailBox.style.display = 'block';
+
+        // KHUSUS: Jika yang diklik adalah menu "Siswa"
+        if (title === 'Siswa') {
+            document.getElementById('detailDesc').style.display = 'none'; // Sembunyikan teks deskripsi bawaan
+            document.getElementById('crudStudentContainer').style.display = 'block'; // Tampilkan form registrasi siswa
+        }
     }
 
-    // --- BAGIAN YANG TADI TERPOTONG SEKARANG SUDAH LENGKAP ---
     function hideAdminDetail() {
         document.getElementById('adminTitle').innerText = "Dashboard Admin";
         document.getElementById('adminGrid').style.display = 'grid';
         document.getElementById('adminDetail').style.display = 'none';
         document.getElementById('crudBookContainer').style.display = 'none';
+        document.getElementById('crudStudentContainer').style.display = 'none'; // Ikut disembunyikan saat kembali ke dashboard
     }
-
     function openBookManager() {
         document.getElementById('adminTitle').innerText = "Dashboard Admin > Buku";
         document.getElementById('adminGrid').style.display = 'none';
