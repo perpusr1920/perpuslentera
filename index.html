@@ -658,6 +658,62 @@
             
             renderStudentsTable(filteredStudents);
         }
+
+        /* --- FUNGSI BACKUP DATA BUKU (CSV) --- */
+        window.downloadBackupCSV = function() {
+            if(localBooksArray.length === 0) {
+                alert("Tidak ada data buku di cloud untuk di-backup!");
+                return;
+            }
+            
+            // Header kolom untuk CSV
+            let csvContent = "data:text/csv;charset=utf-8,No,Barcode,Judul Buku,Pengarang\n";
+            
+            // Isi data buku ke baris CSV
+            localBooksArray.forEach((book, index) => {
+                let row = `${index + 1},"${book.barcode || ''}","${book.title || ''}","${book.author || ''}"`;
+                csvContent += row + "\n";
+            });
+            
+            // Generate link download otomatis
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Backup_Data_Buku_Pelangi_Pustaka.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        /* --- FUNGSI BACKUP DATA SISWA (CSV) --- */
+        window.downloadStudentBackupCSV = function() {
+            if(localStudentsArray.length === 0) {
+                alert("Tidak ada data siswa di cloud untuk di-backup!");
+                return;
+            }
+            
+            // Header kolom untuk CSV
+            let csvContent = "data:text/csv;charset=utf-8,No,Barcode Siswa,Nama Siswa,Kelas\n";
+            
+            // Isi data siswa ke baris CSV
+            localStudentsArray.forEach((student, index) => {
+                const barcode = student.barcode || student.barcodeSiswa || '';
+                const nama = student.name || student.namaSiswa || student.nama || '';
+                const kelas = student.class || student.kelas || '';
+                
+                let row = `${index + 1},"${barcode}","${nama}","${kelas}"`;
+                csvContent += row + "\n";
+            });
+            
+            // Generate link download otomatis
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Backup_Data_Siswa_Pelangi_Pustaka.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     </script>
 </body>
 </html>
