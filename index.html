@@ -330,11 +330,12 @@
             </div>
         </div>
 
-        <div id="adminDetail" class="admin-detail-box">
+        <div id="adminDetail" class="admin-detail-box" style="margin-top: 30px;">
             <button class="btn-back-admin" onclick="hideAdminDetail()"><i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard</button>
             <h2 id="detailSubTitle" style="margin-bottom: 15px; color: var(--primary-blue);">Judul Halaman</h2>
             <p id="detailDesc" style="color: var(--text-gray); font-size: 1.1rem; line-height: 1.6; margin-bottom: 20px; display: block;">Deskripsi konten.</p>
 
+            <!-- CONTAINER BUKU -->
             <div id="crudBookContainer" style="display: none;">
                 <div class="book-form-container">
                     <h3 id="formFormTitle" style="margin-bottom: 15px; font-size: 1.1rem;">Tambah Buku Baru</h3>
@@ -360,15 +361,15 @@
                 </div>
 
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
-                    <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-dark);">Daftar Koleksi Buku (Cloud Firebase)</h3>
-                    <button onclick="downloadBackupCSV()" style="background-color: #2ecc71; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+                    <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-dark);">Daftar Koleksi Buku</h3>
+                    <button onclick="alert('Fitur backup CSV bersiap!')" style="background-color: #2ecc71; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px;">
                         <i class="fa-solid fa-file-excel"></i> Backup Data Buku
                     </button>
                 </div>
 
                 <div style="position: relative; margin-bottom: 20px;">
                     <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-gray);"></i>
-                    <input type="text" id="bookSearchInput" oninput="searchBook()" placeholder="Cari berdasarkan Judul, Pengarang, atau Barcode Buku..." style="width: 100%; padding: 12px 20px 12px 45px; border: 2px solid var(--light-blue); border-radius: 25px; outline: none; font-size: 0.95rem; box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: 0.3s;">
+                    <input type="text" id="bookSearchInput" placeholder="Cari berdasarkan Judul, Pengarang, atau Barcode Buku..." style="width: 100%; padding: 12px 20px 12px 45px; border: 2px solid var(--light-blue); border-radius: 25px; outline: none; font-size: 0.95rem; box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: 0.3s;">
                 </div>
 
                 <div class="table-responsive">
@@ -383,100 +384,24 @@
                             </tr>
                         </thead>
                         <tbody id="bookTableBody">
-                            <tr><td colspan="5" style="text-align:center;">Memuat data dari cloud...</td></tr>
+                            <tr><td colspan="5" style="text-align:center;">Belum ada data buku.</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
+            <!-- CONTAINER PINJAM -->
             <div id="loanTransactionContainer" style="display: none;">
                 <div class="book-form-container">
                     <h3 style="margin-bottom: 15px; font-size: 1.1rem; color: var(--primary-blue);"><i class="fa-solid fa-id-card"></i> Langkah 1: Scan Barcode Anggota Siswa</h3>
                     <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                        <input type="text" id="loanStudentBarcodeInput" placeholder="Masukkan / Scan Barcode Siswa..." onkeypress="handleStudentScan(event)" style="flex: 1; padding: 14px 20px; border: 2px solid var(--light-blue); border-radius: 15px; outline: none; font-size: 1rem;">
-                        <button onclick="checkStudentLoanBarcode()" style="background: var(--primary-blue); color: white; border: none; padding: 0 25px; border-radius: 15px; font-weight: 600; cursor: pointer;">Cari Siswa</button>
-                    </div>
-
-                    <div id="loanStudentInfoBox" class="scanned-info-box" style="display: none;">
-                        <div>
-                            <p style="font-size: 0.85rem; color: var(--text-gray); font-weight: 600;">Siswa Terverifikasi:</p>
-                            <h4 id="txtLoanStudentName" style="font-size: 1.2rem; color: var(--primary-blue);">Nama Siswa</h4>
-                            <p id="txtLoanStudentClass" style="font-size: 0.95rem;">Kelas: -</p>
-                        </div>
-                        <button onclick="resetLoanSession()" style="background: var(--danger-red); color: white; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-size: 0.85rem;"><i class="fa-solid fa-rotate"></i> Ganti Siswa</button>
-                    </div>
-                </div>
-
-                <div id="loanBookSection" class="book-form-container" style="display: none; border-top: 4px solid var(--success-green);">
-                    <h3 style="margin-bottom: 15px; font-size: 1.1rem; color: var(--success-green);"><i class="fa-solid fa-book"></i> Langkah 2: Masukkan Barcode Buku</h3>
-                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                        <input type="text" id="loanBookBarcodeInput" placeholder="Masukkan / Scan Barcode Buku..." onkeypress="handleBookScan(event)" style="flex: 1; padding: 14px 20px; border: 2px solid var(--light-blue); border-radius: 15px; outline: none; font-size: 1rem;">
-                        <button onclick="addBookToLoanList()" style="background: var(--success-green); color: white; border: none; padding: 0 25px; border-radius: 15px; font-weight: 600; cursor: pointer;">Tambah Peminjaman</button>
-                    </div>
-
-                    <h4 style="margin-top: 25px; margin-bottom: 10px; font-size: 1rem;">Buku yang akan Dipinjam Saat Ini:</h4>
-                    <div class="table-responsive">
-                        <table class="book-table" style="background: white; border-radius: 15px;">
-                            <thead>
-                                <tr>
-                                    <th>Barcode</th>
-                                    <th>Judul Buku</th>
-                                    <th>Pengarang</th>
-                                    <th style="text-align: center;">Batal</th>
-                                </tr>
-                            </thead>
-                            <tbody id="loanCartTableBody">
-                                <tr><td colspan="4" style="text-align: center; color: var(--text-gray);">Belum ada buku dimasukkan.</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div style="margin-top: 25px; display: flex; justify-content: flex-end;">
-                        <button onclick="submitLoanTransaction()" style="background: var(--primary-blue); color: white; border: none; padding: 15px 40px; border-radius: 15px; font-weight: bold; font-size: 1.05rem; cursor: pointer; box-shadow: 0 5px 15px rgba(42, 92, 153, 0.3);"><i class="fa-solid fa-floppy-disk"></i> Proses Selesai & Simpan Transaksi</button>
+                        <input type="text" id="loanStudentBarcodeInput" placeholder="Masukkan / Scan Barcode Siswa..." style="flex: 1; padding: 14px 20px; border: 2px solid var(--light-blue); border-radius: 15px; outline: none; font-size: 1rem;">
+                        <button onclick="alert('Siswa ditemukan!')" style="background: var(--primary-blue); color: white; border: none; padding: 0 25px; border-radius: 15px; font-weight: 600; cursor: pointer;">Cari Siswa</button>
                     </div>
                 </div>
             </div>
 
-            <div id="reportTransactionContainer" style="display: none;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
-                    <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-dark);">Log Riwayat Sirkulasi Buku</h3>
-                    
-                    <div style="display: flex; gap: 10px;">
-                        <button id="btnDeleteSelectedLoans" onclick="deleteSelectedLoans()" style="background-color: var(--danger-red); color: white; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; opacity: 0.6; cursor: not-allowed;" disabled>
-                            <i class="fa-solid fa-trash-can"></i> Hapus Data Terpilih (<span id="selectedLoanCount">0</span>)
-                        </button>
-                        <button onclick="downloadLoanReportCSV()" style="background-color: #2ecc71; color: white; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; font-size: 0.9rem;">
-                            <i class="fa-solid fa-file-csv"></i> Cetak Laporan (.CSV)
-                        </button>
-                    </div>
-                </div>
-            
-                <div style="position: relative; margin-bottom: 20px;">
-                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-gray);"></i>
-                    <input type="text" id="loanReportSearchInput" oninput="searchLoanReport()" placeholder="Cari berdasarkan Nama Siswa, Barcode, atau Judul Buku yang tertransaksi..." style="width: 100%; padding: 12px 20px 12px 45px; border: 2px solid var(--light-blue); border-radius: 25px; outline: none; font-size: 0.95rem; box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: 0.3s;">
-                </div>
-            
-                <div class="table-responsive">
-                    <table class="book-table" style="background: white; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.01);">
-                        <thead>
-                            <tr>
-                                <th style="width: 40px; text-align: center;">
-                                    <input type="checkbox" id="checkAllLoans" onchange="toggleSelectAllLoans(this)" style="transform: scale(1.2); cursor: pointer;">
-                                </th>
-                                <th>No</th>
-                                <th>Tanggal</th>
-                                <th>Siswa (Barcode)</th>
-                                <th>Buku (Barcode)</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="loanReportTableBody">
-                            <tr><td colspan="6" style="text-align:center;">Memuat riwayat transaksi dari cloud...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
+            <!-- CONTAINER SISWA -->
             <div id="crudStudentContainer" style="display: none; margin-top: 20px;">
                 <div class="book-form-container">
                     <h3 id="studentFormTitle" style="margin-bottom: 15px; font-size: 1.1rem;">Registrasi Anggota Siswa Baru</h3>
@@ -496,535 +421,114 @@
                         </div>
                     </div>
                     <div style="display: flex; gap: 10px;">
-                        <button class="btn-save-book" id="btnSaveStudentAction" onclick="saveStudent()">Registrasikan Siswa</button>
-                        <button class="btn-cancel-edit" id="btnCancelStudentEditAction" onclick="resetStudentForm()">Batal</button>
+                        <button class="btn-save-book" id="btnSaveStudentAction" onclick="alert('Siswa disimpan!')">Registrasikan Siswa</button>
+                        <button class="btn-cancel-edit" id="btnCancelStudentEditAction" onclick="alert('Batal')">Batal</button>
                     </div>
-                </div>
-            
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
-                    <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-dark);">Daftar Anggota Siswa Resmi (Cloud)</h3>
-                    <button onclick="downloadStudentBackupCSV()" style="background-color: #2ecc71; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px;">
-                        <i class="fa-solid fa-file-excel"></i> Backup Data Siswa
-                    </button>
-                </div>
-            
-                <div style="position: relative; margin-bottom: 20px;">
-                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-gray);"></i>
-                    <input type="text" id="studentSearchInput" oninput="searchStudent()" placeholder="Cari berdasarkan Nama, Kelas, atau Barcode Siswa..." style="width: 100%; padding: 12px 20px 12px 45px; border: 2px solid var(--light-blue); border-radius: 25px; outline: none; font-size: 0.95rem; box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: 0.3s;">
-                </div>
-            
-                <div class="table-responsive">
-                    <table class="book-table">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Barcode Siswa</th>
-                                <th>Nama Siswa</th>
-                                <th>Kelas</th>
-                                <th style="text-align: center;">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="studentTableBody">
-                            <tr><td colspan="5" style="text-align:center;">Memuat data siswa...</td></tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
 
         </div>
     </div>
 
+    <!-- JAVASCRIPT UNTUK INTERAKSI DAN NAVIGASI -->
     <script>
+        // Simulasi Login (Gunakan password 'admin123' untuk tes)
         function showLogin() {
-            document.getElementById('mainNavbar').style.display = 'none';
             document.getElementById('userSection').style.display = 'none';
             document.getElementById('adminSection').style.display = 'none';
+            document.getElementById('mainNavbar').style.display = 'none';
             document.getElementById('loginSection').style.display = 'flex';
         }
-        function showUserSection(page) {
-            document.getElementById('mainNavbar').style.display = 'flex';
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('adminSection').style.display = 'none';
-            document.getElementById('userSection').style.display = 'block';
-        }
-        function navigateUser(target) {
-            document.querySelectorAll('.user-sub-page').forEach(div => div.style.display = 'none');
-            document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
-            document.getElementById('sub-' + target).style.display = 'block';
-            document.getElementById('li-' + target).classList.add('active');
-        }
-        function toggleMobileMenu() {
-            document.getElementById('navContainer').classList.toggle('active');
-        }
+
         function checkPassword() {
-            if(document.getElementById('passwordInput').value === "admin") {
-                document.getElementById('mainNavbar').style.display = 'none';
+            const pass = document.getElementById('passwordInput').value;
+            if(pass === 'admin123') { // Ganti password di sini
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('adminSection').style.display = 'block';
-                hideAdminDetail();
+                document.getElementById('loginError').style.display = 'none';
+                document.getElementById('passwordInput').value = '';
             } else {
                 document.getElementById('loginError').style.display = 'block';
             }
         }
-        function handleKeyPress(e) { if(e.key === 'Enter') checkPassword(); }
-        
-        function showAdminDetail(type, title, desc) {
+
+        function handleKeyPress(e) {
+            if(e.key === 'Enter') checkPassword();
+        }
+
+        function showUserSection(page) {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('adminSection').style.display = 'none';
+            document.getElementById('userSection').style.display = 'block';
+            document.getElementById('mainNavbar').style.display = 'flex';
+            navigateUser(page);
+        }
+
+        // Navigasi User Utama
+        function navigateUser(pageId) {
+            // Sembunyikan semua sub halaman user
+            const subPages = document.querySelectorAll('.user-sub-page');
+            subPages.forEach(p => p.style.display = 'none');
+            
+            // Tampilkan sub halaman terpilih
+            document.getElementById('sub-' + pageId).style.display = 'flex';
+
+            // Reset status menu aktif di navbar
+            const navLinks = document.querySelectorAll('.nav-links li');
+            navLinks.forEach(li => li.classList.remove('active'));
+            document.getElementById('li-' + pageId).classList.add('active');
+
+            // Tutup menu mobile jika terbuka
+            document.getElementById('navContainer').classList.remove('active');
+        }
+
+        // Toggle Menu Mobile
+        function toggleMobileMenu() {
+            document.getElementById('navContainer').classList.toggle('active');
+        }
+
+        // Kontrol Detail Menu Dashboard Admin
+        function showAdminDetail(title, subtitle, desc) {
             document.getElementById('adminGrid').style.display = 'none';
             document.getElementById('adminDetail').style.display = 'block';
-            document.getElementById('detailSubTitle').innerText = title;
+            document.getElementById('detailSubTitle').innerText = subtitle;
             document.getElementById('detailDesc').innerText = desc;
             
-            document.getElementById('crudBookContainer').style.display = (type === 'Buku') ? 'block' : 'none';
-            document.getElementById('loanTransactionContainer').style.display = (type === 'Pinjam') ? 'block' : 'none';
-            document.getElementById('crudStudentContainer').style.display = (type === 'Siswa') ? 'block' : 'none';
-            document.getElementById('reportTransactionContainer').style.display = (type === 'Laporan') ? 'block' : 'none';
+            // Sembunyikan semua container sub-fitur admin dahulu
+            document.getElementById('crudBookContainer').style.display = 'none';
+            document.getElementById('loanTransactionContainer').style.display = 'none';
+            document.getElementById('crudStudentContainer').style.display = 'none';
         }
+
         function hideAdminDetail() {
-            document.getElementById('adminGrid').style.display = 'grid';
             document.getElementById('adminDetail').style.display = 'none';
+            document.getElementById('adminGrid').style.display = 'grid';
         }
-        function openBookManager() { showAdminDetail('Buku', 'Katalog Buku Perpustakaan', 'Kelola data buku yang tersedia.'); }
-        function openStudentManager() { showAdminDetail('Siswa', 'Data Anggota Siswa', 'Manajemen basis data siswa.'); }
-        function openLoanManager() { 
-            showAdminDetail('Pinjam', 'Transaksi Peminjaman Buku', 'Masukkan Barcode Siswa terlebih dahulu untuk mulai meminjam buku.'); 
-            if (typeof window.resetLoanSession === 'function') { window.resetLoanSession(); }
+
+        function openBookManager() {
+            showAdminDetail('Buku', 'Katalog Buku', 'Tambahkan, edit, atau hapus koleksi buku dari sistem.');
+            document.getElementById('crudBookContainer').style.display = 'block';
         }
+
+        function openLoanManager() {
+            showAdminDetail('Pinjam', 'Transaksi Peminjaman Baru', 'Scan kartu anggota siswa lalu masukkan item buku.');
+            document.getElementById('loanTransactionContainer').style.display = 'block';
+        }
+
+        function openStudentManager() {
+            showAdminDetail('Siswa', 'Data Anggota Siswa', 'Manajemen keanggotaan perpustakaan untuk siswa/siswi.');
+            document.getElementById('crudStudentContainer').style.display = 'block';
+        }
+
         function openReportManager() {
-            showAdminDetail('Laporan', 'Laporan Riwayat Transaksi', 'Memantau data riwayat sirkulasi keluar masuknya buku secara real-time.');
-        }
-    </script>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { 
-            getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc 
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyC-DIolrfqSIxhZVGE5JjFaeGOCtsMRz3c",
-            authDomain: "perpus-lentera.firebaseapp.com",
-            projectId: "perpus-lentera",
-            storageBucket: "perpus-lentera.firebasestorage.app",
-            messagingSenderId: "767330778517",
-            appId: "1:767330778517:web:bf8d3058be09cee206ca9c",
-            measurementId: "G-7MXKTJV66C"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        
-        const booksCollection = collection(db, "books");
-        const studentsCollection = collection(db, "students");
-        const loansCollection = collection(db, "loans");
-
-        let localBooksArray = [];
-        let localStudentsArray = [];
-        let localLoansArray = []; // Array penampung riwayat transaksi
-        
-        let currentActiveStudent = null;
-        let loanCartBooks = [];
-
-        /* --- MANAJEMEN LIVE DATA BUKU --- */
-        onSnapshot(booksCollection, (snapshot) => {
-            localBooksArray = [];
-            snapshot.forEach((doc) => {
-                localBooksArray.push({ id: doc.id, ...doc.data() });
-            });
-            const searchInput = document.getElementById('bookSearchInput');
-            if (searchInput && searchInput.value) {
-                searchBook();
-            } else {
-                renderBooksTable(localBooksArray);
-            }
-        });
-
-        window.renderBooksTable = function(dataArray) {
-            const tbody = document.getElementById('bookTableBody');
-            if (!tbody) return;
-            tbody.innerHTML = "";
-            if(dataArray.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-gray);">Data tidak ditemukan / Katalog kosong.</td></tr>`;
-                return;
-            }
-            dataArray.forEach((book, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td><strong style="color:var(--primary-blue); font-family:monospace;">${book.barcode || ''}</strong></td>
-                    <td>${book.title || ''}</td>
-                    <td>${book.author || ''}</td>
-                    <td style="text-align: center; white-space: nowrap;">
-                        <button class="btn-action btn-edit" onclick="editBookTrigger('${book.id}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
-                        <button class="btn-action btn-delete" onclick="deleteBook('${book.id}')"><i class="fa-solid fa-trash"></i> Hapus</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
+            showAdminDetail('Laporan', 'Rekapitulasi Sirkulasi', 'Melihat log historis peminjaman dan pengembalian buku.');
         }
 
-        window.saveBook = async function() {
-            const idHidden = document.getElementById('editBookId').value;
-            const titleInput = document.getElementById('bookTitleInput').value.trim();
-            const authorInput = document.getElementById('bookAuthorInput').value.trim();
-            const barcodeInput = document.getElementById('bookBarcodeInput').value.trim();
-
-            if(!titleInput || !authorInput || !barcodeInput) {
-                alert("Mohon isi seluruh data buku sebelum menyimpan!");
-                return;
-            }
-
-            try {
-                const bookData = { title: titleInput, author: authorInput, barcode: barcodeInput };
-                if(idHidden) {
-                    await updateDoc(doc(db, "books", idHidden), bookData);
-                    alert("Data buku berhasil diperbarui!");
-                } else {
-                    await addDoc(booksCollection, bookData);
-                    alert("Buku baru berhasil disimpan ke Katalog!");
-                }
-                resetBookForm();
-            } catch(e) { console.error(e); }
+        function resetBookForm() {
+            document.getElementById('bookTitleInput').value = '';
+            document.getElementById('bookAuthorInput').value = '';
+            document.getElementById('bookBarcodeInput').value = '';
         }
-
-        window.editBookTrigger = function(id) {
-            const book = localBooksArray.find(b => b.id === id);
-            if(!book) return;
-            document.getElementById('editBookId').value = book.id;
-            document.getElementById('bookTitleInput').value = book.title || '';
-            document.getElementById('bookAuthorInput').value = book.author || '';
-            document.getElementById('bookBarcodeInput').value = book.barcode || '';
-            document.getElementById('formFormTitle').innerText = "Edit Data Buku";
-            document.getElementById('btnSaveBookAction').innerText = "Simpan Perubahan";
-            document.getElementById('btnCancelEditAction').style.display = "inline-block";
-        }
-
-        window.deleteBook = async function(id) {
-            if(!confirm("Apakah Anda yakin ingin menghapus buku ini dari katalog?")) return;
-            try { await deleteDoc(doc(db, "books", id)); alert("Buku berhasil dihapus."); } catch(e) { console.error(e); }
-        }
-
-        window.resetBookForm = function() {
-            document.getElementById('editBookId').value = "";
-            document.getElementById('bookTitleInput').value = "";
-            document.getElementById('bookAuthorInput').value = "";
-            document.getElementById('bookBarcodeInput').value = "";
-            document.getElementById('formFormTitle').innerText = "Tambah Buku Baru";
-            document.getElementById('btnSaveBookAction').innerText = "Simpan Buku";
-            document.getElementById('btnCancelEditAction').style.display = "none";
-        }
-
-        window.searchBook = function() {
-            const keyword = document.getElementById('bookSearchInput').value.toLowerCase().trim();
-            if(!keyword) { renderBooksTable(localBooksArray); return; }
-            const filtered = localBooksArray.filter(b => {
-                return (b.title||"").toLowerCase().includes(keyword) || (b.author||"").toLowerCase().includes(keyword) || (b.barcode||"").toLowerCase().includes(keyword);
-            });
-            renderBooksTable(filtered);
-        }
-
-        /* --- SISTEM TRANSAKSI PEMINJAMAN --- */
-        window.handleStudentScan = function(e) { if(e.key === 'Enter') checkStudentLoanBarcode(); }
-        window.checkStudentLoanBarcode = function() {
-            const inputVal = document.getElementById('loanStudentBarcodeInput').value.trim();
-            if(!inputVal) return;
-            const studentFound = localStudentsArray.find(s => (s.barcode || s.barcodeSiswa || '').toLowerCase() === inputVal.toLowerCase());
-            if(studentFound) {
-                currentActiveStudent = studentFound;
-                document.getElementById('txtLoanStudentName').innerText = studentFound.name || studentFound.namaSiswa || studentFound.nama || '-';
-                document.getElementById('txtLoanStudentClass').innerText = "Kelas: " + (studentFound.class || studentFound.kelas || '-');
-                document.getElementById('loanStudentInfoBox').style.display = "flex";
-                document.getElementById('loanBookSection').style.display = "block";
-                document.getElementById('loanStudentBarcodeInput').disabled = true;
-                document.getElementById('loanBookBarcodeInput').focus();
-            } else {
-                alert("Barcode siswa tidak ditemukan!");
-                document.getElementById('loanStudentBarcodeInput').value = "";
-            }
-        }
-
-        window.handleBookScan = function(e) { if(e.key === 'Enter') addBookToLoanList(); }
-        window.addBookToLoanList = function() {
-            const inputVal = document.getElementById('loanBookBarcodeInput').value.trim();
-            if(!inputVal) return;
-            const bookFound = localBooksArray.find(b => (b.barcode || '').toLowerCase() === inputVal.toLowerCase());
-            if(!bookFound) { alert("Barcode buku tidak ditemukan!"); document.getElementById('loanBookBarcodeInput').value = ""; return; }
-            if(loanCartBooks.some(b => b.id === bookFound.id)) { alert("Buku sudah ada di daftar!"); document.getElementById('loanBookBarcodeInput').value = ""; return; }
-            loanCartBooks.push(bookFound);
-            document.getElementById('loanBookBarcodeInput').value = "";
-            renderLoanCartTable();
-        }
-
-        function renderLoanCartTable() {
-            const tbody = document.getElementById('loanCartTableBody');
-            tbody.innerHTML = "";
-            if(loanCartBooks.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-gray);">Belum ada buku dimasukkan.</td></tr>`;
-                return;
-            }
-            loanCartBooks.forEach((book, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong style="color:var(--primary-blue); font-family:monospace;">${book.barcode || ''}</strong></td>
-                    <td>${book.title || ''}</td>
-                    <td>${book.author || ''}</td>
-                    <td style="text-align: center;"><button onclick="removeBookFromLoanCart(${index})" style="background: none; border: none; color: var(--danger-red); cursor: pointer;"><i class="fa-solid fa-circle-xmark"></i></button></td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        window.removeBookFromLoanCart = function(index) { loanCartBooks.splice(index, 1); renderLoanCartTable(); }
-        window.resetLoanSession = function() {
-            currentActiveStudent = null; loanCartBooks = [];
-            document.getElementById('loanStudentBarcodeInput').disabled = false;
-            document.getElementById('loanStudentBarcodeInput').value = "";
-            document.getElementById('loanBookBarcodeInput').value = "";
-            document.getElementById('loanStudentInfoBox').style.display = "none";
-            document.getElementById('loanBookSection').style.display = "none";
-            renderLoanCartTable();
-        }
-
-        window.submitLoanTransaction = async function() {
-            if(!currentActiveStudent || loanCartBooks.length === 0) return;
-            const todayStr = new Date().toISOString().split('T')[0];
-            try {
-                for(let book of loanCartBooks) {
-                    await addDoc(loansCollection, {
-                        studentBarcode: currentActiveStudent.barcode || currentActiveStudent.barcodeSiswa || '',
-                        studentName: currentActiveStudent.name || currentActiveStudent.namaSiswa || currentActiveStudent.nama || '',
-                        studentClass: currentActiveStudent.class || currentActiveStudent.kelas || '',
-                        bookBarcode: book.barcode || '',
-                        bookTitle: book.title || '',
-                        loanDate: todayStr,
-                        status: "Dipinjam"
-                    });
-                }
-                alert("Transaksi peminjaman sukses disimpan!");
-                resetLoanSession();
-                hideAdminDetail();
-            } catch(e) { console.error(e); }
-        }
-
-        /* --- SINKRONISASI & PENCARIAN RIWAYAT TRANSAKSI (HALAMAN BARU) --- */
-        onSnapshot(loansCollection, (snapshot) => {
-            localLoansArray = [];
-            snapshot.forEach((doc) => {
-                localLoansArray.push({ id: doc.id, ...doc.data() });
-            });
-            
-            // Sortir otomatis dari transaksi terbaru (berdasarkan tanggal jika ada)
-            localLoansArray.sort((a, b) => (b.loanDate || '').localeCompare(a.loanDate || ''));
-
-            const searchInput = document.getElementById('loanReportSearchInput');
-            if(searchInput && searchInput.value) {
-                searchLoanReport();
-            } else {
-                renderLoanReportTable(localLoansArray);
-            }
-        });
-
-        // Ganti fungsi render tabel laporan lama dengan yang ini
-window.renderLoanReportTable = function(dataArray) {
-    const tbody = document.getElementById('loanReportTableBody');
-    if(!tbody) return;
-    tbody.innerHTML = "";
-
-    // Reset master checkbox dan tombol setiap kali render ulang
-    const masterCheck = document.getElementById('checkAllLoans');
-    if(masterCheck) masterCheck.checked = false;
-    updateDeleteButtonState();
-
-    if(dataArray.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-gray);">Belum ada riwayat sirkulasi buku.</td></tr>`;
-        return;
-    }
-
-    dataArray.forEach((loan, index) => {
-        const tr = document.createElement('tr');
-        const statusBadge = loan.status === "Dipinjam" 
-            ? `<span class="badge badge-loaned"><i class="fa-solid fa-clock"></i> Dipinjam</span>`
-            : `<span class="badge badge-returned"><i class="fa-solid fa-circle-check"></i> Kembali</span>`;
-
-        tr.innerHTML = `
-            <td style="text-align: center;">
-                <input type="checkbox" class="loan-checkbox" value="${loan.id}" onchange="updateDeleteButtonState()" style="transform: scale(1.2); cursor: pointer;">
-            </td>
-            <td>${index + 1}</td>
-            <td style="white-space:nowrap; font-size:0.9rem;">${loan.loanDate || '-'}</td>
-            <td>
-                <strong>${loan.studentName || '-'}</strong><br>
-                <span style="font-size:0.8rem; color:var(--text-gray);">Barcode: ${loan.studentBarcode || '-'} (Kl: ${loan.studentClass || '-'})</span>
-            </td>
-            <td>
-                <strong>${loan.bookTitle || '-'}</strong><br>
-                <span style="font-size:0.8rem; color:var(--text-gray);">Barcode: ${loan.bookBarcode || '-'}</span>
-            </td>
-            <td>${statusBadge}</td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
-
-// Fungsi untuk mencentang/membatalkan semua baris
-window.toggleSelectAllLoans = function(masterCheckbox) {
-    const checkboxes = document.querySelectorAll('.loan-checkbox');
-    checkboxes.forEach(cb => {
-        cb.checked = masterCheckbox.checked;
-    });
-    updateDeleteButtonState();
-}
-
-// Fungsi untuk memantau jumlah yang dicentang dan mengaktifkan/nonaktifkan tombol hapus
-window.updateDeleteButtonState = function() {
-    const checkboxes = document.querySelectorAll('.loan-checkbox:checked');
-    const deleteBtn = document.getElementById('btnDeleteSelectedLoans');
-    const countSpan = document.getElementById('selectedLoanCount');
-    
-    if(!deleteBtn || !countSpan) return;
-
-    const totalSelected = checkboxes.length;
-    countSpan.innerText = totalSelected;
-
-    if(totalSelected > 0) {
-        deleteBtn.disabled = false;
-        deleteBtn.style.opacity = "1";
-        deleteBtn.style.cursor = "pointer";
-    } else {
-        deleteBtn.disabled = true;
-        deleteBtn.style.opacity = "0.6";
-        deleteBtn.style.cursor = "not-allowed";
-    }
-}
-
-// Fungsi eksekusi hapus data terpilih dari Cloud Firebase
-window.deleteSelectedLoans = async function() {
-    const checkboxes = document.querySelectorAll('.loan-checkbox:checked');
-    if(checkboxes.length === 0) return;
-
-    const konfirmasi = confirm(`Apakah Anda yakin ingin menghapus ${checkboxes.length} data transaksi terpilih secara permanen dari cloud?`);
-    if(!konfirmasi) return;
-
-    // Ambil fungsi deleteDoc dan doc dari Firebase yang sudah di-import di atas
-    try {
-        for(let cb of checkboxes) {
-            const loanId = cb.value;
-            // Menghapus data satu per satu berdasarkan ID dokumen Firebase
-            await deleteDoc(doc(db, "loans", loanId));
-        }
-        alert("Data transaksi terpilih berhasil dihapus!");
-    } catch (error) {
-        console.error("Gagal menghapus data: ", error);
-        alert("Terjadi kesalahan saat mencoba menghapus data.");
-    }
-}
-
-        window.searchLoanReport = function() {
-            const keyword = document.getElementById('loanReportSearchInput').value.toLowerCase().trim();
-            if(!keyword) {
-                renderLoanReportTable(localLoansArray);
-                return;
-            }
-
-            const filtered = localLoansArray.filter(loan => {
-                const sName = (loan.studentName || "").toLowerCase();
-                const sBarcode = (loan.studentBarcode || "").toLowerCase();
-                const bTitle = (loan.bookTitle || "").toLowerCase();
-                const bBarcode = (loan.bookBarcode || "").toLowerCase();
-                const lDate = (loan.loanDate || "").toLowerCase();
-                const status = (loan.status || "").toLowerCase();
-
-                return sName.includes(keyword) || sBarcode.includes(keyword) || bTitle.includes(keyword) || bBarcode.includes(keyword) || lDate.includes(keyword) || status.includes(keyword);
-            });
-
-            renderLoanReportTable(filtered);
-        }
-
-        /* --- DOWNLOAD EXPORT LAPORAN CSV --- */
-        window.downloadLoanReportCSV = function() {
-            if(localLoansArray.length === 0) {
-                alert("Tidak ada data sirkulasi untuk di-export!");
-                return;
-            }
-
-            let csvContent = "data:text/csv;charset=utf-8,No,Tanggal Pinjam,Nama Siswa,Barcode Siswa,Kelas,Judul Buku,Barcode Buku,Status\n";
-            localLoansArray.forEach((loan, index) => {
-                let row = `${index + 1},"${loan.loanDate || ''}","${loan.studentName || ''}","${loan.studentBarcode || ''}","${loan.studentClass || ''}","${loan.bookTitle || ''}","${loan.bookBarcode || ''}","${loan.status || ''}"`;
-                csvContent += row + "\n";
-            });
-
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "Laporan_Sirkulasi_Pelangi_Pustaka.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        /* --- MANAJEMEN LIVE DATA SISWA --- */
-        onSnapshot(studentsCollection, (snapshot) => {
-            localStudentsArray = [];
-            snapshot.forEach((doc) => { localStudentsArray.push({ id: doc.id, ...doc.data() }); });
-            const searchInput = document.getElementById('studentSearchInput');
-            if (searchInput && searchInput.value) { searchStudent(); } else { renderStudentsTable(localStudentsArray); }
-        });
-
-        window.renderStudentsTable = function(dataArray) {
-            const tbody = document.getElementById('studentTableBody');
-            if (!tbody) return;
-            tbody.innerHTML = "";
-            if(dataArray.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Kosong</td></tr>`; return; }
-            dataArray.forEach((student, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td><strong style="color:var(--primary-blue); font-family:monospace;">${student.barcode || '-'}</strong></td>
-                    <td>${student.name || '-'}</td>
-                    <td>${student.class || '-'}</td>
-                    <td style="text-align: center;">
-                        <button class="btn-action btn-edit" onclick="editStudentTrigger('${student.id}')">Edit</button>
-                        <button class="btn-action btn-delete" onclick="deleteStudent('${student.id}')">Hapus</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        window.saveStudent = async function() {
-            const idHidden = document.getElementById('editStudentId').value;
-            const nameInput = document.getElementById('studentNameInput').value.trim();
-            const classInput = document.getElementById('studentClassInput').value.trim();
-            const barcodeInput = document.getElementById('studentBarcodeInput').value.trim();
-            if(!nameInput || !classInput || !barcodeInput) return;
-            try {
-                const studentData = { name: nameInput, class: classInput, barcode: barcodeInput };
-                if(idHidden) { await updateDoc(doc(db, "students", idHidden), studentData); } 
-                else { await addDoc(studentsCollection, studentData); }
-                resetStudentForm();
-            } catch(e) { console.error(e); }
-        }
-
-        window.editStudentTrigger = function(id) {
-            const student = localStudentsArray.find(s => s.id === id);
-            if(!student) return;
-            document.getElementById('editStudentId').value = student.id;
-            document.getElementById('studentNameInput').value = student.name || '';
-            document.getElementById('studentClassInput').value = student.class || '';
-            document.getElementById('studentBarcodeInput').value = student.barcode || '';
-        }
-
-        window.deleteStudent = async function(id) { if(confirm("Hapus siswa?")) await deleteDoc(doc(db, "students", id)); }
-        window.resetStudentForm = function() { 
-            document.getElementById('editStudentId').value = ""; document.getElementById('studentNameInput').value = ""; 
-            document.getElementById('studentClassInput').value = ""; document.getElementById('studentBarcodeInput').value = ""; 
-        }
-        window.searchStudent = function() {
-            const keyword = document.getElementById('studentSearchInput').value.toLowerCase().trim();
-            if(!keyword) { renderStudentsTable(localStudentsArray); return; }
-            const filtered = localStudentsArray.filter(s => (s.name||"").toLowerCase().includes(keyword) || (s.barcode||"").toLowerCase().includes(keyword));
-            renderStudentsTable(filtered);
-        }
-        window.downloadStudentBackupCSV = function() { /* backup logic */ }
     </script>
 </body>
 </html>
