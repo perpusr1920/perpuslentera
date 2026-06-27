@@ -309,7 +309,7 @@
                 <h3>Absensi</h3>
                 <p>Daftar Hadir</p>
             </div>
-            <div class="card" onclick="showAdminDetail('Siswa', 'Data Anggota Siswa', 'Manajemen basis data siswa.')">
+            <div class="card" onclick="openStudentManager()">
                 <div class="icon-wrapper"><i class="fa-solid fa-graduation-cap"></i></div>
                 <h3>Siswa</h3>
                 <p>Data Anggota</p>
@@ -432,15 +432,14 @@
     </div>
 
     <script>
-        // Logika Navigasi UI diperbarui untuk mengontrol visibilitas Navbar utama
         function showLogin() {
-            document.getElementById('mainNavbar').style.display = 'none'; // Sembunyikan navbar saat login
+            document.getElementById('mainNavbar').style.display = 'none';
             document.getElementById('userSection').style.display = 'none';
             document.getElementById('adminSection').style.display = 'none';
             document.getElementById('loginSection').style.display = 'flex';
         }
         function showUserSection(page) {
-            document.getElementById('mainNavbar').style.display = 'flex'; // Munculkan kembali navbar untuk user
+            document.getElementById('mainNavbar').style.display = 'flex';
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('adminSection').style.display = 'none';
             document.getElementById('userSection').style.display = 'block';
@@ -456,7 +455,7 @@
         }
         function checkPassword() {
             if(document.getElementById('passwordInput').value === "admin") {
-                document.getElementById('mainNavbar').style.display = 'none'; // Pastikan navbar tetap sembunyi di Panel Admin
+                document.getElementById('mainNavbar').style.display = 'none';
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('adminSection').style.display = 'block';
                 hideAdminDetail();
@@ -465,6 +464,7 @@
             }
         }
         function handleKeyPress(e) { if(e.key === 'Enter') checkPassword(); }
+        
         function showAdminDetail(type, title, desc) {
             document.getElementById('adminGrid').style.display = 'none';
             document.getElementById('adminDetail').style.display = 'block';
@@ -479,6 +479,7 @@
             document.getElementById('adminDetail').style.display = 'none';
         }
         function openBookManager() { showAdminDetail('Buku', 'Katalog Buku Perpustakaan', 'Kelola data buku yang tersedia.'); }
+        function openStudentManager() { showAdminDetail('Siswa', 'Data Anggota Siswa', 'Manajemen basis data siswa.'); }
     </script>
 
     <script type="module">
@@ -517,6 +518,7 @@
 
         window.renderBooksTable = function() {
             const tbody = document.getElementById('bookTableBody');
+            if (!tbody) return;
             tbody.innerHTML = "";
             if(localBooksArray.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-gray);">Katalog Cloud Kosong. Silakan tambah buku!</td></tr>`;
@@ -538,24 +540,123 @@
             });
         }
 
-        window.saveBook = async function() {
-            const idHidden = document.getElementById('editBookId').value;
-            const titleInput = document.getElementById('bookTitleInput').value.trim();
-            const authorInput = document.getElementById('bookAuthorInput').value.trim();
-            const barcodeInput = document.getElementById('bookBarcodeInput').value.trim();
+        /* --- MANAJEMEN LIVE DATA SISWA --- */
+        onSnapshot(studentsCollection, (snapshot) => {
+            localStudentsArray = [];
+            snapshot.forEach((doc) => {
+                localStudentsArray.push({ id: doc.id, ...doc.data() });
+            });
+            renderStudentsTable(localStudentsArray);
+        });
 
-            if(!titleInput || !authorInput || !barcodeInput) {
-                alert("Mohon isi seluruh data buku sebelum menyimpan!");
+        window.renderStudentsTable = function(dataArray) {
+            const tbody = document.getElementById('studentTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = "";
+            
+            if(dataArray.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-gray);">Data siswa kosong. Silakan registrasikan siswa baru!</td></tr>`;
                 return;
             }
+            
+            dataArray.forEach((student, index) => {
+                const tr = document.createElement('tr');
+                const barcodeSiswa = student.barcode || student.barcodeSiswa || '-';
+                const namaSiswa = student.name || student.namaSiswa || student.nama || '-';
+                const kelasSiswa = student.class || student.kelas || '-';
+
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><strong style="color:var(--primary-blue); font-family:monospace;">${barcodeSiswa}</strong></td>
+                    <td>${namaSiswa}</td>
+                    <td>${kelasSiswa}</td>
+                    <td style="text-align: center; white-space: nowrap;">
+                        <button class="btn-action btn-edit" onclick="editStudentTrigger('${student.id}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+                        <button class="btn-action btn-delete" onclick="deleteStudent('${student.id}')"><i class="fa-solid fa-trash"></i> Hapus</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.saveStudent = async function() {
+            const idHidden = document.getElementById('editStudentId').value;
+            const nameInput = document.getElementById('studentNameInput').value.trim();
+            const classInput = document.getElementById('studentClassInput').value.trim();
+            const barcodeInput = document.getElementById('studentBarcodeInput').value.trim();
+
+            if(!nameInput || !classInput || !barcodeInput) {
+                alert("Mohon isi seluruh data siswa sebelum menyimpan!");
+                return;
+            }
+            
             try {
+                const studentData = {
+                    name: nameInput,
+                    class: classInput,
+                    barcode: barcodeInput
+                };
+
                 if(idHidden) {
-                    await updateDoc(doc(db, "books", idHidden), { title: titleInput, author: authorInput, barcode: barcodeInput });
+                    await updateDoc(doc(db, "students", idHidden), studentData);
+                    alert("Data siswa berhasil diperbarui!");
                 } else {
-                    await addDoc(booksCollection, { title: titleInput, author: authorInput, barcode: barcodeInput });
+                    await addDoc(studentsCollection, studentData);
+                    alert("Siswa baru berhasil diregistrasikan!");
                 }
-                resetBookForm();
+                resetStudentForm();
+            } catch(e) { 
+                console.error("Gagal menyimpan data siswa:", e); 
+            }
+        }
+
+        window.editStudentTrigger = async function(id) {
+            const student = localStudentsArray.find(s => s.id === id);
+            if(!student) return;
+            
+            document.getElementById('editStudentId').value = student.id;
+            document.getElementById('studentNameInput').value = student.name || student.namaSiswa || student.nama || '';
+            document.getElementById('studentClassInput').value = student.class || student.kelas || '';
+            document.getElementById('studentBarcodeInput').value = student.barcode || student.barcodeSiswa || '';
+            
+            document.getElementById('studentFormTitle').innerText = "Edit Data Anggota Siswa";
+            document.getElementById('btnSaveStudentAction').innerText = "Simpan Perubahan";
+            document.getElementById('btnCancelStudentEditAction').style.display = "inline-block";
+        }
+
+        window.deleteStudent = async function(id) {
+            if(!confirm("Apakah Anda yakin ingin menghapus siswa ini dari database?")) return;
+            try {
+                await deleteDoc(doc(db, "students", id));
+                alert("Data siswa berhasil dihapus.");
             } catch(e) { console.error(e); }
+        }
+
+        window.resetStudentForm = function() {
+            document.getElementById('editStudentId').value = "";
+            document.getElementById('studentNameInput').value = "";
+            document.getElementById('studentClassInput').value = "";
+            document.getElementById('studentBarcodeInput').value = "";
+            document.getElementById('studentFormTitle').innerText = "Registrasi Anggota Siswa Baru";
+            document.getElementById('btnSaveStudentAction').innerText = "Registrasikan Siswa";
+            document.getElementById('btnCancelStudentEditAction').style.display = "none";
+        }
+
+        window.searchStudent = function() {
+            const keyword = document.getElementById('studentSearchInput').value.toLowerCase().trim();
+            if(!keyword) {
+                renderStudentsTable(localStudentsArray);
+                return;
+            }
+            
+            const filteredStudents = localStudentsArray.filter(student => {
+                const name = (student.name || student.namaSiswa || student.nama || "").toLowerCase();
+                const sClass = (student.class || student.kelas || "").toLowerCase();
+                const barcode = (student.barcode || student.barcodeSiswa || "").toLowerCase();
+                return name.includes(keyword) || sClass.includes(keyword) || barcode.includes(keyword);
+            });
+            
+            renderStudentsTable(filteredStudents);
         }
     </script>
 </body>
