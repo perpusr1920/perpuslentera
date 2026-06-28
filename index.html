@@ -464,8 +464,8 @@
                                 <th>No</th>
                                 <th>Waktu Kunjungan</th>
                                 <th>Nomor Anggota</th>
-                                <th>Nama Pengunjung</th>
-                                <th>Status / Kelas</th>
+                                <th>Pengunjung</th>
+                                <th>Kelas</th>
                             </tr>
                         </thead>
                         <tbody id="attendanceTableBody">
@@ -736,12 +736,16 @@ function submitAttendance() {
 
     if(!barcodeValue) return;
 
+    // 1. Set default jika data siswa tidak ditemukan di database
     let namaSiswa = "Pengunjung Umum";
-    let kelasSiswa = "Siswa / Anggota";
+    let kelasSiswa = "-";
 
-    if(masterSiswa[barcodeValue]) {
-        namaSiswa = masterSiswa[barcodeValue].nama;
-        kelasSiswa = masterSiswa[barcodeValue].kelas;
+    // 2. Cari data siswa secara otomatis berdasarkan Barcode di localStudentsArray Anda
+    const siswaDitemukan = localStudentsArray.find(siswa => siswa.barcode === barcodeValue);
+
+    if(siswaDitemukan) {
+        namaSiswa = siswaDitemukan.name;
+        kelasSiswa = siswaDitemukan.class; // Mengambil data kelas asli siswa (misal: "Kelas 4", "Kelas 1A", dll)
     }
 
     const now = new Date();
@@ -753,12 +757,13 @@ function submitAttendance() {
         tanggal: dateString,
         id: barcodeValue,
         nama: namaSiswa,
-        status: kelasSiswa
+        status: kelasSiswa // Ini akan menyimpan nama kelasnya saja ke database log
     };
 
     attendanceData.unshift(newLog);
     localStorage.setItem('attendance_logs', JSON.stringify(attendanceData));
 
+    // Menampilkan notifikasi sukses berwarna hijau
     msgEl.style.color = '#2ecc71';
     msgEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Absen Berhasil! Selamat Datang, <b>${namaSiswa}</b> (${kelasSiswa})`;
     msgEl.style.display = 'block';
@@ -770,7 +775,6 @@ function submitAttendance() {
 
     setTimeout(() => { msgEl.style.display = 'none'; }, 4000);
 }
-
 function renderAttendanceTable() {
     const tbody = document.getElementById('attendanceTableBody');
     const todayStr = new Date().toLocaleDateString('id-ID');
