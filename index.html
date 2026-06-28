@@ -1020,7 +1020,7 @@
             const tbody = document.getElementById('studentTableBody');
             if (!tbody) return;
             tbody.innerHTML = "";
-            if(dataArray.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Kosong</td></tr>`; return; }
+            if(dataArray.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-gray);">Data siswa tidak ditemukan / Kosong.</td></tr>`; return; }
             dataArray.forEach((student, index) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -1028,9 +1028,9 @@
                     <td><strong style="color:var(--primary-blue); font-family:monospace;">${student.barcode || '-'}</strong></td>
                     <td>${student.name || '-'}</td>
                     <td>${student.class || '-'}</td>
-                    <td style="text-align: center;">
-                        <button class="btn-action btn-edit" onclick="editStudentTrigger('${student.id}')">Edit</button>
-                        <button class="btn-action btn-delete" onclick="deleteStudent('${student.id}')">Hapus</button>
+                    <td style="text-align: center; white-space: nowrap;">
+                        <button class="btn-action btn-edit" onclick="editStudentTrigger('${student.id}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+                        <button class="btn-action btn-delete" onclick="deleteStudent('${student.id}')"><i class="fa-solid fa-trash"></i> Hapus</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -1042,11 +1042,21 @@
             const nameInput = document.getElementById('studentNameInput').value.trim();
             const classInput = document.getElementById('studentClassInput').value.trim();
             const barcodeInput = document.getElementById('studentBarcodeInput').value.trim();
-            if(!nameInput || !classInput || !barcodeInput) return;
+            
+            if(!nameInput || !classInput || !barcodeInput) {
+                alert("Mohon isi seluruh data siswa sebelum menyimpan!");
+                return;
+            }
+            
             try {
                 const studentData = { name: nameInput, class: classInput, barcode: barcodeInput };
-                if(idHidden) { await updateDoc(doc(db, "students", idHidden), studentData); } 
-                else { await addDoc(studentsCollection, studentData); }
+                if(idHidden) { 
+                    await updateDoc(doc(db, "students", idHidden), studentData); 
+                    alert("Data siswa berhasil diperbarui!");
+                } else { 
+                    await addDoc(studentsCollection, studentData); 
+                    alert("Siswa baru berhasil diregistrasikan!");
+                }
                 resetStudentForm();
             } catch(e) { console.error(e); }
         }
@@ -1058,20 +1068,88 @@
             document.getElementById('studentNameInput').value = student.name || '';
             document.getElementById('studentClassInput').value = student.class || '';
             document.getElementById('studentBarcodeInput').value = student.barcode || '';
+            document.getElementById('studentFormTitle').innerText = "Edit Data Anggota Siswa";
+            document.getElementById('btnSaveStudentAction').innerText = "Simpan Perubahan";
+            document.getElementById('btnCancelStudentEditAction').style.display = "inline-block";
         }
 
-        window.deleteStudent = async function(id) { if(confirm("Hapus siswa?")) await deleteDoc(doc(db, "students", id)); }
-        window.resetStudentForm = function() { 
-            document.getElementById('editStudentId').value = ""; document.getElementById('studentNameInput').value = ""; 
-            document.getElementById('studentClassInput').value = ""; document.getElementById('studentBarcodeInput').value = ""; 
+        window.deleteStudent = async function(id) { 
+            if(!confirm("Apakah Anda yakin ingin menghapus data siswa ini?")) return; 
+            try { await deleteDoc(doc(db, "students", id)); alert("Data siswa berhasil dihapus."); } catch(e) { console.error(e); }
         }
+        
+        window.resetStudentForm = function() { 
+            document.getElementById('editStudentId').value = ""; 
+            document.getElementById('studentNameInput').value = ""; 
+            document.getElementById('studentClassInput').value = ""; 
+            document.getElementById('studentBarcodeInput').value = ""; 
+            document.getElementById('studentFormTitle').innerText = "Registrasi Anggota Siswa Baru";
+            document.getElementById('btnSaveStudentAction').innerText = "Registrasikan Siswa";
+            document.getElementById('btnCancelStudentEditAction').style.display = "none";
+        }
+        
         window.searchStudent = function() {
             const keyword = document.getElementById('studentSearchInput').value.toLowerCase().trim();
             if(!keyword) { renderStudentsTable(localStudentsArray); return; }
-            const filtered = localStudentsArray.filter(s => (s.name||"").toLowerCase().includes(keyword) || (s.barcode||"").toLowerCase().includes(keyword));
+            const filtered = localStudentsArray.filter(s => (s.name||"").toLowerCase().includes(keyword) || (s.barcode||"").toLowerCase().includes(keyword) || (s.class||"").toLowerCase().includes(keyword));
             renderStudentsTable(filtered);
         }
-        window.downloadStudentBackupCSV = function() { /* backup logic */ }
+
+        /* ======================================================= */
+        /* --- FUNGSI BARU: EKSPOR DATA (BUKU & SISWA) KE CSV --- */
+        /* ======================================================= */
+
+        // 1. Ekspor / Backup Data Buku
+        window.downloadBackupCSV = function() {
+            if(localBooksArray.length === 0) {
+                alert("Tidak ada data buku yang bisa diekspor!");
+                return;
+            }
+            
+            // Membuat header kolom CSV beserta bom UTF-8 agar karakter terbaca dengan baik di Excel
+            let csvContent = "\uFEFFNo,Barcode Buku,Judul Buku,Pengarang\n";
+            
+            localBooksArray.forEach((book, index) => {
+                // Membuka string dengan tanda kutip untuk mencegah eror tanda koma dalam judul/nama
+                csvContent += `${index + 1},"${book.barcode || ''}","${book.title || ''}","${book.author || ''}"\n`;
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute("href", url);
+            link.setAttribute("download", "Backup_Katalog_Buku_Pelangi_Pustaka.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // 2. Ekspor / Backup Data Anggota Siswa
+        window.downloadStudentBackupCSV = function() {
+            if(localStudentsArray.length === 0) {
+                alert("Tidak ada data siswa yang bisa diekspor!");
+                return;
+            }
+            
+            let csvContent = "\uFEFFNo,Barcode Siswa,Nama Siswa,Kelas\n";
+            
+            localStudentsArray.forEach((student, index) => {
+                csvContent += `${index + 1},"${student.barcode || ''}","${student.name || ''}","${student.class || ''}"\n`;
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute("href", url);
+            link.setAttribute("download", "Backup_Data_Siswa_Pelangi_Pustaka.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     </script>
 </body>
 </html>
