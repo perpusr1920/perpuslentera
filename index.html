@@ -318,6 +318,7 @@
                 <h3>Absensi</h3>
                 <p>Daftar Hadir</p>
             </div>
+            <a href="absensi.html" target="_blank" class="btn-nav"><i class="fa-solid fa-user-check"></i> Buka Monitor Absensi</a>
             <div class="card" onclick="openStudentManager()">
                 <div class="icon-wrapper"><i class="fa-solid fa-graduation-cap"></i></div>
                 <h3>Siswa</h3>
@@ -329,6 +330,39 @@
                 <p>Rekap Transaksi</p>
             </div>
         </div>
+        <!-- Tombol Filter Laporan -->
+<div style="margin-bottom: 20px; display: flex; gap: 10px;">
+    <button class="btn-tab active" id="btnReportSirkulasi" onclick="switchReportTab('sirkulasi')"><i class="fa-solid fa-book-reader"></i> Riwayat Sirkulasi</button>
+    <button class="btn-tab" id="btnReportAbsensi" onclick="switchReportTab('absensi')"><i class="fa-solid fa-id-card"></i> Riwayat Absensi Siswa</button>
+</div>
+
+<!-- CONTAINER 1: TABEL SIRKULASI BUKU (Yang sudah ada sebelumnya) -->
+<div id="containerSirkulasiReport">
+    <!-- ... Taruh tabel sirkulasi/pinjaman buku lama Anda di sini ... -->
+</div>
+
+<!-- CONTAINER 2: TABEL RIWAYAT ABSENSI (Baru) -->
+<div id="containerAbsensiReport" style="display: none;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3>Daftar Hadir Pengunjung Perpustakaan</h3>
+        <button class="btn-action btn-edit" onclick="downloadAttendanceCSV()"><i class="fa-solid fa-file-excel"></i> Cetak Absensi (.CSV)</button>
+    </div>
+    <table class="main-table">
+        <thead>
+            <tr>
+                <th style="width: 50px;">No</th>
+                <th>Tanggal</th>
+                <th>Jam</th>
+                <th>Barcode Siswa</th>
+                <th>Nama Siswa</th>
+                <th>Kelas</th>
+            </tr>
+        </thead>
+        <tbody id="attendanceTableBody">
+            <!-- Data absensi dimuat di sini secara live -->
+        </tbody>
+    </table>
+</div>
 
         <div id="adminDetail" class="admin-detail-box">
             <button class="btn-back-admin" onclick="hideAdminDetail()"><i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard</button>
@@ -1212,6 +1246,91 @@
             
             link.setAttribute("href", url);
             link.setAttribute("download", "Backup_Data_Siswa_Pelangi_Pustaka.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        import { collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // pastikan orderBy di-import
+
+        // Inisialisasi array lokal untuk absensi
+        let localAttendanceArray = [];
+        const attendanceCollection = collection(db, "attendance");
+
+        /* --- SINKRONISASI LIVE DATA ABSENSI --- */
+        const attendanceQuery = query(attendanceCollection, orderBy("timestamp", "desc"));
+        onSnapshot(attendanceQuery, (snapshot) => {
+            localAttendanceArray = [];
+            snapshot.forEach((doc) => {
+                localAttendanceArray.push({ id: doc.id, ...doc.data() });
+            });
+            renderAttendanceTable(localAttendanceArray);
+        });
+
+        // Merender data absensi ke tabel
+        window.renderAttendanceTable = function(dataArray) {
+            const tbody = document.getElementById('attendanceTableBody');
+            if(!tbody) return;
+            tbody.innerHTML = "";
+
+            if(dataArray.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-gray);">Belum ada data absensi hari ini.</td></tr>`;
+                return;
+            }
+
+            dataArray.forEach((att, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><strong>${att.date || '-'}</strong></td>
+                    <td><span style="color: var(--primary-blue); font-weight:bold;">${att.time || '-'}</span></td>
+                    <td style="font-family: monospace;">${att.studentBarcode || '-'}</td>
+                    <td><strong>${att.studentName || '-'}</strong></td>
+                    <td>${att.studentClass || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /* --- FUNGSI NAVIGASI TAB DI LAPORAN --- */
+        window.switchReportTab = function(tabName) {
+            const btnSirkulasi = document.getElementById('btnReportSirkulasi');
+            const btnAbsensi = document.getElementById('btnReportAbsensi');
+            const boxSirkulasi = document.getElementById('containerSirkulasiReport');
+            const boxAbsensi = document.getElementById('containerAbsensiReport');
+
+            if(tabName === 'sirkulasi') {
+                btnSirkulasi.classList.add('active');
+                btnAbsensi.classList.remove('active');
+                boxSirkulasi.style.display = "block";
+                boxAbsensi.style.display = "none";
+            } else {
+                btnSirkulasi.classList.remove('active');
+                btnAbsensi.classList.add('active');
+                boxSirkulasi.style.style.display = "none";
+                boxAbsensi.style.display = "block";
+            }
+        }
+
+        /* --- EKSPOR DATA ABSENSI KE CSV --- */
+        window.downloadAttendanceCSV = function() {
+            if(localAttendanceArray.length === 0) {
+                alert("Tidak ada data absensi yang bisa diekspor!");
+                return;
+            }
+            
+            let csvContent = "\uFEFFNo,Tanggal,Jam Masuk,Barcode Siswa,Nama Siswa,Kelas\n";
+            
+            localAttendanceArray.forEach((att, index) => {
+                csvContent += `${index + 1},"${att.date || ''}","${att.time || ''}","${att.studentBarcode || ''}","${att.studentName || ''}","${att.studentClass || ''}"\n`;
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute("href", url);
+            link.setAttribute("download", "Laporan_Presensi_Pengunjung_Perpustakaan.csv");
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();
