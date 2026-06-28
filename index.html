@@ -464,7 +464,7 @@
                                 <th>No</th>
                                 <th>Waktu Kunjungan</th>
                                 <th>Nomor Anggota</th>
-                                <th>Pengunjung</th>
+                                <th>Nama Pengunjung</th>
                                 <th>Kelas</th>
                             </tr>
                         </thead>
@@ -717,10 +717,9 @@ const masterSiswa = {
         function openReportManager() {
             showAdminDetail('Laporan', 'Laporan Riwayat Transaksi', 'Memantau data riwayat sirkulasi keluar masuknya buku secara real-time.');
         }
-        // 2. Taruh fungsi-fungsi ini di bagian bawah script Anda
+        // ==================== LOGIKA FITUR ABSENSI PERPUSTAKAAN ====================
 function openAttendanceManager() {
     showAdminDetail('Absensi', 'Daftar Hadir Pengunjung', 'Melihat statistik serta menginput absensi kunjungan harian siswa.');
-    document.getElementById('attendanceContainer').style.display = 'block';
     renderAttendanceTable();
     calculateAttendanceStats();
 }
@@ -732,20 +731,23 @@ function handleAttendancePress(e) {
 function submitAttendance() {
     const inputField = document.getElementById('attendanceInput');
     const msgEl = document.getElementById('attendanceMsg');
+    
+    if(!inputField) return;
     const barcodeValue = inputField.value.trim();
 
     if(!barcodeValue) return;
 
-    // 1. Set default jika data siswa tidak ditemukan di database
+    // 1. Set data default apabila barcode tidak terdaftar di database siswa
     let namaSiswa = "Pengunjung Umum";
     let kelasSiswa = "-";
 
     // 2. Cari data siswa secara otomatis berdasarkan Barcode di localStudentsArray Anda
-    const siswaDitemukan = localStudentsArray.find(siswa => siswa.barcode === barcodeValue);
-
-    if(siswaDitemukan) {
-        namaSiswa = siswaDitemukan.name;
-        kelasSiswa = siswaDitemukan.class; // Mengambil data kelas asli siswa (misal: "Kelas 4", "Kelas 1A", dll)
+    if (typeof localStudentsArray !== 'undefined' && localStudentsArray.length > 0) {
+        const siswaDitemukan = localStudentsArray.find(siswa => siswa.barcode === barcodeValue);
+        if(siswaDitemukan) {
+            namaSiswa = siswaDitemukan.name || "Siswa Aktif";
+            kelasSiswa = siswaDitemukan.class || "-";
+        }
     }
 
     const now = new Date();
@@ -757,13 +759,14 @@ function submitAttendance() {
         tanggal: dateString,
         id: barcodeValue,
         nama: namaSiswa,
-        status: kelasSiswa // Ini akan menyimpan nama kelasnya saja ke database log
+        status: kelasSiswa
     };
 
+    // Simpan ke array lokal dan LocalStorage browser
     attendanceData.unshift(newLog);
     localStorage.setItem('attendance_logs', JSON.stringify(attendanceData));
 
-    // Menampilkan notifikasi sukses berwarna hijau
+    // Berikan feedback visual sukses berwarna hijau
     msgEl.style.color = '#2ecc71';
     msgEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Absen Berhasil! Selamat Datang, <b>${namaSiswa}</b> (${kelasSiswa})`;
     msgEl.style.display = 'block';
@@ -775,8 +778,11 @@ function submitAttendance() {
 
     setTimeout(() => { msgEl.style.display = 'none'; }, 4000);
 }
+
 function renderAttendanceTable() {
     const tbody = document.getElementById('attendanceTableBody');
+    if(!tbody) return;
+
     const todayStr = new Date().toLocaleDateString('id-ID');
     const todayLogs = attendanceData.filter(item => item.tanggal === todayStr);
 
@@ -800,14 +806,16 @@ function calculateAttendanceStats() {
     const todayStr = new Date().toLocaleDateString('id-ID');
     
     const totalToday = attendanceData.filter(item => item.tanggal === todayStr).length;
-    document.getElementById('txtTotalAbsen').innerText = totalToday;
+    const txtTotal = document.getElementById('txtTotalAbsen');
+    if(txtTotal) txtTotal.innerText = totalToday;
 
     const uniqueDates = [...new Set(attendanceData.map(item => item.tanggal))];
     const totalDaysRecorded = uniqueDates.length || 1;
     const totalAllDays = attendanceData.length;
 
     const averagePerDay = (totalAllDays / totalDaysRecorded).toFixed(1);
-    document.getElementById('txtRataRataAbsen').innerText = averagePerDay;
+    const txtAvg = document.getElementById('txtRataRataAbsen');
+    if(txtAvg) txtAvg.innerText = averagePerDay;
 }
 
 function clearAttendanceLog() {
@@ -818,6 +826,7 @@ function clearAttendanceLog() {
         calculateAttendanceStats();
     }
 }
+// ===========================================================================
     </script>
 
     <script type="module">
