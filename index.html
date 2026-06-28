@@ -463,8 +463,8 @@
                             <tr>
                                 <th>No</th>
                                 <th>Waktu Kunjungan</th>
-                                <th>Nomor Anggota</th>
-                                <th>Nama Pengunjung</th>
+                                <th>Barcode Siswa</th>
+                                <th>Nama Siswa</th>
                                 <th>Kelas</th>
                             </tr>
                         </thead>
@@ -737,16 +737,18 @@ function submitAttendance() {
 
     if(!barcodeValue) return;
 
-    // 1. Set data default apabila barcode tidak terdaftar di database siswa
-    let namaSiswa = "Pengunjung Umum";
+    // 1. Inisialisasi Nilai Default jika data barcode tidak ada di database
+    let namaSiswa = "Bukan Anggota / Umum";
     let kelasSiswa = "-";
 
-    // 2. Cari data siswa secara otomatis berdasarkan Barcode di localStudentsArray Anda
+    // 2. Scan langsung ke localStudentsArray untuk mencocokkan properti .barcode
     if (typeof localStudentsArray !== 'undefined' && localStudentsArray.length > 0) {
-        const siswaDitemukan = localStudentsArray.find(siswa => siswa.barcode === barcodeValue);
+        // Mencari siswa yang nomor barcodenya sama dengan input (baik string maupun angka)
+        const siswaDitemukan = localStudentsArray.find(siswa => String(siswa.barcode).trim() === String(barcodeValue));
+        
         if(siswaDitemukan) {
-            namaSiswa = siswaDitemukan.name || "Siswa Aktif";
-            kelasSiswa = siswaDitemukan.class || "-";
+            namaSiswa = siswaDitemukan.name;  // Mengambil properti .name dari database Anda
+            kelasSiswa = siswaDitemukan.class; // Mengambil properti .class dari database Anda
         }
     }
 
@@ -759,14 +761,14 @@ function submitAttendance() {
         tanggal: dateString,
         id: barcodeValue,
         nama: namaSiswa,
-        status: kelasSiswa
+        status: kelasSiswa // Menyimpan data kelas siswa ke riwayat
     };
 
-    // Simpan ke array lokal dan LocalStorage browser
+    // Masukkan ke log baris paling atas
     attendanceData.unshift(newLog);
     localStorage.setItem('attendance_logs', JSON.stringify(attendanceData));
 
-    // Berikan feedback visual sukses berwarna hijau
+    // Notifikasi Berhasil Berwarna Hijau Pop-up
     msgEl.style.color = '#2ecc71';
     msgEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Absen Berhasil! Selamat Datang, <b>${namaSiswa}</b> (${kelasSiswa})`;
     msgEl.style.display = 'block';
@@ -797,7 +799,7 @@ function renderAttendanceTable() {
             <td><i class="fa-regular fa-clock" style="color: var(--primary-blue)"></i> ${item.waktu}</td>
             <td><code>${item.id}</code></td>
             <td><strong>${item.nama}</strong></td>
-            <td><span class="badge badge-returned" style="background-color: var(--primary-blue);">${item.status}</span></td>
+            <td><span class="badge badge-returned" style="background-color: var(--primary-blue); color: white; padding: 4px 10px; border-radius: 8px; font-size: 0.85rem;">${item.status}</span></td>
         </tr>
     `).join('');
 }
