@@ -421,7 +421,59 @@
                     </table>
                 </div>
             </div>
-
+            <div id="attendanceContainer" style="display: none;">
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <i class="fa-solid fa-users"></i>
+                        <div class="stat-info">
+                            <h4 id="txtTotalAbsen">0</h4>
+                            <p>Total Absen Hari Ini</p>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <div class="stat-info">
+                            <h4 id="txtRataRataAbsen">0.0</h4>
+                            <p>Rata-rata Pengunjung / Hari</p>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="book-form-container" style="border-left: 5px solid var(--primary-blue);">
+                    <h3 style="margin-bottom: 15px; font-size: 1.1rem; color: var(--text-dark);">
+                        <i class="fa-solid fa-qrcode"></i> Scan Barcode / Input NIS Anggota
+                    </h3>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="attendanceInput" placeholder="Masukkan Nomor Anggota / Scan Barcode Siswa..." onkeypress="handleAttendancePress(event)" style="flex: 1; padding: 14px 20px; border: 2px solid var(--light-blue); border-radius: 15px; outline: none; font-size: 1rem;">
+                        <button onclick="submitAttendance()" style="background: var(--primary-blue); color: white; border: none; padding: 0 25px; border-radius: 15px; font-weight: 600; cursor: pointer;">Absen Hadir</button>
+                    </div>
+                    <p id="attendanceMsg" style="margin-top: 10px; font-size: 0.9rem; font-weight: 600; display: none;"></p>
+                </div>
+            
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; margin-bottom: 15px;">
+                    <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-dark);">Riwayat Absensi Hari Ini</h3>
+                    <button onclick="clearAttendanceLog()" style="background-color: var(--danger-red); color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+                        <i class="fa-solid fa-trash-can"></i> Bersihkan Log
+                    </button>
+                </div>
+            
+                <div class="table-responsive">
+                    <table class="book-table" style="background: white; border-radius: 20px;">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Waktu Kunjungan</th>
+                                <th>Nomor Anggota</th>
+                                <th>Nama Pengunjung</th>
+                                <th>Status / Kelas</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTableBody">
+                            <tr><td colspan="5" style="text-align: center; color: var(--text-gray);">Belum ada data absensi masuk hari ini.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <div id="loanTransactionContainer" style="display: none;">
                 <div class="book-form-container">
                     <h3 style="margin-bottom: 15px; font-size: 1.1rem; color: var(--primary-blue);"><i class="fa-solid fa-id-card"></i> Langkah 1: Scan Barcode Anggota Siswa</h3>
@@ -493,63 +545,7 @@
             <div id="reportTransactionContainer" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
                     <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-dark);">Log Riwayat Sirkulasi Buku</h3>
-                    <!-- --- CONTAINER ABSENSI (MINIMALIS & REKAP STATISTIK) --- -->
-<div id="attendanceContainer" style="display: none;">
-    <!-- Widget Statistik Harian -->
-    <div class="stats-grid">
-        <div class="stat-box">
-            <i class="fa-solid fa-users"></i>
-            <div class="stat-info">
-                <h4 id="txtTotalAbsen">0</h4>
-                <p>Total Absen Hari Ini</p>
-            </div>
-        </div>
-        <div class="stat-box">
-            <i class="fa-solid fa-chart-line"></i>
-            <div class="stat-info">
-                <h4 id="txtRataRataAbsen">0.0</h4>
-                <p>Rata-rata Pengunjung / Hari</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Form Input Absen -->
-    <div class="book-form-container" style="border-left: 5px solid var(--primary-blue);">
-        <h3 style="margin-bottom: 15px; font-size: 1.1rem; color: var(--text-dark);">
-            <i class="fa-solid fa-qrcode"></i> Scan Barcode / Input NIS Anggota
-        </h3>
-        <div style="display: flex; gap: 10px;">
-            <input type="text" id="attendanceInput" placeholder="Masukkan Nomor Anggota / Scan Barcode Siswa..." onkeypress="handleAttendancePress(event)" style="flex: 1; padding: 14px 20px; border: 2px solid var(--light-blue); border-radius: 15px; outline: none; font-size: 1rem;">
-            <button onclick="submitAttendance()" style="background: var(--primary-blue); color: white; border: none; padding: 0 25px; border-radius: 15px; font-weight: 600; cursor: pointer;">Absen Hadir</button>
-        </div>
-        <p id="attendanceMsg" style="margin-top: 10px; font-size: 0.9rem; font-weight: 600; display: none;"></p>
-    </div>
-
-    <!-- Rekap Tabel Hasil Absen -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; margin-bottom: 15px;">
-        <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-dark);">Riwayat Absensi Hari Ini</h3>
-        <button onclick="clearAttendanceLog()" style="background-color: var(--danger-red); color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
-            <i class="fa-solid fa-trash-can"></i> Bersihkan Log
-        </button>
-    </div>
-
-    <div class="table-responsive">
-        <table class="book-table" style="background: white; border-radius: 20px;">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Waktu Kunjungan</th>
-                    <th>Nomor Anggota</th>
-                    <th>Nama Pengunjung</th>
-                    <th>Status / Kelas</th>
-                </tr>
-            </thead>
-            <tbody id="attendanceTableBody">
-                <tr><td colspan="5" style="text-align: center; color: var(--text-gray);">Belum ada data absensi masuk hari ini.</td></tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+                    
                     <div style="display: flex; gap: 10px;">
                         <button id="btnDeleteSelectedLoans" onclick="deleteSelectedLoans()" style="background-color: var(--danger-red); color: white; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; opacity: 0.6; cursor: not-allowed;" disabled>
                             <i class="fa-solid fa-trash-can"></i> Hapus Terpilih (<span id="selectedLoanCount">0</span>)
@@ -685,19 +681,22 @@ const masterSiswa = {
         }
         function handleKeyPress(e) { if(e.key === 'Enter') checkPassword(); }
         
-        function showAdminDetail(type, title, desc) {
-            document.getElementById('adminGrid').style.display = 'none';
-            document.getElementById('adminDetail').style.display = 'block';
-            document.getElementById('detailSubTitle').innerText = title;
-            document.getElementById('detailDesc').innerText = desc;
-            
-            document.getElementById('crudBookContainer').style.display = (type === 'Buku') ? 'block' : 'none';
-            document.getElementById('loanTransactionContainer').style.display = (type === 'Pinjam') ? 'block' : 'none';
-            document.getElementById('returnTransactionContainer').style.display = (type === 'Kembali') ? 'block' : 'none';
-            document.getElementById('crudStudentContainer').style.display = (type === 'Siswa') ? 'block' : 'none';
-            document.getElementById('reportTransactionContainer').style.display = (type === 'Laporan') ? 'block' : 'none';
-            document.getElementById('attendanceContainer').style.display = 'none';
-        }
+        function showAdminDetail(type, subtitle, desc) {
+    document.getElementById('adminGrid').style.display = 'none';
+    document.getElementById('adminDetail').style.display = 'block';
+    document.getElementById('detailSubTitle').innerText = subtitle;
+    document.getElementById('detailDesc').innerText = desc;
+
+    // Kontrol visibilitas masing-masing menu (Pastikan baris ini sesuai)
+    document.getElementById('crudBookContainer').style.display = (type === 'Buku') ? 'block' : 'none';
+    document.getElementById('loanTransactionContainer').style.display = (type === 'Pinjam') ? 'block' : 'none';
+    document.getElementById('returnTransactionContainer').style.display = (type === 'Kembali') ? 'block' : 'none';
+    document.getElementById('crudStudentContainer').style.display = (type === 'Siswa') ? 'block' : 'none';
+    document.getElementById('reportTransactionContainer').style.display = (type === 'Laporan') ? 'block' : 'none';
+    
+    // Tambahkan baris logika khusus untuk menu Absensi di sini
+    document.getElementById('attendanceContainer').style.display = (type === 'Absensi') ? 'block' : 'none';
+}
         function hideAdminDetail() {
             document.getElementById('adminGrid').style.display = 'grid';
             document.getElementById('adminDetail').style.display = 'none';
