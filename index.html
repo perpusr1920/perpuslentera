@@ -895,6 +895,7 @@
             }
         });
 
+        /* --- SINKRONISASI & LIVE LAPORAN TRANSAKSI + PERHITUNGAN TERLAMBAT --- */
         window.renderLoanReportTable = function(dataArray) {
             const tbody = document.getElementById('loanReportTableBody');
             if(!tbody) return;
@@ -909,11 +910,35 @@
                 return;
             }
 
+            // Ambil tanggal hari ini (format YYYY-MM-DD)
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
             dataArray.forEach((loan, index) => {
                 const tr = document.createElement('tr');
-                const statusBadge = loan.status === "Dipinjam" 
-                    ? `<span class="badge badge-loaned"><i class="fa-solid fa-clock"></i> Dipinjam</span>`
-                    : `<span class="badge badge-returned"><i class="fa-solid fa-circle-check"></i> Kembali</span>`;
+                
+                let statusBadge = "";
+                let rowStyle = "";
+
+                if (loan.status === "Dipinjam") {
+                    // Hitung selisih hari
+                    const borrowDate = new Date(loan.loanDate);
+                    borrowDate.setHours(0,0,0,0);
+                    
+                    // Selisih dalam milidetik diubah ke hari
+                    const timeDiff = today.getTime() - borrowDate.getTime();
+                    const daysElapsed = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+
+                    if (daysElapsed > 7) {
+                        const lateDays = daysElapsed - 7;
+                        statusBadge = `<span class="badge" style="background-color: var(--danger-red);"><i class="fa-solid fa-triangle-exclamation"></i> Terlambat ${lateDays} Hari</span>`;
+                        rowStyle = `style="background-color: rgba(255, 75, 75, 0.08);"`; // Beri highlight merah tipis pada baris yang terlambat
+                    } else {
+                        statusBadge = `<span class="badge badge-loaned"><i class="fa-solid fa-clock"></i> Dipinjam</span>`;
+                    }
+                } else {
+                    statusBadge = `<span class="badge badge-returned"><i class="fa-solid fa-circle-check"></i> Kembali</span>`;
+                }
 
                 tr.innerHTML = `
                     <td style="text-align: center;">
@@ -931,10 +956,52 @@
                     </td>
                     <td>${statusBadge}</td>
                 `;
+                
+                if(rowStyle) tr.setAttribute('style', tr.getAttribute('style') ? tr.getAttribute('style') + rowStyle.replace('style="','').replace('"','') : rowStyle.replace('style="','').replace('"',''));
                 tbody.appendChild(tr);
             });
         }
 
+        // Perbarui juga fungsi unduh laporan agar keterangan keterlambatan masuk ke file Excel/CSV
+        window.downloadLoanReportCSV = function() {
+            if(localLoansArray.length === 0) return;
+            
+            let csvContent = "\uFEFFNo,Tanggal Pinjam,Nama Siswa,Barcode Siswa,Kelas,Judul Buku,Barcode Buku,Status Keterangan\n";
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
+            localLoansArray.forEach((loan, index) => {
+                let statusInfo = loan.status;
+                
+                if (loan.status === "Dipinjam") {
+                    const borrowDate = new Date(loan.loanDate);
+                    borrowDate.setHours(0,0,0,0);
+                    const timeDiff = today.getTime() - borrowDate.getTime();
+                    const daysElapsed = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                    
+                    if (daysElapsed > 7) {
+                        statusInfo = `Terlambat ${daysElapsed - 7} Hari`;
+                    } else {
+                        statusInfo = "Dipinjam (Aman)";
+                    }
+                } else {
+                    statusInfo = "Sudah Kembali";
+                }
+
+                csvContent += `${index + 1},"${loan.loanDate || ''}","${loan.studentName || ''}","${loan.studentBarcode || ''}","${loan.studentClass || ''}","${loan.bookTitle || ''}","${loan.bookBarcode || ''}","${statusInfo}"\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute("href", url);
+            link.setAttribute("download", "Laporan_Sirkulasi_Pelangi_Pustaka.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
         window.toggleSelectAllLoans = function(masterCheckbox) {
             const checkboxes = document.querySelectorAll('.loan-checkbox');
             checkboxes.forEach(cb => { cb.checked = masterCheckbox.checked; });
