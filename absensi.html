@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Absensi Perpustakaan</title>
+    <!-- FontAwesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            /* Menggunakan gambar ad97d6754de0b32fd1fc4e25e8bd3c05.jpg sebagai latar belakang */
+            background: url('ad97d6754de0b32fd1fc4e25e8bd3c05.jpg') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .absensi-container {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+        .absensi-container h2 {
+            color: #1e3a8a;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+        .absensi-container p {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 1.2rem;
+        }
+        .barcode-input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-family: monospace;
+            text-align: center;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .barcode-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        }
+        .status-message {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: none;
+        }
+        .status-success {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        .status-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        .clock {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #334155;
+            margin-bottom: 20px;
+            background: rgba(226, 232, 240, 0.6);
+            padding: 6px 15px;
+            border-radius: 30px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="absensi-container">
+        <h2>Absensi Pengunjung</h2>
+        <p>Perpustakaan Pelangi Pustaka</p>
+        
+        <div class="clock" id="liveClock">00:00:00</div>
+
+        <div class="input-group">
+            <i class="fa-solid fa-barcode"></i>
+            <input type="text" id="barcodeScan" class="barcode-input" placeholder="Scan Barcode Siswa..." autocomplete="off">
+        </div>
+
+        <div id="statusBox" class="status-message"></div>
+    </div>
+
+    <!-- Firebase SDK Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firestore-firebase.js";
+
+        // === PASTE KONFIGURASI FIREBASE ANDA DI SINI ===
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-DIolrfqSIxhZVGE5JjFaeGOCtsMRz3c",
+            authDomain: "perpus-lentera.firebaseapp.com",
+            projectId: "perpus-lentera",
+            storageBucket: "perpus-lentera.firebasestorage.app",
+            messagingSenderId: "767330778517",
+            appId: "1:767330778517:web:bf8d3058be09cee206ca9c",
+            measurementId: "G-7MXKTJV66C"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const inputScan = document.getElementById('barcodeScan');
+        const statusBox = document.getElementById('statusBox');
+
+        // Pastikan input selalu fokus untuk scanner barcode hardware
+        window.onload = () => { inputScan.focus(); };
+        document.addEventListener('click', () => { inputScan.focus(); });
+
+        // Jam Live
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('liveClock').innerText = now.toLocaleTimeString('id-ID');
+        }, 1000);
+
+        // Deteksi input dari Scanner Barcode (Enter)
+        inputScan.addEventListener('keypress', async function(e) {
+            if (e.key === 'Enter') {
+                const barcode = inputScan.value.trim();
+                inputScan.value = ""; // langsung kosongkan untuk scan selanjutnya
+                
+                if(!barcode) return;
+
+                showStatus("Sedang memproses...", "success");
+
+                try {
+                    // 1. Cari data siswa berdasarkan barcode di koleksi 'students'
+                    const q = query(collection(db, "students"), where("barcode", "==", barcode));
+                    const querySnapshot = await getDocs(q);
+
+                    if (querySnapshot.empty) {
+                        showStatus(`Barcode "${barcode}" tidak terdaftar sebagai anggota siswa!`, "error");
+                        return;
+                    }
+
+                    // Ambil data siswa pertama yang cocok
+                    let studentData = {};
+                    querySnapshot.forEach((doc) => {
+                        studentData = doc.data();
+                    });
+
+                    // 2. Buat objek waktu dan tanggal terpisah
+                    const sekarang = new Date();
+                    const tanggalStr = sekarang.toLocaleDateString('id-ID', { year: 'numeric', month: '2-digit', day: '2-digit' }).split('/').reverse().join('-'); // format YYYY-MM-DD
+                    const waktuStr = sekarang.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+                    // 3. Simpan ke koleksi 'attendance'
+                    await addDoc(collection(db, "attendance"), {
+                        studentBarcode: barcode,
+                        studentName: studentData.name,
+                        studentClass: studentData.class,
+                        date: tanggalStr,
+                        time: waktuStr,
+                        timestamp: sekarang.getTime()
+                    });
+
+                    showStatus(`Berhasil Absen! 👋 Selamat datang, ${studentData.name} (Kelas ${studentData.class})`, "success");
+
+                } catch (error) {
+                    console.error("Ganti Error: ", error);
+                    showStatus("Terjadi kesalahan sistem.", "error");
+                }
+            }
+        });
+
+        function showStatus(text, type) {
+            statusBox.innerText = text;
+            statusBox.className = "status-message " + (type === "success" ? "status-success" : "status-error");
+            statusBox.style.display = "block";
+        }
+    </script>
+</body>
+</html>
