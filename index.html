@@ -161,10 +161,6 @@
         .badge-loaned { background-color: var(--accent-orange); }
         .badge-returned { background-color: var(--success-green); }
 
-        /* Tabs Style untuk Laporan */
-        .btn-tab { background: var(--white); color: var(--text-gray); border: 2px solid var(--light-blue); padding: 10px 20px; border-radius: 15px; cursor: pointer; font-weight: 600; transition: 0.3s; font-size: 0.9rem; }
-        .btn-tab.active { background: var(--primary-blue); color: var(--white); border-color: var(--primary-blue); }
-
         /* Styling Table */
         .table-responsive { width: 100%; overflow-x: auto; margin-top: 20px; }
         .book-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem; }
@@ -317,11 +313,12 @@
                 <h3>Kembali</h3>
                 <p>Pengembalian</p>
             </div>
-            <div class="card" onclick="showAdminDetail('Absensi_Kunjungan', 'Daftar Hadir Pengunjung', 'Melihat statistik absensi kunjungan harian siswa.')">
+            <div class="card" onclick="showAdminDetail('Absensi', 'Daftar Hadir Pengunjung', 'Melihat statistik absensi kunjungan harian siswa.')">
                 <div class="icon-wrapper"><i class="fa-solid fa-user-check"></i></div>
                 <h3>Absensi</h3>
                 <p>Daftar Hadir</p>
             </div>
+            <a href="absensi.html" target="_blank" class="btn-nav"><i class="fa-solid fa-user-check"></i> Buka Monitor Absensi</a>
             <div class="card" onclick="openStudentManager()">
                 <div class="icon-wrapper"><i class="fa-solid fa-graduation-cap"></i></div>
                 <h3>Siswa</h3>
@@ -462,78 +459,46 @@
             </div>
 
             <div id="reportTransactionContainer" style="display: none;">
-                <div style="margin-bottom: 25px; display: flex; gap: 10px;">
-                    <button class="btn-tab active" id="btnReportSirkulasi" onclick="switchReportTab('sirkulasi')"><i class="fa-solid fa-book-reader"></i> Riwayat Sirkulasi Buku</button>
-                    <button class="btn-tab" id="btnReportAbsensi" onclick="switchReportTab('absensi')"><i class="fa-solid fa-id-card"></i> Riwayat Absensi Siswa</button>
-                </div>
-
-                <div id="containerSirkulasiReport">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
-                        <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-dark);">Log Riwayat Sirkulasi Buku</h3>
-                        <div style="display: flex; gap: 10px;">
-                            <button id="btnDeleteSelectedLoans" onclick="deleteSelectedLoans()" style="background-color: var(--danger-red); color: white; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; opacity: 0.6; cursor: not-allowed;" disabled>
-                                <i class="fa-solid fa-trash-can"></i> Hapus Terpilih (<span id="selectedLoanCount">0</span>)
-                            </button>
-                            <button onclick="downloadLoanReportCSV()" style="background-color: #2ecc71; color: white; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; font-size: 0.9rem;">
-                                <i class="fa-solid fa-file-csv"></i> Cetak Laporan (.CSV)
-                            </button>
-                        </div>
-                    </div>
-
-                    <div style="position: relative; margin-bottom: 20px;">
-                        <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-gray);"></i>
-                        <input type="text" id="loanReportSearchInput" oninput="searchLoanReport()" placeholder="Cari berdasarkan Nama Siswa, Barcode, atau Status..." style="width: 100%; padding: 12px 20px 12px 45px; border: 2px solid var(--light-blue); border-radius: 25px; outline: none; font-size: 0.95rem; box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: 0.3s;">
-                    </div>
-
-                    <div class="table-responsive">
-                        <table class="book-table" style="background: white; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.01);">
-                            <thead>
-                                <tr>
-                                    <th style="width: 40px; text-align: center;">
-                                        <input type="checkbox" id="checkAllLoans" onchange="toggleSelectAllLoans(this)" style="transform: scale(1.2); cursor: pointer;">
-                                    </th>
-                                    <th>No</th>
-                                    <th>Tanggal</th>
-                                    <th>Siswa (Barcode)</th>
-                                    <th>Buku (Barcode)</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="loanReportTableBody">
-                                <tr><td colspan="6" style="text-align:center;">Memuat riwayat transaksi dari cloud...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div id="containerAbsensiReport" style="display: none;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-dark);">Daftar Hadir Pengunjung Perpustakaan</h3>
-                        <button onclick="downloadAttendanceCSV()" style="background-color: #2ecc71; color: white; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; font-size: 0.9rem;">
-                            <i class="fa-solid fa-file-excel"></i> Cetak Absensi (.CSV)
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+                    <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-dark);">Log Riwayat Sirkulasi Buku</h3>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <button id="btnDeleteSelectedLoans" onclick="deleteSelectedLoans()" style="background-color: var(--danger-red); color: white; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; opacity: 0.6; cursor: not-allowed;" disabled>
+                            <i class="fa-solid fa-trash-can"></i> Hapus Terpilih (<span id="selectedLoanCount">0</span>)
+                        </button>
+                        <button onclick="downloadLoanReportCSV()" style="background-color: #2ecc71; color: white; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; font-size: 0.9rem;">
+                            <i class="fa-solid fa-file-csv"></i> Cetak Laporan (.CSV)
                         </button>
                     </div>
-                    <div class="table-responsive">
-                        <table class="book-table" style="background: white; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.01);">
-                            <thead>
-                                <tr>
-                                    <th style="width: 50px;">No</th>
-                                    <th>Tanggal</th>
-                                    <th>Jam Masuk</th>
-                                    <th>Barcode Siswa</th>
-                                    <th>Nama Siswa</th>
-                                    <th>Kelas</th>
-                                </tr>
-                            </thead>
-                            <tbody id="attendanceTableBody">
-                                <tr><td colspan="6" style="text-align:center;">Belum ada riwayat absensi.</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+                </div>
+
+                <div style="position: relative; margin-bottom: 20px;">
+                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-gray);"></i>
+                    <input type="text" id="loanReportSearchInput" oninput="searchLoanReport()" placeholder="Cari berdasarkan Nama Siswa, Barcode, atau Judul Buku yang tertransaksi..." style="width: 100%; padding: 12px 20px 12px 45px; border: 2px solid var(--light-blue); border-radius: 25px; outline: none; font-size: 0.95rem; box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: 0.3s;">
+                </div>
+
+                <div class="table-responsive">
+                    <table class="book-table" style="background: white; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.01);">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px; text-align: center;">
+                                    <input type="checkbox" id="checkAllLoans" onchange="toggleSelectAllLoans(this)" style="transform: scale(1.2); cursor: pointer;">
+                                </th>
+                                <th>No</th>
+                                <th>Tanggal</th>
+                                <th>Siswa (Barcode)</th>
+                                <th>Buku (Barcode)</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="loanReportTableBody">
+                            <tr><td colspan="6" style="text-align:center;">Memuat riwayat transaksi dari cloud...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <div id="crudStudentContainer" style="display: none;">
+            <div id="crudStudentContainer" style="display: none; margin-top: 20px;">
                 <div class="book-form-container">
                     <h3 id="studentFormTitle" style="margin-bottom: 15px; font-size: 1.1rem;">Registrasi Anggota Siswa Baru</h3>
                     <input type="hidden" id="editStudentId">
@@ -590,10 +555,78 @@
         </div>
     </div>
 
+    <script>
+        function showLogin() {
+            document.getElementById('mainNavbar').style.display = 'none';
+            document.getElementById('userSection').style.display = 'none';
+            document.getElementById('adminSection').style.display = 'none';
+            document.getElementById('loginSection').style.display = 'flex';
+        }
+        function showUserSection(page) {
+            document.getElementById('mainNavbar').style.display = 'flex';
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('adminSection').style.display = 'none';
+            document.getElementById('userSection').style.display = 'block';
+        }
+        function navigateUser(target) {
+            document.querySelectorAll('.user-sub-page').forEach(div => div.style.display = 'none');
+            document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
+            document.getElementById('sub-' + target).style.display = 'block';
+            document.getElementById('li-' + target).classList.add('active');
+        }
+        function toggleMobileMenu() {
+            document.getElementById('navContainer').classList.toggle('active');
+        }
+        function checkPassword() {
+            if(document.getElementById('passwordInput').value === "admin") {
+                document.getElementById('mainNavbar').style.display = 'none';
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('adminSection').style.display = 'block';
+                hideAdminDetail();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+        function handleKeyPress(e) { if(e.key === 'Enter') checkPassword(); }
+        
+        function showAdminDetail(type, title, desc) {
+            document.getElementById('adminGrid').style.display = 'none';
+            document.getElementById('adminDetail').style.display = 'block';
+            document.getElementById('detailSubTitle').innerText = title;
+            document.getElementById('detailDesc').innerText = desc;
+            
+            document.getElementById('crudBookContainer').style.display = (type === 'Buku') ? 'block' : 'none';
+            document.getElementById('loanTransactionContainer').style.display = (type === 'Pinjam') ? 'block' : 'none';
+            document.getElementById('returnTransactionContainer').style.display = (type === 'Kembali') ? 'block' : 'none';
+            document.getElementById('crudStudentContainer').style.display = (type === 'Siswa') ? 'block' : 'none';
+            document.getElementById('reportTransactionContainer').style.display = (type === 'Laporan') ? 'block' : 'none';
+        }
+        function hideAdminDetail() {
+            document.getElementById('adminGrid').style.display = 'grid';
+            document.getElementById('adminDetail').style.display = 'none';
+        }
+        function openBookManager() { showAdminDetail('Buku', 'Katalog Buku Perpustakaan', 'Kelola data buku yang tersedia.'); }
+        function openStudentManager() { showAdminDetail('Siswa', 'Data Anggota Siswa', 'Manajemen basis data siswa.'); }
+        function openLoanManager() { 
+            showAdminDetail('Pinjam', 'Transaksi Peminjaman Buku', 'Masukkan Barcode Siswa terlebih dahulu untuk mulai meminjam buku.'); 
+            if (typeof window.resetLoanSession === 'function') { window.resetLoanSession(); }
+        }
+        function openReturnManager() {
+            showAdminDetail('Kembali', 'Pengembalian Buku', 'Silakan scan langsung barcode fisik buku untuk memproses pengembalian.');
+            setTimeout(() => { 
+                const returnInput = document.getElementById('returnBookBarcodeInput');
+                if(returnInput) returnInput.focus();
+            }, 200);
+        }
+        function openReportManager() {
+            showAdminDetail('Laporan', 'Laporan Riwayat Transaksi', 'Memantau data riwayat sirkulasi keluar masuknya buku secara real-time.');
+        }
+    </script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { 
-            getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs, query, where, orderBy 
+            getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs, query, where 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -612,12 +645,10 @@
         const booksCollection = collection(db, "books");
         const studentsCollection = collection(db, "students");
         const loansCollection = collection(db, "loans");
-        const attendanceCollection = collection(db, "attendance");
 
         let localBooksArray = [];
         let localStudentsArray = [];
         let localLoansArray = []; 
-        let localAttendanceArray = [];
         
         let currentActiveStudent = null;
         let loanCartBooks = [];
@@ -848,12 +879,13 @@
             }
         }
 
-        /* --- LIVE LAPORAN TRANSAKSI SIRKULASI --- */
+        /* --- SINKRONISASI & LIVE LAPORAN TRANSAKSI + CHECKBOX --- */
         onSnapshot(loansCollection, (snapshot) => {
             localLoansArray = [];
             snapshot.forEach((doc) => {
                 localLoansArray.push({ id: doc.id, ...doc.data() });
             });
+            
             localLoansArray.sort((a, b) => (b.loanDate || '').localeCompare(a.loanDate || ''));
 
             const searchInput = document.getElementById('loanReportSearchInput');
@@ -864,6 +896,7 @@
             }
         });
 
+        /* --- SINKRONISASI & LIVE LAPORAN TRANSAKSI + PERHITUNGAN TERLAMBAT --- */
         window.renderLoanReportTable = function(dataArray) {
             const tbody = document.getElementById('loanReportTableBody');
             if(!tbody) return;
@@ -878,24 +911,29 @@
                 return;
             }
 
+            // Ambil tanggal hari ini (format YYYY-MM-DD)
             const today = new Date();
             today.setHours(0,0,0,0);
 
             dataArray.forEach((loan, index) => {
                 const tr = document.createElement('tr');
+                
                 let statusBadge = "";
                 let rowStyle = "";
 
                 if (loan.status === "Dipinjam") {
+                    // Hitung selisih hari
                     const borrowDate = new Date(loan.loanDate);
                     borrowDate.setHours(0,0,0,0);
+                    
+                    // Selisih dalam milidetik diubah ke hari
                     const timeDiff = today.getTime() - borrowDate.getTime();
                     const daysElapsed = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
 
                     if (daysElapsed > 7) {
                         const lateDays = daysElapsed - 7;
                         statusBadge = `<span class="badge" style="background-color: var(--danger-red);"><i class="fa-solid fa-triangle-exclamation"></i> Terlambat ${lateDays} Hari</span>`;
-                        rowStyle = "background-color: rgba(255, 75, 75, 0.08);"; 
+                        rowStyle = `style="background-color: rgba(255, 75, 75, 0.08);"`; // Beri highlight merah tipis pada baris yang terlambat
                     } else {
                         statusBadge = `<span class="badge badge-loaned"><i class="fa-solid fa-clock"></i> Dipinjam</span>`;
                     }
@@ -919,11 +957,52 @@
                     </td>
                     <td>${statusBadge}</td>
                 `;
-                if(rowStyle) tr.setAttribute('style', rowStyle);
+                
+                if(rowStyle) tr.setAttribute('style', tr.getAttribute('style') ? tr.getAttribute('style') + rowStyle.replace('style="','').replace('"','') : rowStyle.replace('style="','').replace('"',''));
                 tbody.appendChild(tr);
             });
         }
 
+        // Perbarui juga fungsi unduh laporan agar keterangan keterlambatan masuk ke file Excel/CSV
+        window.downloadLoanReportCSV = function() {
+            if(localLoansArray.length === 0) return;
+            
+            let csvContent = "\uFEFFNo,Tanggal Pinjam,Nama Siswa,Barcode Siswa,Kelas,Judul Buku,Barcode Buku,Status Keterangan\n";
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
+            localLoansArray.forEach((loan, index) => {
+                let statusInfo = loan.status;
+                
+                if (loan.status === "Dipinjam") {
+                    const borrowDate = new Date(loan.loanDate);
+                    borrowDate.setHours(0,0,0,0);
+                    const timeDiff = today.getTime() - borrowDate.getTime();
+                    const daysElapsed = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                    
+                    if (daysElapsed > 7) {
+                        statusInfo = `Terlambat ${daysElapsed - 7} Hari`;
+                    } else {
+                        statusInfo = "Dipinjam (Aman)";
+                    }
+                } else {
+                    statusInfo = "Sudah Kembali";
+                }
+
+                csvContent += `${index + 1},"${loan.loanDate || ''}","${loan.studentName || ''}","${loan.studentBarcode || ''}","${loan.studentClass || ''}","${loan.bookTitle || ''}","${loan.bookBarcode || ''}","${statusInfo}"\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute("href", url);
+            link.setAttribute("download", "Laporan_Sirkulasi_Pelangi_Pustaka.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
         window.toggleSelectAllLoans = function(masterCheckbox) {
             const checkboxes = document.querySelectorAll('.loan-checkbox');
             checkboxes.forEach(cb => { cb.checked = masterCheckbox.checked; });
@@ -953,14 +1032,19 @@
         window.deleteSelectedLoans = async function() {
             const checkboxes = document.querySelectorAll('.loan-checkbox:checked');
             if(checkboxes.length === 0) return;
-            if(!confirm(`Hapus ${checkboxes.length} data transaksi?`)) return;
+
+            const konfirmasi = confirm(`Apakah Anda yakin ingin menghapus ${checkboxes.length} data transaksi terpilih secara permanen dari cloud?`);
+            if(!konfirmasi) return;
 
             try {
                 for(let cb of checkboxes) {
                     await deleteDoc(doc(db, "loans", cb.value));
                 }
-                alert("Data berhasil dihapus!");
-            } catch (error) { console.error(error); }
+                alert("Data transaksi terpilih berhasil dihapus!");
+            } catch (error) {
+                console.error(error);
+                alert("Terjadi kesalahan saat menghapus data.");
+            }
         }
 
         window.searchLoanReport = function() {
@@ -971,6 +1055,7 @@
                 return (loan.studentName || "").toLowerCase().includes(keyword) || 
                        (loan.studentBarcode || "").toLowerCase().includes(keyword) || 
                        (loan.bookTitle || "").toLowerCase().includes(keyword) || 
+                       (loan.bookBarcode || "").toLowerCase().includes(keyword) || 
                        (loan.status || "").toLowerCase().includes(keyword);
             });
             renderLoanReportTable(filtered);
@@ -978,95 +1063,17 @@
 
         window.downloadLoanReportCSV = function() {
             if(localLoansArray.length === 0) return;
-            let csvContent = "\uFEFFNo,Tanggal Pinjam,Nama Siswa,Barcode Siswa,Kelas,Judul Buku,Barcode Buku,Status Keterangan\n";
-            const today = new Date();
-            today.setHours(0,0,0,0);
-
+            let csvContent = "data:text/csv;charset=utf-8,No,Tanggal Pinjam,Nama Siswa,Barcode Siswa,Kelas,Judul Buku,Barcode Buku,Status\n";
             localLoansArray.forEach((loan, index) => {
-                let statusInfo = loan.status;
-                if (loan.status === "Dipinjam") {
-                    const borrowDate = new Date(loan.loanDate);
-                    borrowDate.setHours(0,0,0,0);
-                    const timeDiff = today.getTime() - borrowDate.getTime();
-                    const daysElapsed = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-                    statusInfo = daysElapsed > 7 ? `Terlambat ${daysElapsed - 7} Hari` : "Dipinjam (Aman)";
-                } else {
-                    statusInfo = "Sudah Kembali";
-                }
-                csvContent += `${index + 1},"${loan.loanDate || ''}","${loan.studentName || ''}","${loan.studentBarcode || ''}","${loan.studentClass || ''}","${loan.bookTitle || ''}","${loan.bookBarcode || ''}","${statusInfo}"\n`;
+                csvContent += `${index + 1},"${loan.loanDate || ''}","${loan.studentName || ''}","${loan.studentBarcode || ''}","${loan.studentClass || ''}","${loan.bookTitle || ''}","${loan.bookBarcode || ''}","${loan.status || ''}"\n`;
             });
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
-            link.setAttribute("href", URL.createObjectURL(blob));
+            link.setAttribute("href", encodedUri);
             link.setAttribute("download", "Laporan_Sirkulasi_Pelangi_Pustaka.csv");
+            document.body.appendChild(link);
             link.click();
-        }
-
-        /* --- SINKRONISASI LIVE ABSENSI PERPUSTAKAAN --- */
-        const attendanceQuery = query(attendanceCollection, orderBy("timestamp", "desc"));
-        onSnapshot(attendanceQuery, (snapshot) => {
-            localAttendanceArray = [];
-            snapshot.forEach((doc) => {
-                localAttendanceArray.push({ id: doc.id, ...doc.data() });
-            });
-            renderAttendanceTable(localAttendanceArray);
-        });
-
-        window.renderAttendanceTable = function(dataArray) {
-            const tbody = document.getElementById('attendanceTableBody');
-            if(!tbody) return;
-            tbody.innerHTML = "";
-
-            if(dataArray.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-gray);">Belum ada riwayat absensi masuk.</td></tr>`;
-                return;
-            }
-
-            dataArray.forEach((att, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td><strong>${att.date || '-'}</strong></td>
-                    <td><span style="color: var(--primary-blue); font-weight:bold;">${att.time || '-'}</span></td>
-                    <td style="font-family: monospace;">${att.studentBarcode || '-'}</td>
-                    <td><strong>${att.studentName || '-'}</strong></td>
-                    <td>${att.studentClass || '-'}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        /* --- TOGGLE SUB-TAB LAPORAN --- */
-        window.switchReportTab = function(tabName) {
-            const btnSirkulasi = document.getElementById('btnReportSirkulasi');
-            const btnAbsensi = document.getElementById('btnReportAbsensi');
-            const boxSirkulasi = document.getElementById('containerSirkulasiReport');
-            const boxAbsensi = document.getElementById('containerAbsensiReport');
-
-            if(tabName === 'sirkulasi') {
-                btnSirkulasi.classList.add('active');
-                btnAbsensi.classList.remove('active');
-                boxSirkulasi.style.display = "block";
-                boxAbsensi.style.display = "none";
-            } else {
-                btnSirkulasi.classList.remove('active');
-                btnAbsensi.classList.add('active');
-                boxSirkulasi.style.display = "none";
-                boxAbsensi.style.display = "block";
-            }
-        }
-
-        window.downloadAttendanceCSV = function() {
-            if(localAttendanceArray.length === 0) return;
-            let csvContent = "\uFEFFNo,Tanggal,Jam Masuk,Barcode Siswa,Nama Siswa,Kelas\n";
-            localAttendanceArray.forEach((att, index) => {
-                csvContent += `${index + 1},"${att.date || ''}","${att.time || ''}","${att.studentBarcode || ''}","${att.studentName || ''}","${att.studentClass || ''}"\n`;
-            });
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.setAttribute("href", URL.createObjectURL(blob));
-            link.setAttribute("download", "Laporan_Presensi_Pengunjung.csv");
-            link.click();
+            document.body.removeChild(link);
         }
 
         /* --- MANAJEMEN LIVE DATA SISWA --- */
@@ -1081,7 +1088,7 @@
             const tbody = document.getElementById('studentTableBody');
             if (!tbody) return;
             tbody.innerHTML = "";
-            if(dataArray.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-gray);">Kosong</td></tr>`; return; }
+            if(dataArray.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-gray);">Data siswa tidak ditemukan / Kosong.</td></tr>`; return; }
             dataArray.forEach((student, index) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -1089,9 +1096,9 @@
                     <td><strong style="color:var(--primary-blue); font-family:monospace;">${student.barcode || '-'}</strong></td>
                     <td>${student.name || '-'}</td>
                     <td>${student.class || '-'}</td>
-                    <td style="text-align: center;">
-                        <button class="btn-action btn-edit" onclick="editStudentTrigger('${student.id}')">Edit</button>
-                        <button class="btn-action btn-delete" onclick="deleteStudent('${student.id}')">Hapus</button>
+                    <td style="text-align: center; white-space: nowrap;">
+                        <button class="btn-action btn-edit" onclick="editStudentTrigger('${student.id}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+                        <button class="btn-action btn-delete" onclick="deleteStudent('${student.id}')"><i class="fa-solid fa-trash"></i> Hapus</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -1103,11 +1110,21 @@
             const nameInput = document.getElementById('studentNameInput').value.trim();
             const classInput = document.getElementById('studentClassInput').value.trim();
             const barcodeInput = document.getElementById('studentBarcodeInput').value.trim();
-            if(!nameInput || !classInput || !barcodeInput) return;
+            
+            if(!nameInput || !classInput || !barcodeInput) {
+                alert("Mohon isi seluruh data siswa sebelum menyimpan!");
+                return;
+            }
+            
             try {
                 const studentData = { name: nameInput, class: classInput, barcode: barcodeInput };
-                if(idHidden) { await updateDoc(doc(db, "students", idHidden), studentData); } 
-                else { await addDoc(studentsCollection, studentData); }
+                if(idHidden) { 
+                    await updateDoc(doc(db, "students", idHidden), studentData); 
+                    alert("Data siswa berhasil diperbarui!");
+                } else { 
+                    await addDoc(studentsCollection, studentData); 
+                    alert("Siswa baru berhasil diregistrasikan!");
+                }
                 resetStudentForm();
             } catch(e) { console.error(e); }
         }
@@ -1119,48 +1136,88 @@
             document.getElementById('studentNameInput').value = student.name || '';
             document.getElementById('studentClassInput').value = student.class || '';
             document.getElementById('studentBarcodeInput').value = student.barcode || '';
+            document.getElementById('studentFormTitle').innerText = "Edit Data Anggota Siswa";
+            document.getElementById('btnSaveStudentAction').innerText = "Simpan Perubahan";
+            document.getElementById('btnCancelStudentEditAction').style.display = "inline-block";
         }
 
-        window.deleteStudent = async function(id) { if(confirm("Hapus siswa?")) await deleteDoc(doc(db, "students", id)); }
-        window.resetStudentForm = function() { 
-            document.getElementById('editStudentId').value = ""; document.getElementById('studentNameInput').value = ""; 
-            document.getElementById('studentClassInput').value = ""; document.getElementById('studentBarcodeInput').value = ""; 
+        window.deleteStudent = async function(id) { 
+            if(!confirm("Apakah Anda yakin ingin menghapus data siswa ini?")) return; 
+            try { await deleteDoc(doc(db, "students", id)); alert("Data siswa berhasil dihapus."); } catch(e) { console.error(e); }
         }
+        
+        window.resetStudentForm = function() { 
+            document.getElementById('editStudentId').value = ""; 
+            document.getElementById('studentNameInput').value = ""; 
+            document.getElementById('studentClassInput').value = ""; 
+            document.getElementById('studentBarcodeInput').value = ""; 
+            document.getElementById('studentFormTitle').innerText = "Registrasi Anggota Siswa Baru";
+            document.getElementById('btnSaveStudentAction').innerText = "Registrasikan Siswa";
+            document.getElementById('btnCancelStudentEditAction').style.display = "none";
+        }
+        
         window.searchStudent = function() {
             const keyword = document.getElementById('studentSearchInput').value.toLowerCase().trim();
             if(!keyword) { renderStudentsTable(localStudentsArray); return; }
-            const filtered = localStudentsArray.filter(s => (s.name||"").toLowerCase().includes(keyword) || (s.barcode||"").toLowerCase().includes(keyword));
+            const filtered = localStudentsArray.filter(s => (s.name||"").toLowerCase().includes(keyword) || (s.barcode||"").toLowerCase().includes(keyword) || (s.class||"").toLowerCase().includes(keyword));
             renderStudentsTable(filtered);
         }
-        
+
+        /* ======================================================= */
+        /* --- FUNGSI BARU: EKSPOR DATA (BUKU & SISWA) KE CSV --- */
+        /* ======================================================= */
+
+        // 1. Ekspor / Backup Data Buku
         window.downloadBackupCSV = function() {
-            if(localBooksArray.length === 0) return;
+            if(localBooksArray.length === 0) {
+                alert("Tidak ada data buku yang bisa diekspor!");
+                return;
+            }
+            
+            // Membuat header kolom CSV beserta bom UTF-8 agar karakter terbaca dengan baik di Excel
             let csvContent = "\uFEFFNo,Barcode Buku,Judul Buku,Pengarang\n";
-            localBooksArray.forEach((b, index) => { csvContent += `${index + 1},"${b.barcode || ''}","${b.title || ''}","${b.author || ''}"\n`; });
+            
+            localBooksArray.forEach((book, index) => {
+                // Membuka string dengan tanda kutip untuk mencegah eror tanda koma dalam judul/nama
+                csvContent += `${index + 1},"${book.barcode || ''}","${book.title || ''}","${book.author || ''}"\n`;
+            });
+            
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
-            link.setAttribute("href", URL.createObjectURL(blob));
-            link.setAttribute("download", "Backup_Katalog_Buku.csv");
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute("href", url);
+            link.setAttribute("download", "Backup_Katalog_Buku_Pelangi_Pustaka.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
         }
 
+        // 2. Ekspor / Backup Data Anggota Siswa
         window.downloadStudentBackupCSV = function() {
-            if(localStudentsArray.length === 0) return;
+            if(localStudentsArray.length === 0) {
+                alert("Tidak ada data siswa yang bisa diekspor!");
+                return;
+            }
+            
             let csvContent = "\uFEFFNo,Barcode Siswa,Nama Siswa,Kelas\n";
-            localStudentsArray.forEach((s, index) => { csvContent += `${index + 1},"${s.barcode || ''}","${s.name || ''}","${s.class || ''}"\n`; });
+            
+            localStudentsArray.forEach((student, index) => {
+                csvContent += `${index + 1},"${student.barcode || ''}","${student.name || ''}","${student.class || ''}"\n`;
+            });
+            
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
-            link.setAttribute("href", URL.createObjectURL(blob));
-            link.setAttribute("download", "Backup_Data_Siswa.csv");
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute("href", url);
+            link.setAttribute("download", "Backup_Data_Siswa_Pelangi_Pustaka.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
         }
-
-        // Navigasi halaman detail utama dashboard admin
-        window.openBookManager = function() { showAdminDetail('Buku', 'Katalog Buku Perpustakaan', 'Kelola data buku yang tersedia.'); }
-        window.openStudentManager = function() { showAdminDetail('Siswa', 'Data Anggota Siswa', 'Manajemen basis data siswa.'); }
-        window.openLoanManager = function() { showAdminDetail('Pinjam', 'Transaksi Peminjaman Buku', 'Lakukan scan barcode siswa untuk mulai transaksi peminjaman.'); window.resetLoanSession(); }
-        window.openReturnManager = function() { showAdminDetail('Kembali', 'Pengembalian Buku', 'Silakan scan langsung barcode fisik buku untuk memproses pengembalian.'); }
-        window.openReportManager = function() { showAdminDetail('Laporan', 'Laporan Manajemen Perpustakaan', 'Gunakan tab di bawah untuk melihat sirkulasi buku dan daftar hadir siswa.'); }
     </script>
 </body>
 </html>
