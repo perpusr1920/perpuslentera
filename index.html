@@ -10,79 +10,197 @@
 
     <style>
         :root {
-            --primary-blue: #2A5C99;
-            --light-blue: #E3F2FD;
-            --accent-orange: #FF9800;
-            --text-dark: #2B3674;
-            --text-gray: #707EAE;
-            --white: #FFFFFF;
-            --bg-body: #F0F5FA;
-            --danger-red: #FF4B4B;
-            --success-green: #2ecc71;
+            --primary-blue: #2563eb;
+            --primary-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            --hero-gradient: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            --light-blue: #eff6ff;
+            --accent-orange: #f97316;
+            --text-dark: #0f172a;
+            --text-gray: #64748b;
+            --white: #ffffff;
+            --bg-body: #f8fafc;
+            --danger-red: #ef4444;
+            --success-green: #10b981;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -6px rgba(0, 0, 0, 0.1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background-color: var(--bg-body); color: var(--text-dark); overflow-x: hidden; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Poppins', sans-serif; 
+        }
+        
+        body { 
+            background-color: var(--bg-body); 
+            color: var(--text-dark); 
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
 
         /* --- NAVBAR --- */
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 8%;
+            padding: 25px 8%;
             background-color: transparent;
             position: absolute;
             width: 100%;
             top: 0;
             z-index: 1000;
         }
-        .nav-logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.4rem; color: var(--white); cursor: pointer; }
-        .nav-logo i { background: var(--white); color: var(--primary-blue); padding: 8px; border-radius: 12px; }
-        
-        .nav-container { display: flex; align-items: center; gap: 20px; }
-        .nav-links { display: flex; list-style: none; gap: 15px; }
-        .nav-links li { 
+        .nav-logo { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            font-weight: 700; 
+            font-size: 1.5rem;
+            color: var(--white); 
             cursor: pointer; 
+            letter-spacing: -0.025em;
+        }
+        .nav-logo i { 
+            background: rgba(255, 255, 255, 0.2); 
+            color: var(--white);
+            padding: 10px; 
+            border-radius: 14px; 
+            backdrop-filter: blur(10px);
+            font-size: 1.3rem;
+        }
+        
+        .nav-container { 
+            display: flex;
+            align-items: center; 
+            gap: 30px; 
+        }
+        .nav-links { 
+            display: flex; 
+            list-style: none; 
+            gap: 8px; 
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+        }
+        .nav-links li { 
+            cursor: pointer;
             font-weight: 500; 
             color: var(--white); 
-            padding: 8px 18px;
+            padding: 8px 20px;
             border-radius: 25px;
-            transition: 0.3s;
-            opacity: 0.9;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0.85;
+            font-size: 0.95rem;
         }
-        .nav-links li:hover { background: rgba(255,255,255,0.2); opacity: 1; }
-        .nav-links li.active { background: var(--white); color: var(--primary-blue); opacity: 1; }
+        .nav-links li:hover { 
+            background: rgba(255, 255, 255, 0.15); 
+            opacity: 1;
+        }
+        .nav-links li.active { 
+            background: var(--white); 
+            color: var(--primary-blue); 
+            opacity: 1;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
 
-        .btn-admin-nav { background: var(--accent-orange); color: white; border: none; padding: 10px 25px; border-radius: 25px; font-weight: 700; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3); }
-        .btn-admin-nav:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4); }
+        .btn-admin-nav { 
+            background: var(--white); 
+            color: var(--primary-blue); 
+            border: none; 
+            padding: 12px 28px;
+            border-radius: 30px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            font-size: 0.95rem;
+        }
+        .btn-admin-nav:hover { 
+            background: var(--light-blue);
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
 
-        .menu-toggle { display: none; font-size: 1.8rem; color: var(--white); cursor: pointer; }
+        .menu-toggle { 
+            display: none; 
+            font-size: 1.6rem; 
+            color: var(--white); 
+            cursor: pointer; 
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
 
         /* --- HERO SECTION --- */
         .hero {
             position: relative;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            height: 550px;
+            background: var(--hero-gradient);
+            height: 520px;
             display: flex;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding-bottom: 100px;
+            padding-bottom: 80px;
             padding-left: 20px;
             padding-right: 20px;
         }
-        .hero-content { position: relative; z-index: 2; color: var(--white); }
-        .hero h1 { font-size: 4rem; font-weight: 800; text-shadow: 0 4px 10px rgba(0,0,0,0.1); line-height: 1.2; }
-        .hero p { font-size: 1.5rem; opacity: 0.9; font-weight: 400; margin-top: 10px; }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.4), transparent 60%);
+            pointer-events: none;
+        }
+        .hero-content { 
+            position: relative; 
+            z-index: 2; 
+            color: var(--white); 
+        }
+        .hero h1 { 
+            font-size: 3.5rem; 
+            font-weight: 800; 
+            letter-spacing: -0.03em;
+            line-height: 1.15; 
+            margin: 5px 0 15px 0;
+        }
+        .hero p { 
+            font-size: 1.25rem; 
+            opacity: 0.9; 
+            font-weight: 400; 
+            letter-spacing: 0.02em;
+        }
         
-        .wave-container { position: absolute; bottom: 0; width: 100%; line-height: 0; }
-        .wave-container svg { position: relative; display: block; width: calc(100% + 1.3px); height: 120px; }
-        .wave-container .shape-fill { fill: var(--bg-body); }
+        .wave-container { 
+            position: absolute;
+            bottom: -1px; 
+            width: 100%; 
+            line-height: 0; 
+        }
+        .wave-container svg { 
+            position: relative;
+            display: block; 
+            width: calc(100% + 1.3px); 
+            height: 90px; 
+        }
+        .wave-container .shape-fill { 
+            fill: var(--bg-body);
+        }
 
         /* --- MAIN LAYOUT --- */
-        .main-container { max-width: 1000px; margin: -120px auto 50px auto; position: relative; z-index: 5; padding: 0 20px; }
+        .main-container { 
+            max-width: 1040px;
+            margin: -100px auto 60px auto; 
+            position: relative; 
+            z-index: 5; 
+            padding: 0 20px;
+        }
         
         /* --- CARDS --- */
+        /* --- CARDS (PERBAIKAN POSISI TEKS TETAP DI TENGAH) --- */
         .welcome-card {
             background: var(--white);
             border-radius: 40px;
@@ -92,14 +210,43 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
         }
+        
+        /* Memastikan judul dan teks paragraf di setiap sub-menu dipaksa ke tengah */
+        .welcome-card h2, 
+        .welcome-card p {
+            text-align: center !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+
         .welcome-card .icon-circle {
-            width: 80px; height: 80px; background: var(--light-blue); color: var(--primary-blue);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; margin-bottom: 25px; flex-shrink: 0;
+            width: 80px;
+            height: 80px; 
+            background: var(--light-blue); 
+            color: var(--primary-blue);
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 2rem; 
+            margin-bottom: 25px; 
+            flex-shrink: 0;
+            margin-left: auto !important;
+            margin-right: auto !important;
         }
-        .welcome-card h2 { font-size: 2.2rem; color: var(--text-dark); margin-bottom: 15px; }
-        .welcome-card p { font-size: 1.1rem; color: var(--text-gray); max-width: 700px; line-height: 1.8; }
+        .welcome-card h2 { 
+            font-size: 2.2rem; 
+            color: var(--text-dark); 
+            margin-bottom: 15px; 
+        }
+        .welcome-card p { 
+            font-size: 1.1rem; 
+            color: var(--text-gray); 
+            max-width: 700px; 
+            line-height: 1.8; 
+        }
 
         .info-bar {
             margin-top: 30px;
@@ -116,123 +263,561 @@
         }
         .info-bar i { font-size: 1.5rem; color: var(--accent-orange); flex-shrink: 0; }
 
-        .rules-list { text-align: left; max-width: 600px; margin: 20px auto 0 auto; line-height: 1.8; font-size: 1.1rem; color: var(--text-dark); list-style: none; }
-        .rules-list li { margin-bottom: 12px; display: flex; gap: 10px; align-items: flex-start; }
-        .rules-list li::before { content: "\f00c"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--accent-orange); }
+        /* Khusus Tata Tertib: Memastikan list/daftar berjejer rapi di tengah kartu */
+        .rules-list { 
+            text-align: left; 
+            max-width: 600px; 
+            margin: 20px auto 0 auto !important; 
+            line-height: 1.8; 
+            font-size: 1.1rem; 
+            color: var(--text-dark); 
+            list-style: none; 
+        }
+        .rules-list li { 
+            margin-bottom: 12px;
+            display: flex; 
+            gap: 10px; 
+            align-items: flex-start; 
+        }
+        .rules-list li::before { 
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free"; 
+            font-weight: 900; 
+            color: var(--accent-orange); 
+        }
 
         /* --- LOGIN SECTION --- */
-        #loginSection { display: none; min-height: 100vh; justify-content: center; align-items: center; background: var(--bg-body); padding: 20px; }
-        .login-card { background: var(--white); padding: 40px 30px; border-radius: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 450px; }
-        .login-card input { width: 100%; padding: 16px 25px; margin-bottom: 20px; border: 2px solid var(--light-blue); border-radius: 20px; outline: none; font-size: 1rem; transition: 0.3s; }
-        .login-card input:focus { border-color: var(--primary-blue); }
-        .login-card button { width: 100%; padding: 16px; background: var(--primary-blue); color: white; border: none; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 1rem; }
+        #loginSection { 
+            display: none;
+            min-height: 100vh; 
+            justify-content: center; 
+            align-items: center; 
+            background: radial-gradient(circle at top left, var(--light-blue), var(--bg-body)); 
+            padding: 20px;
+        }
+        .login-card { 
+            background: var(--white); 
+            padding: 45px 35px; 
+            border-radius: 28px;
+            box-shadow: var(--hover-shadow); 
+            text-align: center; 
+            width: 100%; 
+            max-width: 440px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+        }
+        .login-card input { 
+            width: 100%; 
+            padding: 14px 20px; 
+            margin-bottom: 20px;
+            border: 2px solid #e2e8f0; 
+            border-radius: 14px; 
+            outline: none; 
+            font-size: 1rem; 
+            transition: all 0.2s ease;
+            color: var(--text-dark);
+        }
+        .login-card input:focus { 
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+        .login-card button { 
+            width: 100%; 
+            padding: 14px; 
+            background: var(--primary-gradient); 
+            color: white;
+            border: none; 
+            border-radius: 14px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+        .login-card button:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
 
         /* --- ADMIN SECTION --- */
-        #adminSection { display: none; max-width: 1100px; margin: 40px auto; padding: 0 20px; }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: var(--white); padding: 25px 40px; border-radius: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); gap: 15px; }
-        .btn-logout { background: var(--danger-red); color: white; border: none; padding: 12px 25px; border-radius: 15px; cursor: pointer; font-weight: 600; flex-shrink: 0; }
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; }
-        .card { background: var(--white); border-radius: 30px; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; transition: 0.3s; box-shadow: 0px 10px 20px rgba(112, 144, 176, 0.08); cursor: pointer; text-align: center; }
-        .card:hover { transform: translateY(-10px); background: var(--primary-blue); color: white; }
-        .icon-wrapper { width: 70px; height: 70px; border-radius: 20px; background-color: var(--light-blue); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; color: var(--primary-blue); font-size: 1.8rem; }
-        .card:hover .icon-wrapper { background: rgba(255,255,255,0.2); color: white; }
+        #adminSection { 
+            display: none;
+            max-width: 1140px; 
+            margin: 40px auto; 
+            padding: 0 20px; 
+        }
+        .admin-header { 
+            display: flex;
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 35px; 
+            background: var(--white); 
+            padding: 25px 40px; 
+            border-radius: 20px; 
+            box-shadow: var(--card-shadow); 
+            gap: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+        }
+        .admin-header h2 {
+            font-size: 1.6rem;
+            letter-spacing: -0.02em;
+        }
+        .btn-logout { 
+            background: #fef2f2; 
+            color: var(--danger-red); 
+            border: 1px solid #fee2e2; 
+            padding: 12px 24px;
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            flex-shrink: 0; 
+            transition: all 0.2s ease;
+        }
+        .btn-logout:hover {
+            background: var(--danger-red);
+            color: white;
+        }
+
+        .grid-container { 
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); 
+            gap: 25px; 
+        }
+        .card { 
+            background: var(--white); 
+            border-radius: 20px;
+            padding: 35px 25px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            box-shadow: var(--card-shadow);
+            cursor: pointer; 
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .card:hover { 
+            transform: translateY(-6px); 
+            background: var(--white); 
+            box-shadow: var(--hover-shadow);
+            border-color: var(--primary-blue);
+        }
+        .icon-wrapper { 
+            width: 64px; 
+            height: 64px; 
+            border-radius: 16px; 
+            background-color: var(--light-blue); 
+            display: flex;
+            align-items: center; 
+            justify-content: center; 
+            margin-bottom: 20px; 
+            color: var(--primary-blue); 
+            font-size: 1.6rem;
+            transition: all 0.3s ease;
+        }
+        .card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+            color: var(--text-dark);
+        }
+        .card p {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+        .card:hover .icon-wrapper { 
+            background: var(--primary-gradient); 
+            color: white;
+            transform: scale(1.05);
+        }
 
         /* Detail Halaman Admin & CRUD */
-        .admin-detail-box { display: none; background: var(--white); border-radius: 30px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
-        .btn-back-admin { background: var(--text-gray); color: white; border: none; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; margin-bottom: 20px; transition: 0.3s; }
-        .btn-back-admin:hover { background: var(--text-dark); }
+        .admin-detail-box { 
+            display: none;
+            background: var(--white); 
+            border-radius: 24px; 
+            padding: 40px; 
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+        }
+        .btn-back-admin { 
+            background: #f1f5f9; 
+            color: var(--text-gray); 
+            border: none; 
+            padding: 10px 20px;
+            border-radius: 10px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            margin-bottom: 25px; 
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+        .btn-back-admin:hover { 
+            background: #e2e8f0;
+            color: var(--text-dark);
+        }
 
         /* Styling Form Buku & Siswa */
-        .book-form-container { background: var(--bg-body); padding: 25px; border-radius: 20px; margin-bottom: 30px; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
-        .form-grid .form-group { display: flex; flex-direction: column; gap: 5px; }
-        .form-grid .form-group label { font-size: 0.9rem; font-weight: 600; color: var(--text-dark); }
-        .form-grid .form-group input { padding: 12px 15px; border: 2px solid var(--light-blue); border-radius: 12px; outline: none; font-size: 0.95rem; }
-        .form-grid .form-group input:focus { border-color: var(--primary-blue); }
-        .btn-save-book { background: var(--primary-blue); color: white; border: none; padding: 12px 25px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.3s; }
-        .btn-save-book:hover { background: #1a4577; }
-        .btn-cancel-edit { background: var(--text-gray); color: white; border: none; padding: 12px 25px; border-radius: 12px; font-weight: 600; cursor: pointer; display: none; }
+        .book-form-container { 
+            background: #f8fafc;
+            padding: 30px; 
+            border-radius: 18px; 
+            margin-bottom: 35px; 
+            border: 1px solid #e2e8f0;
+        }
+        .form-grid { 
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+            gap: 20px; 
+            margin-bottom: 20px; 
+        }
+        .form-grid .form-group { 
+            display: flex;
+            flex-direction: column; 
+            gap: 8px; 
+        }
+        .form-grid .form-group label { 
+            font-size: 0.85rem; 
+            font-weight: 600;
+            color: var(--text-dark); 
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .form-grid .form-group input { 
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0; 
+            border-radius: 10px; 
+            outline: none; 
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            background: var(--white);
+        }
+        .form-grid .form-group input:focus { 
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+        }
+        .btn-save-book { 
+            background: var(--primary-gradient); 
+            color: white; 
+            border: none; 
+            padding: 12px 28px;
+            border-radius: 10px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+        }
+        .btn-save-book:hover { 
+            opacity: 0.95;
+        }
+        .btn-cancel-edit { 
+            background: #e2e8f0; 
+            color: var(--text-dark); 
+            border: none; 
+            padding: 12px 28px;
+            border-radius: 10px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            display: none; 
+            transition: all 0.2s ease;
+        }
+        .btn-cancel-edit:hover {
+            background: #cbd5e1;
+        }
 
         /* Styling Info Box Hasil scan */
-        .scanned-info-box { background: var(--light-blue); border-left: 5px solid var(--primary-blue); padding: 15px 20px; border-radius: 0 15px 15px 0; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .scanned-info-box { 
+            background: #ecf5ff;
+            border-left: 4px solid var(--primary-blue); 
+            padding: 18px 24px; 
+            border-radius: 12px; 
+            margin-bottom: 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+        }
 
         /* Badge Status */
-        .badge { padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: bold; color: white; display: inline-block; }
-        .badge-loaned { background-color: var(--accent-orange); }
-        .badge-returned { background-color: var(--success-green); }
+        .badge { 
+            padding: 6px 14px;
+            border-radius: 20px; 
+            font-size: 0.8rem; 
+            font-weight: 600; 
+            color: white; 
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .badge-loaned { 
+            background-color: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #ffedd5;
+        }
+        .badge-returned { 
+            background-color: #ecfdf5;
+            color: #047857;
+            border: 1px solid #d1fae5;
+        }
 
         /* Styling Table */
-        .table-responsive { width: 100%; overflow-x: auto; margin-top: 20px; }
-        .book-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem; }
-        .book-table th, .book-table td { padding: 15px; border-bottom: 1px solid var(--light-blue); }
-        .book-table th { background-color: var(--light-blue); color: var(--primary-blue); font-weight: 700; }
-        .book-table tr:hover { background-color: rgba(227, 242, 253, 0.3); }
+        .table-responsive { 
+            width: 100%;
+            overflow-x: auto; 
+            margin-top: 25px; 
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+        }
+        .book-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            text-align: left;
+            font-size: 0.95rem; 
+            background: var(--white);
+        }
+        .book-table th, .book-table td { 
+            padding: 16px 20px;
+            border-bottom: 1px solid #f1f5f9; 
+        }
+        .book-table th { 
+            background-color: #f8fafc; 
+            color: var(--text-dark);
+            font-weight: 600; 
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .book-table tr:last-child td {
+            border-bottom: none;
+        }
+        .book-table tr:hover { 
+            background-color: #fafafa;
+        }
         
-        .btn-action { border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: 0.2s; margin-right: 5px; }
-        .btn-edit { background: var(--accent-orange); color: white; }
-        .btn-edit:hover { background: #e08600; }
-        .btn-delete { background: var(--danger-red); color: white; }
-        .btn-delete:hover { background: #cc3b3b; }
+        .btn-action { 
+            border: none;
+            padding: 8px 14px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 0.85rem; 
+            transition: all 0.2s ease; 
+            margin-right: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-edit { 
+            background: #fff7ed; 
+            color: #ea580c;
+            border: 1px solid #ffedd5;
+        }
+        .btn-edit:hover { 
+            background: #ea580c;
+            color: var(--white);
+        }
+        .btn-delete { 
+            background: #fef2f2; 
+            color: #dc2626;
+            border: 1px solid #fee2e2;
+        }
+        .btn-delete:hover { 
+            background: #dc2626;
+            color: var(--white);
+        }
         
         @media (max-width: 768px) {
-            .navbar { padding: 15px 5%; background-color: var(--primary-blue); position: fixed; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-            .nav-container {
-                display: none; flex-direction: column; position: absolute;
-                top: 100%; left: 0; width: 100%; background-color: var(--primary-blue);
-                padding: 20px; box-shadow: 0 10px 15px rgba(0,0,0,0.1); gap: 20px;
+            .navbar { 
+                padding: 15px 5%;
+                background-color: var(--primary-blue); 
+                position: fixed; 
+                box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
             }
-            .nav-container.active { display: flex; }
-            .nav-links { flex-direction: column; width: 100%; text-align: center; gap: 5px; }
-            .nav-links li { width: 100%; padding: 12px; }
-            .nav-links li.active { background: rgba(255,255,255,0.2); color: var(--white); font-weight: 700; }
-            .btn-admin-nav { width: 100%; text-align: center; }
-            .menu-toggle { display: block; }
-            .hero { height: 450px; padding-top: 100px; padding-bottom: 60px; }
-            .hero h1 { font-size: 2.2rem; }
-            .hero p { font-size: 1.1rem; }
-            .wave-container svg { height: 60px; }
-            .main-container { margin: -50px auto 30px auto; }
-            .welcome-card { padding: 35px 20px; border-radius: 25px; }
-            .welcome-card h2 { font-size: 1.6rem; }
-            .welcome-card p { font-size: 0.95rem; line-height: 1.6; }
-            .info-bar { padding: 15px 20px; border-radius: 20px; flex-direction: column; text-align: center; gap: 10px; }
-            .admin-header { flex-direction: column; text-align: center; padding: 20px; border-radius: 20px; }
-            .btn-logout { width: 100%; }
-            .admin-detail-box { padding: 25px 15px; border-radius: 20px; }
-            .form-grid { grid-template-columns: 1fr; }
+            .nav-container {
+                display: none;
+                flex-direction: column; 
+                position: absolute;
+                top: 100%; left: 0; width: 100%; 
+                background-color: var(--primary-blue);
+                padding: 25px; 
+                box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+                gap: 20px;
+            }
+            .nav-container.active { 
+                display: flex;
+            }
+            .nav-links { 
+                flex-direction: column; 
+                width: 100%; 
+                text-align: center;
+                gap: 8px; 
+                background: transparent;
+                backdrop-filter: none;
+            }
+            .nav-links li { 
+                width: 100%;
+                padding: 12px; 
+            }
+            .nav-links li.active { 
+                background: rgba(255,255,255,0.2);
+                color: var(--white); 
+                font-weight: 700; 
+            }
+            .btn-admin-nav { 
+                width: 100%; 
+                text-align: center; 
+            }
+            .menu-toggle { 
+                display: block; 
+            }
+            .hero { 
+                height: 440px; 
+                padding-top: 100px; 
+                padding-bottom: 40px;
+            }
+            .hero h1 { 
+                font-size: 2.4rem; 
+            }
+            .hero p { 
+                font-size: 1.1rem; 
+            }
+            .wave-container svg { 
+                height: 50px; 
+            }
+            .main-container { 
+                margin: -40px auto 40px auto; 
+            }
+            .welcome-card { 
+                padding: 35px 20px; 
+                border-radius: 20px; 
+            }
+            .welcome-card h2 { 
+                font-size: 1.6rem; 
+            }
+            .welcome-card p { 
+                font-size: 0.95rem; 
+                line-height: 1.6; 
+            }
+            .info-bar { 
+                padding: 15px 20px; 
+                border-radius: 14px;
+                flex-direction: column; 
+                text-align: center; 
+                gap: 8px; 
+            }
+            .admin-header { 
+                flex-direction: column;
+                text-align: center; 
+                padding: 25px; 
+                border-radius: 16px; 
+            }
+            .btn-logout { 
+                width: 100%; 
+            }
+            .admin-detail-box { 
+                padding: 25px 20px; 
+                border-radius: 18px;
+            }
+            .form-grid { 
+                grid-template-columns: 1fr; 
+            }
         }
+
         /* --- STYLING ABSENSI (MINIMALIS & STATS) --- */
-.stats-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-    gap: 20px; 
-    margin-bottom: 30px; 
-}
-.stat-box { 
-    background: var(--white); 
-    border: 2px solid var(--light-blue); 
-    padding: 20px; 
-    border-radius: 20px; 
-    display: flex; 
-    align-items: center; 
-    gap: 15px; 
-}
-.stat-box i { 
-    font-size: 2rem; 
-    color: var(--primary-blue); 
-    background: var(--light-blue); 
-    padding: 12px; 
-    border-radius: 15px; 
-}
-.stat-box .stat-info h4 { 
-    font-size: 1.8rem; 
-    color: var(--text-dark); 
-    font-weight: 700; 
-}
-.stat-box .stat-info p { 
-    font-size: 0.85rem; 
-    color: var(--text-gray); 
-}
+        .stats-grid { 
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+            gap: 25px; 
+            margin-bottom: 35px; 
+        }
+        .stat-box { 
+            background: var(--white); 
+            border: 1px solid #e2e8f0;
+            padding: 24px; 
+            border-radius: 18px; 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+            box-shadow: var(--card-shadow);
+        }
+        .stat-box i { 
+            font-size: 1.8rem;
+            color: var(--primary-blue); 
+            background: var(--light-blue); 
+            padding: 14px; 
+            border-radius: 14px; 
+        }
+        .stat-box .stat-info h4 { 
+            font-size: 1.8rem; 
+            color: var(--text-dark);
+            font-weight: 700; 
+            line-height: 1.2;
+        }
+        .stat-box .stat-info p { 
+            font-size: 0.85rem; 
+            color: var(--text-gray);
+            font-weight: 500;
+        }
+        /* --- CSS TABEL JADWAL KUNJUNG HOME --- */
+        .schedule-section {
+            margin-top: 45px;
+            width: 100%;
+            background: var(--white);
+            padding: 35px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        .schedule-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .schedule-section p.subtitle {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            margin-bottom: 25px;
+        }
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+        .schedule-table th, .schedule-table td {
+            padding: 12px 10px;
+            border: 1px solid #e2e8f0;
+        }
+        .schedule-table th {
+            background-color: var(--light-blue);
+            color: var(--primary-blue);
+            font-weight: 700;
+        }
+        .schedule-table td:first-child {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: var(--text-dark);
+            width: 50px;
+        }
+        .schedule-table tr:hover td {
+            background-color: rgba(227, 242, 253, 0.2);
+        }
+
+        /* Input khusus panel admin jadwal */
+        .admin-table-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--light-blue);
+            border-radius: 8px;
+            outline: none;
+            text-align: center;
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+        .admin-table-input:focus {
+            border-color: var(--primary-blue);
+            background-color: #fafcfe;
+        }
     </style>
 </head>
 <body>
@@ -280,6 +865,26 @@
                 <div class="info-bar">
                     <i class="fa-solid fa-star"></i>
                     <span><strong>Info Hari Ini:</strong> Belum ada pengumuman terbaru. Selamat membaca, Sobat Pustaka!</span>
+                </div>
+                <div class="schedule-section" style="text-align: left; width: 100%;">
+                    <h3><i class="fa-solid fa-calendar-days" style="color: var(--primary-blue);"></i> Jadwal Kunjungan</h3>
+                    <p class="subtitle">Gukar Sekolah Kristen Lentera Ambarawa • Tahun Pelajaran 2025/2026</p>
+                    <div class="table-responsive">
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Senin</th>
+                                    <th>Selasa</th>
+                                    <th>Rabu</th>
+                                    <th>Kamis</th>
+                                    <th>Jumat</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userScheduleBody">
+                                </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -360,6 +965,11 @@
                 <div class="icon-wrapper"><i class="fa-solid fa-file-invoice"></i></div>
                 <h3>Laporan</h3>
                 <p>Rekap Transaksi</p>
+            </div>
+            <div class="card" onclick="openScheduleManager()">
+                <div class="icon-wrapper"><i class="fa-solid fa-table-cells"></i></div>
+                <h3>Jadwal Kunjung</h3>
+                <p>Ubah Tabel Beranda</p>
             </div>
         </div>
 
@@ -444,8 +1054,15 @@
                         <i class="fa-solid fa-qrcode"></i> Scan Barcode / Input NIS Anggota
                     </h3>
                     <div style="display: flex; gap: 10px;">
-                        <input type="text" id="attendanceInput" placeholder="Masukkan Nomor Anggota / Scan Barcode Siswa..." onkeypress="handleAttendancePress(event)" style="flex: 1; padding: 14px 20px; border: 2px solid var(--light-blue); border-radius: 15px; outline: none; font-size: 1rem;">
+                        <input type="text" id="attendanceInput" placeholder="Masukkan Nomor Anggota / Scan Barcode Siswa..." onkeypress="handleAttendancePress(event)" oninput="previewAttendanceStudent()" style="flex: 1; padding: 14px 20px; border: 2px solid var(--light-blue); border-radius: 15px; outline: none; font-size: 1rem;">
                         <button onclick="submitAttendance()" style="background: var(--primary-blue); color: white; border: none; padding: 0 25px; border-radius: 15px; font-weight: 600; cursor: pointer;">Absen Hadir</button>
+                    </div>
+                    <div id="attendancePreviewBox" class="scanned-info-box" style="display: none; margin-top: 15px;">
+                        <div>
+                            <p style="font-size: 0.85rem; color: var(--text-gray); font-weight: 600;">Data Siswa Ditemukan:</p>
+                            <h4 id="txtAttendancePreviewName" style="font-size: 1.2rem; color: var(--primary-blue);">Nama Siswa</h4>
+                            <p id="txtAttendancePreviewClass" style="font-size: 0.95rem;">Kelas: -</p>
+                        </div>
                     </div>
                     <p id="attendanceMsg" style="margin-top: 10px; font-size: 0.9rem; font-weight: 600; display: none;"></p>
                 </div>
@@ -635,19 +1252,36 @@
                     </table>
                 </div>
             </div>
-
+            <div id="scheduleManagerContainer" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-dark);">Pengisian Data Baris Tabel Jadwal Beranda</h3>
+                        <p style="color: var(--text-gray); font-size: 0.9rem; margin-top: 2px;">Silakan isi sel kolom yang kosong di bawah ini. Perubahan akan langsung disimpan ke beranda.</p>
+                    </div>
+                    <button class="btn-save-book" onclick="saveScheduleData()" style="background: var(--success-green);"><i class="fa-solid fa-floppy-disk"></i> Simpan Tabel</button>
+                </div>
+                
+                <div class="table-responsive" style="background: white; padding: 20px; border-radius: 20px; border: 1px solid var(--light-blue);">
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Senin</th>
+                                <th>Selasa</th>
+                                <th>Rabu</th>
+                                <th>Kamis</th>
+                                <th>Jumat</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminScheduleBody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // 1. Taruh ini di baris paling atas di dalam tag <script> Anda
-let attendanceData = JSON.parse(localStorage.getItem('attendance_logs')) || [];
-const masterSiswa = {
-    "12345": { nama: "Budi Santoso", kelas: "Kelas 4A" },
-    "12346": { nama: "Siti Rahma", kelas: "Kelas 5B" },
-    "12347": { nama: "Andi Wijaya", kelas: "Kelas 3" },
-    "899123": { nama: "Gisela Putri", kelas: "Kelas 6" }
-};
         function showLogin() {
             document.getElementById('mainNavbar').style.display = 'none';
             document.getElementById('userSection').style.display = 'none';
@@ -718,127 +1352,151 @@ const masterSiswa = {
             showAdminDetail('Laporan', 'Laporan Riwayat Transaksi', 'Memantau data riwayat sirkulasi keluar masuknya buku secara real-time.');
         }
         // ==================== LOGIKA FITUR ABSENSI PERPUSTAKAAN ====================
+        // Catatan: fungsi inti absensi (submitAttendance, renderAttendanceTable, dst)
+        // sekarang didefinisikan di <script type="module"> di bawah, supaya bisa
+        // langsung mengakses data siswa (localStudentsArray) dan database Firestore.
 function openAttendanceManager() {
     showAdminDetail('Absensi', 'Daftar Hadir Pengunjung', 'Melihat statistik serta menginput absensi kunjungan harian siswa.');
-    renderAttendanceTable();
-    calculateAttendanceStats();
+    if (typeof window.renderAttendanceTable === 'function') window.renderAttendanceTable();
+    if (typeof window.calculateAttendanceStats === 'function') window.calculateAttendanceStats();
+    setTimeout(() => {
+        const attInput = document.getElementById('attendanceInput');
+        if (attInput) attInput.focus();
+    }, 200);
 }
 
 function handleAttendancePress(e) {
     if(e.key === 'Enter') submitAttendance();
 }
-
-function submitAttendance() {
-    const inputField = document.getElementById('attendanceInput');
-    const msgEl = document.getElementById('attendanceMsg');
-    
-    if(!inputField) return;
-    
-    // `.trim()` digunakan untuk menghapus spasi kosong di awal/akhir input tanpa sengaja
-    const barcodeValue = inputField.value.trim();
-
-    if(!barcodeValue) return;
-
-    // 1. Nilai default jika data siswa tidak ditemukan
-    let namaSiswa = "Pengunjung Umum";
-    let kelasSiswa = "-";
-
-    // 2. Pencarian cerdas ke database anggota (localStudentsArray)
-    if (typeof localStudentsArray !== 'undefined' && localStudentsArray.length > 0) {
-        
-        const siswaDitemukan = localStudentsArray.find(siswa => {
-            // Kita ubah dua-duanya menjadi String murni, lalu hilangkan spasinya agar pencocokan 100% akurat
-            const barcodeDatabase = siswa.barcode ? String(siswa.barcode).trim() : "";
-            const barcodeInput = String(barcodeValue).trim();
-            
-            return barcodeDatabase === barcodeInput;
-        });
-        
-        // Jika ditemukan, ambil data asli dari database siswa Anda
-        if(siswaDitemukan) {
-            namaSiswa = siswaDitemukan.name || siswaDitemukan.nama || "Siswa Aktif";
-            kelasSiswa = siswaDitemukan.class || siswaDitemukan.kelas || "-";
-        }
-    }
-
-    const now = new Date();
-    const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + " WIB";
-    const dateString = now.toLocaleDateString('id-ID');
-
-    const newLog = {
-        waktu: timeString,
-        tanggal: dateString,
-        id: barcodeValue,
-        nama: namaSiswa,
-        status: kelasSiswa
-    };
-
-    // Masukkan ke baris paling atas di tabel log absensi
-    attendanceData.unshift(newLog);
-    localStorage.setItem('attendance_logs', JSON.stringify(attendanceData));
-
-    // Memunculkan pesan sukses di bawah kotak input
-    msgEl.style.color = '#2ecc71';
-    msgEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Absen Berhasil! Selamat Datang, <b>${namaSiswa}</b> (${kelasSiswa})`;
-    msgEl.style.display = 'block';
-
-    // Reset kotak input agar siap discan kembali
-    inputField.value = '';
-    inputField.focus();
-    renderAttendanceTable();
-    calculateAttendanceStats();
-
-    // Sembunyikan notifikasi setelah 4 detik
-    setTimeout(() => { msgEl.style.display = 'none'; }, 4000);
-}
-function renderAttendanceTable() {
-    const tbody = document.getElementById('attendanceTableBody');
-    if(!tbody) return;
-
-    const todayStr = new Date().toLocaleDateString('id-ID');
-    const todayLogs = attendanceData.filter(item => item.tanggal === todayStr);
-
-    if(todayLogs.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-gray);">Belum ada data absensi masuk hari ini.</td></tr>`;
-        return;
-    }
-
-    tbody.innerHTML = todayLogs.map((item, index) => `
-        <tr>
-            <td><b>${index + 1}</b></td>
-            <td><i class="fa-regular fa-clock" style="color: var(--primary-blue)"></i> ${item.waktu}</td>
-            <td><code>${item.id}</code></td>
-            <td><strong>${item.nama}</strong></td>
-            <td><span class="badge badge-returned" style="background-color: var(--primary-blue); color: white; padding: 4px 10px; border-radius: 8px; font-size: 0.85rem;">${item.status}</span></td>
-        </tr>
-    `).join('');
-}
-
-function calculateAttendanceStats() {
-    const todayStr = new Date().toLocaleDateString('id-ID');
-    
-    const totalToday = attendanceData.filter(item => item.tanggal === todayStr).length;
-    const txtTotal = document.getElementById('txtTotalAbsen');
-    if(txtTotal) txtTotal.innerText = totalToday;
-
-    const uniqueDates = [...new Set(attendanceData.map(item => item.tanggal))];
-    const totalDaysRecorded = uniqueDates.length || 1;
-    const totalAllDays = attendanceData.length;
-
-    const averagePerDay = (totalAllDays / totalDaysRecorded).toFixed(1);
-    const txtAvg = document.getElementById('txtRataRataAbsen');
-    if(txtAvg) txtAvg.innerText = averagePerDay;
-}
-
-function clearAttendanceLog() {
-    if(confirm("Apakah Anda yakin ingin menghapus semua history log absensi?")) {
-        attendanceData = [];
-        localStorage.removeItem('attendance_logs');
-        renderAttendanceTable();
-        calculateAttendanceStats();
-    }
-}
 // ===========================================================================
+// ==================== LOGIKA TRANSAKSI TABEL JADWAL HOME ====================
+const TOTAL_ROWS = 12;
+const DAYS_KEY = ['senin', 'selasa', 'rabu', 'kamis', 'jumat'];
+
+// Fungsi inisialisasi awal saat halaman dibuka
+function initScheduleTable() {
+    let savedSchedule = localStorage.getItem('library_schedule_data');
+    if (!savedSchedule) {
+        // Buat data kosong sebanyak 12 baris jika data belum ada
+        let emptyData = {};
+        for (let i = 1; i <= TOTAL_ROWS; i++) {
+            emptyData[i] = { senin: "", selasa: "", rabu: "", kamis: "", jumat: "" };
+        }
+        localStorage.setItem('library_schedule_data', JSON.stringify(emptyData));
+    }
+    renderUserScheduleTable();
+}
+
+// Menampilkan data tabel di halaman Home depan
+function renderUserScheduleTable() {
+    const tbody = document.getElementById('userScheduleBody');
+    if (!tbody) return;
+    
+    const scheduleData = JSON.parse(localStorage.getItem('library_schedule_data'));
+    let htmlContent = "";
+    
+    for (let i = 1; i <= TOTAL_ROWS; i++) {
+        const rowData = scheduleData[i] || { senin: "", selasa: "", rabu: "", kamis: "", jumat: "" };
+        htmlContent += `
+            <tr>
+                <td>${i}</td>
+                <td>${rowData.senin}</td>
+                <td>${rowData.selasa}</td>
+                <td>${rowData.rabu}</td>
+                <td>${rowData.kamis}</td>
+                <td>${rowData.jumat}</td>
+            </tr>
+        `;
+    }
+    tbody.innerHTML = htmlContent;
+}
+
+// Membuka Halaman Editor Jadwal di Sisi Admin
+window.openScheduleManager = function() {
+    showAdminDetail('Jadwal Kunjung', 'Kelola Jadwal Wajib Kunjung Baca Pinjam', 'Silakan ubah isi tabel langsung pada kolom yang disediakan di bawah ini.');
+    
+    // Menyembunyikan sub-container admin lainnya untuk mencegah tumpang tindih
+    document.getElementById('crudBookContainer').style.display = 'none';
+    document.getElementById('attendanceContainer').style.display = 'none';
+    if(document.getElementById('loanTransactionContainer')) document.getElementById('loanTransactionContainer').style.display = 'none';
+    if(document.getElementById('returnContainer')) document.getElementById('returnContainer').style.display = 'none';
+    if(document.getElementById('studentContainer')) document.getElementById('studentContainer').style.display = 'none';
+    if(document.getElementById('reportTransactionContainer')) document.getElementById('reportTransactionContainer').style.display = 'none';
+    
+    // Tampilkan container jadwal
+    document.getElementById('scheduleManagerContainer').style.display = 'block';
+    renderAdminScheduleForm();
+}
+
+// Merender form input tabel di menu admin
+function renderAdminScheduleForm() {
+    const tbody = document.getElementById('adminScheduleBody');
+    if (!tbody) return;
+    
+    const scheduleData = JSON.parse(localStorage.getItem('library_schedule_data'));
+    let htmlContent = "";
+    
+    for (let i = 1; i <= TOTAL_ROWS; i++) {
+        const rowData = scheduleData[i] || { senin: "", selasa: "", rabu: "", kamis: "", jumat: "" };
+        htmlContent += `
+            <tr>
+                <td>${i}</td>
+                <td><input type="text" class="admin-table-input" data-row="${i}" data-day="senin" value="${rowData.senin}" placeholder="..."></td>
+                <td><input type="text" class="admin-table-input" data-row="${i}" data-day="selasa" value="${rowData.selasa}" placeholder="..."></td>
+                <td><input type="text" class="admin-table-input" data-row="${i}" data-day="rabu" value="${rowData.rabu}" placeholder="..."></td>
+                <td><input type="text" class="admin-table-input" data-row="${i}" data-day="kamis" value="${rowData.kamis}" placeholder="..."></td>
+                <td><input type="text" class="admin-table-input" data-row="${i}" data-day="jumat" value="${rowData.jumat}" placeholder="..."></td>
+            </tr>
+        `;
+    }
+    tbody.innerHTML = htmlContent;
+}
+
+// Fungsi tombol Simpan Tabel Jadwal oleh Admin
+window.saveScheduleData = function() {
+    let updatedData = {};
+    for (let i = 1; i <= TOTAL_ROWS; i++) {
+        updatedData[i] = { senin: "", selasa: "", rabu: "", kamis: "", jumat: "" };
+    }
+    
+    // Mengambil semua data dari elemen input form admin
+    const inputs = document.querySelectorAll('.admin-table-input');
+    inputs.forEach(input => {
+        const row = input.getAttribute('data-row');
+        const day = input.getAttribute('data-day');
+        updatedData[row][day] = input.value.trim();
+    });
+    
+    localStorage.setItem('library_schedule_data', JSON.stringify(updatedData));
+    renderUserScheduleTable();
+    alert('Jadwal wajib kunjung berhasil diperbarui!');
+    hideAdminDetail();
+}
+
+// Menghubungkan fungsi inisialisasi agar berjalan saat pertama halaman dimuat
+document.addEventListener("DOMContentLoaded", function() {
+    initScheduleTable();
+});
+
+// Modifikasi/override aman pada fungsi bawaan showAdminDetail agar dapat merespon menu Jadwal
+const originalShowAdminDetail = window.showAdminDetail;
+window.showAdminDetail = function(type, title, desc) {
+    if (typeof originalShowAdminDetail === "function") {
+        originalShowAdminDetail(type, title, desc);
+    } else {
+        // Jika fungsi tidak dilepas ke window, pasang status standar layouting detail
+        document.getElementById('adminGrid').style.display = 'none';
+        document.getElementById('adminDetail').style.display = 'block';
+        document.getElementById('detailSubTitle').innerText = title;
+        document.getElementById('detailDesc').innerText = desc;
+    }
+    // Tambahkan kondisi penyembunyian kontainer jadwal jika menu lain yang diakses
+    if (type !== 'Jadwal Kunjung') {
+        const container = document.getElementById('scheduleManagerContainer');
+        if(container) container.style.display = 'none';
+    }
+};
+// ============================================================================
     </script>
 
     <script type="module">
@@ -863,10 +1521,12 @@ function clearAttendanceLog() {
         const booksCollection = collection(db, "books");
         const studentsCollection = collection(db, "students");
         const loansCollection = collection(db, "loans");
+        const attendanceCollection = collection(db, "attendance");
 
         let localBooksArray = [];
         let localStudentsArray = [];
         let localLoansArray = []; 
+        let localAttendanceArray = [];
         
         let currentActiveStudent = null;
         let loanCartBooks = [];
@@ -1380,6 +2040,159 @@ function clearAttendanceLog() {
             const filtered = localStudentsArray.filter(s => (s.name||"").toLowerCase().includes(keyword) || (s.barcode||"").toLowerCase().includes(keyword) || (s.class||"").toLowerCase().includes(keyword));
             renderStudentsTable(filtered);
         }
+
+        /* --- MANAJEMEN LIVE DATA ABSENSI --- */
+        // Fungsi bantu: cari data siswa di localStudentsArray berdasarkan barcode/NIS
+        function findSiswaByBarcode(barcodeValue) {
+            if (!barcodeValue || localStudentsArray.length === 0) return null;
+            const barcodeInput = String(barcodeValue).trim().toLowerCase();
+            return localStudentsArray.find(siswa => {
+                const barcodeDB = siswa.barcode ? String(siswa.barcode).trim().toLowerCase() : "";
+                return barcodeDB === barcodeInput;
+            }) || null;
+        }
+
+        // Menampilkan data siswa secara langsung (real-time) begitu barcode/NIS diketik/discan
+        window.previewAttendanceStudent = function() {
+            const inputField = document.getElementById('attendanceInput');
+            const previewBox = document.getElementById('attendancePreviewBox');
+            if (!inputField || !previewBox) return;
+
+            const barcodeValue = inputField.value.trim();
+            if (!barcodeValue) { previewBox.style.display = 'none'; return; }
+
+            const siswaDitemukan = findSiswaByBarcode(barcodeValue);
+            if (siswaDitemukan) {
+                document.getElementById('txtAttendancePreviewName').innerText = siswaDitemukan.name || 'Siswa Aktif';
+                document.getElementById('txtAttendancePreviewClass').innerText = 'Kelas: ' + (siswaDitemukan.class || '-');
+                previewBox.style.display = 'flex';
+            } else {
+                previewBox.style.display = 'none';
+            }
+        }
+
+        // Menyimpan absensi ke Firestore (cloud) agar data tersimpan permanen & real-time di semua perangkat
+        window.submitAttendance = async function() {
+            const inputField = document.getElementById('attendanceInput');
+            const msgEl = document.getElementById('attendanceMsg');
+            if (!inputField) return;
+
+            const barcodeValue = inputField.value.trim();
+            if (!barcodeValue) return;
+
+            let namaSiswa = "Pengunjung Umum";
+            let kelasSiswa = "-";
+
+            const siswaDitemukan = findSiswaByBarcode(barcodeValue);
+            if (siswaDitemukan) {
+                namaSiswa = siswaDitemukan.name || "Siswa Aktif";
+                kelasSiswa = siswaDitemukan.class || "-";
+            }
+
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + " WIB";
+            const dateString = now.toLocaleDateString('id-ID');
+
+            const newLog = {
+                waktu: timeString,
+                tanggal: dateString,
+                id: barcodeValue,
+                nama: namaSiswa,
+                kelas: kelasSiswa,
+                createdAt: now.getTime()
+            };
+
+            try {
+                await addDoc(attendanceCollection, newLog);
+
+                msgEl.style.color = '#2563eb';
+                msgEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Absen Berhasil! Selamat Datang, <b>${namaSiswa}</b> (Kelas: ${kelasSiswa})`;
+                msgEl.style.display = 'block';
+
+                inputField.value = '';
+                document.getElementById('attendancePreviewBox').style.display = 'none';
+                inputField.focus();
+
+                setTimeout(() => { msgEl.style.display = 'none'; }, 4000);
+            } catch (e) {
+                console.error(e);
+                alert("Terjadi kesalahan saat menyimpan data absensi.");
+            }
+        }
+
+        window.renderAttendanceTable = function(dataArray) {
+            const tbody = document.getElementById('attendanceTableBody');
+            if (!tbody) return;
+            const data = dataArray || localAttendanceArray;
+
+            tbody.innerHTML = '';
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-gray);">Belum ada data absensi hari ini.</td></tr>`;
+                return;
+            }
+
+            data.forEach((log, index) => {
+                const tr = document.createElement('tr');
+                const namaTampil = log.nama || "Pengunjung Umum";
+                const kelasTampil = log.kelas || "-";
+                const statusBadge = kelasTampil !== "-"
+                    ? `<span class="badge badge-success">Siswa</span>`
+                    : `<span class="badge badge-warning">Umum</span>`;
+
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${log.waktu}</td>
+                    <td>${log.id}</td>
+                    <td>
+                        <div style="font-weight:600; color:var(--text-dark);">${namaTampil}</div>
+                        <div style="font-size:0.8rem; color:var(--text-gray);">Kelas: ${kelasTampil}</div>
+                    </td>
+                    <td>${statusBadge}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.calculateAttendanceStats = function() {
+            const todayStr = new Date().toLocaleDateString('id-ID');
+
+            const totalToday = localAttendanceArray.filter(item => item.tanggal === todayStr).length;
+            const txtTotal = document.getElementById('txtTotalAbsen');
+            if (txtTotal) txtTotal.innerText = totalToday;
+
+            const uniqueDates = [...new Set(localAttendanceArray.map(item => item.tanggal))];
+            const totalDaysRecorded = uniqueDates.length || 1;
+            const totalAllDays = localAttendanceArray.length;
+
+            const averagePerDay = (totalAllDays / totalDaysRecorded).toFixed(1);
+            const txtAvg = document.getElementById('txtRataRataAbsen');
+            if (txtAvg) txtAvg.innerText = averagePerDay;
+        }
+
+        window.clearAttendanceLog = async function() {
+            if (!confirm("Apakah Anda yakin ingin menghapus semua history log absensi?")) return;
+            try {
+                for (const log of localAttendanceArray) {
+                    await deleteDoc(doc(db, "attendance", log.id_));
+                }
+                alert("Log absensi berhasil dihapus.");
+            } catch (e) {
+                console.error(e);
+                alert("Terjadi kesalahan saat menghapus log absensi.");
+            }
+        }
+
+        // Sinkronisasi real-time: setiap ada perubahan data absensi di cloud, tabel & statistik otomatis diperbarui
+        onSnapshot(attendanceCollection, (snapshot) => {
+            localAttendanceArray = [];
+            snapshot.forEach((docSnap) => {
+                localAttendanceArray.push({ id_: docSnap.id, ...docSnap.data() });
+            });
+            // Urutkan dari yang paling baru berdasarkan waktu disimpan
+            localAttendanceArray.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+            renderAttendanceTable();
+            calculateAttendanceStats();
+        });
 
         /* ======================================================= */
         /* --- FUNGSI BARU: EKSPOR DATA (BUKU & SISWA) KE CSV --- */
